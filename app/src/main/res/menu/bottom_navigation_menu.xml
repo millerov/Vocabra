@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/card_browser_menu_item"
+        android:icon="@drawable/ic_search_black_24dp"
+        android:title="@string/buttom_nav_bar_text">
+    </item>
+
+    <item
+        android:id="@+id/translator_menu_item"
+        android:icon="@drawable/ic_translate_black_24dp"
+        android:title="@string/buttom_nav_bar_text">
+    </item>
+
+    <item
+        android:id="@+id/decks_menu_item"
+        android:icon="@drawable/ic_format_list_bulleted_black_24dp"
+        android:title="@string/buttom_nav_bar_text">
+    </item>
+
+    <item
+        android:id="@+id/settings_menu_item"
+        android:icon="@drawable/ic_settings_black_24dp"
+        android:title="@string/buttom_nav_bar_text">
+    </item>
+
+</menu>
