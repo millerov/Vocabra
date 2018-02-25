@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.ui;
 import android.app.FragmentManager;
 import android.os.Bundle;
 import android.support.design.internal.BottomNavigationPresenter;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
@@ -14,6 +15,8 @@ import com.arellomobile.mvp.presenter.ProvidePresenter;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.Screens;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.common.BackButtonListener;
+import com.example.alexmelnikov.vocabra.common.RouterProvider;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 
@@ -29,7 +32,7 @@ import ru.terrakok.cicerone.commands.Command;
 import ru.terrakok.cicerone.commands.Replace;
 import ru.terrakok.cicerone.commands.SystemMessage;
 
-public class MainActivity extends MvpAppCompatActivity implements MainView {
+public class MainActivity extends MvpAppCompatActivity implements MainView, RouterProvider {
     private WordBrowserFragment wordBrowserFragment;
     private TranslatorFragment translatorFragment;
 
@@ -120,6 +123,18 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         super.onPause();
     }
 
+    @Override
+    public void onBackPressed() {
+        android.app.Fragment fragment = getFragmentManager().findFragmentById(R.id.fragment_container);
+        if (fragment != null
+                && fragment instanceof BackButtonListener
+                && ((BackButtonListener) fragment).onBackPressed()) {
+            return;
+        } else {
+            presenter.onBackPressed();
+        }
+    }
+
 
     private Navigator navigator = new Navigator() {
         @Override
@@ -155,4 +170,8 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         }
     };
 
+    @Override
+    public Router getRouter() {
+        return router;
+    }
 }

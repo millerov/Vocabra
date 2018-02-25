@@ -27,4 +27,8 @@ public class MainPresenter extends MvpPresenter<MainView> {
     public void onTabTranslatorClick() {
         router.replaceScreen(Screens.TRANSLATOR_SCREEN);
     }
+
+    public void onBackPressed() {
+        router.exit();
+    }
 }
