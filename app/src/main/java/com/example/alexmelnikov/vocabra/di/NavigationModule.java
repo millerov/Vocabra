@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.di;
 
+import com.example.alexmelnikov.vocabra.navigation.LocalCiceroneHolder;
+
 import javax.inject.Singleton;
 
 import dagger.Module;
@@ -31,4 +33,5 @@ public class NavigationModule {
     NavigatorHolder provideNavigatorHolder() {
         return cicerone.getNavigatorHolder();
     }
+
 }

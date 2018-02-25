@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.di;
 
 import com.example.alexmelnikov.vocabra.ui.MainActivity;
+import com.example.alexmelnikov.vocabra.ui.TranslatorFragment;
 
 import javax.inject.Singleton;
 
@@ -17,4 +18,5 @@ import dagger.Component;
 })
 public interface AppComponent {
     void inject (MainActivity mainActivity);
+
 }
