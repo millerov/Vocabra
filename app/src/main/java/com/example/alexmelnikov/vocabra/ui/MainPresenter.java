@@ -1,7 +1,10 @@
 package com.example.alexmelnikov.vocabra.ui;
 
+import android.support.design.widget.BottomNavigationView;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.example.alexmelnikov.vocabra.Screens;
 
 import ru.terrakok.cicerone.Router;
 
@@ -15,5 +18,13 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     public MainPresenter(Router router) {
         this.router = router;
+    }
+
+    public void onTabWordBrowserClick() {
+        router.replaceScreen(Screens.WORD_BROWSER_SCREEN);
+    }
+
+    public void onTabTranslatorClick() {
+        router.replaceScreen(Screens.TRANSLATOR_SCREEN);
     }
 }
