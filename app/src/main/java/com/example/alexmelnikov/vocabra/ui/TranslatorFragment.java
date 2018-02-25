@@ -9,16 +9,14 @@ import android.view.ViewGroup;
 
 import com.example.alexmelnikov.vocabra.R;
 
-
 /**
- * Created by AlexMelnikov on 24.02.18.
+ * Created by AlexMelnikov on 25.02.18.
  */
 
-public class WordBrowserFragment extends Fragment {
-
+public class TranslatorFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_word_browser, container, false);
+        return inflater.inflate(R.layout.fragment_translator, container, false);
     }
 }

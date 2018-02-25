@@ -27,9 +27,20 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.1'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 
+    //Design
     compile 'com.android.support:design:26.1.0'
     compile 'com.github.ittianyu:BottomNavigationViewEx:1.2.4'
 
+    //Butterknife
     compile 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //Cicerone
+    compile 'ru.terrakok.cicerone:cicerone:3.0.0'
+
+    //MVP
+    compile 'com.arello-mobile:moxy:1.5.3'
+    compile 'com.arello-mobile:moxy-android:1.5.3'
+    compile 'com.arello-mobile:moxy-app-compat:1.5.3'
+    annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.3'
 }
