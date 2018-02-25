@@ -12,10 +12,10 @@ import dagger.Component;
  */
 
 
-@Singleton
+/*@Singleton
 @Component(modules = {
-        NavigationModule.class,
-})
+
+})*/
 public interface AppComponent {
     void inject (MainActivity mainActivity);
 

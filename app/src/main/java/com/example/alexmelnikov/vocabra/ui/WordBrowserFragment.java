@@ -9,30 +9,13 @@ import android.view.ViewGroup;
 
 import com.arellomobile.mvp.MvpFragment;
 import com.example.alexmelnikov.vocabra.R;
-import com.example.alexmelnikov.vocabra.common.BackButtonListener;
-import com.example.alexmelnikov.vocabra.common.RouterProvider;
-
-import ru.terrakok.cicerone.Navigator;
 
 
 /**
  * Created by AlexMelnikov on 24.02.18.
  */
 
-public class WordBrowserFragment extends MvpFragment implements BackButtonListener{
-    private static final String EXTRA_NAME = "tcf_extra_name";
-
-    private Navigator navigator;
-
-    public static WordBrowserFragment getNewInstance(String name) {
-        WordBrowserFragment fragment = new WordBrowserFragment();
-
-        Bundle arguments = new Bundle();
-        arguments.putString(EXTRA_NAME, name);
-        fragment.setArguments(arguments);
-
-        return fragment;
-    }
+public class WordBrowserFragment extends MvpFragment {
 
     @Nullable
     @Override
@@ -40,16 +23,4 @@ public class WordBrowserFragment extends MvpFragment implements BackButtonListen
         return inflater.inflate(R.layout.fragment_word_browser, container, false);
     }
 
-    @Override
-    public boolean onBackPressed() {
-        Fragment fragment = getChildFragmentManager().findFragmentById(R.id.fragment_container);
-        if (fragment != null
-                && fragment instanceof BackButtonListener
-                && ((BackButtonListener) fragment).onBackPressed()) {
-            return true;
-        } else {
-            ((RouterProvider) getActivity()).getRouter().exit();
-            return true;
-        }
-    }
 }

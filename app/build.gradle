@@ -42,9 +42,6 @@ dependencies {
     annotationProcessor 'com.google.dagger:dagger-compiler:2.14.1'
     annotationProcessor 'com.google.dagger:dagger-android-processor:2.14.1'
 
-    //Cicerone
-    compile 'ru.terrakok.cicerone:cicerone:3.0.0'
-
     //MVP
     compile 'com.arello-mobile:moxy:1.5.3'
     compile 'com.arello-mobile:moxy-android:1.5.3'
