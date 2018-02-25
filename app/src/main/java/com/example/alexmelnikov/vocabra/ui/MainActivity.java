@@ -4,19 +4,27 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.example.alexmelnikov.vocabra.R;
+import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import ru.terrakok.cicerone.Router;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends MvpAppCompatActivity implements MainView {
 
     @BindView(R.id.bottom_nav_bar) BottomNavigationViewEx bottomNavBar;
 
+    @Inject Router router;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        VocabraApp.INSTANCE.getAppComponent().inject(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
@@ -56,6 +64,5 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
-
 
 }

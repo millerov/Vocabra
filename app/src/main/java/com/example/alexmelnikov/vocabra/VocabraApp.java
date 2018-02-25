@@ -1,10 +1,11 @@
 package com.example.alexmelnikov.vocabra;
 
 import android.app.Application;
+import android.util.Log;
 
-import ru.terrakok.cicerone.Cicerone;
-import ru.terrakok.cicerone.NavigatorHolder;
-import ru.terrakok.cicerone.Router;
+import com.example.alexmelnikov.vocabra.di.AppComponent;
+import com.example.alexmelnikov.vocabra.di.DaggerAppComponent;
+
 
 /**
  * Created by AlexMelnikov on 25.02.18.
@@ -12,20 +13,20 @@ import ru.terrakok.cicerone.Router;
 
 public class VocabraApp extends Application {
     public static VocabraApp INSTANCE;
-    private Cicerone<Router> cicerone;
+    private static AppComponent appComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
         INSTANCE = this;
-        cicerone = Cicerone.create();
+        appComponent = buildComponent();
     }
 
-    public NavigatorHolder getNavigatorHolder() {
-        return cicerone.getNavigatorHolder();
+    public static AppComponent getAppComponent() {
+        return appComponent;
     }
 
-    public Router getRouter() {
-        return cicerone.getRouter();
+    protected AppComponent buildComponent() {
+        return DaggerAppComponent.builder().build();
     }
 }
