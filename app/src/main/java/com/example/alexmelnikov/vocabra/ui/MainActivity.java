@@ -1,6 +1,8 @@
 package com.example.alexmelnikov.vocabra.ui;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -46,24 +48,37 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationViewEx.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
-                FragmentManager fragMan = getFragmentManager();
-                switch (item.getItemId()) {
-                    case R.id.word_browser_menu_item:
-                        wordBrowserFragment = new WordBrowserFragment();
-                        fragMan.beginTransaction()
-                                .replace(R.id.fragment_container, wordBrowserFragment)
-                                .commit();
-                        break;
-                    case R.id.translator_menu_item:
-                        translatorFragment = new TranslatorFragment();
-                        fragMan.beginTransaction()
-                                .replace(R.id.fragment_container, translatorFragment)
-                                .commit();
-                        break;
-                }
+                presenter.bottomNavigationClick(bottomNavBar.getMenuItemPosition(item));
                 return true;
             }
         });
     }
 
+    @Override
+    public void replaceFragment(int index, int previousIndex) {
+        Fragment fragment;
+        FragmentTransaction fts = getFragmentManager().beginTransaction();
+
+        if (index == 0) {
+            fragment = new WordBrowserFragment();
+        } else { //if index = 2
+            fragment = new TranslatorFragment();
+        }
+
+        // Choose animations
+        if (index == previousIndex) {
+            fts.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
+        } /*else if (index == 1) {
+            if (previousIndex == 0) {
+                fts.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left);
+            } else {
+                fts.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right);
+            }
+        } else if (index == 2) {
+            fts.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left);
+        }*/
+
+        // Execute transaction
+        fts.replace(R.id.fragment_container, fragment).commit();
+    }
 }
