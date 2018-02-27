@@ -1,11 +1,6 @@
 package com.example.alexmelnikov.vocabra.di;
 
-import com.example.alexmelnikov.vocabra.ui.MainActivity;
-import com.example.alexmelnikov.vocabra.ui.TranslatorFragment;
-
-import javax.inject.Singleton;
-
-import dagger.Component;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 
 /**
  * Created by AlexMelnikov on 25.02.18.

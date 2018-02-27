@@ -1,4 +1,4 @@
-package com.example.alexmelnikov.vocabra.ui;
+package com.example.alexmelnikov.vocabra.ui.main;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;

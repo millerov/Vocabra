@@ -1,7 +1,6 @@
-package com.example.alexmelnikov.vocabra.ui;
+package com.example.alexmelnikov.vocabra.ui.main;
 
 import android.app.Fragment;
-import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -9,6 +8,8 @@ import android.view.MenuItem;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
+import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
+import com.example.alexmelnikov.vocabra.ui.WordBrowserFragment;
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 
