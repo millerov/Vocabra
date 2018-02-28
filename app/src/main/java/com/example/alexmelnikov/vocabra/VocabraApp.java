@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra;
 import android.app.Application;
 import android.content.res.Configuration;
 
+import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.DaggerAppComponent;
 import com.example.alexmelnikov.vocabra.dagger.AppComponent;
 
@@ -11,13 +12,14 @@ import com.example.alexmelnikov.vocabra.dagger.AppComponent;
  */
 
 public class VocabraApp extends Application {
-    public static VocabraApp INSTANCE;
     private AppComponent appComponent;
+    private static ApiHelper apiHelper;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        INSTANCE = this;
+
+        apiHelper = new ApiHelper();
     }
 
     public AppComponent getAppComponent() {
@@ -26,5 +28,9 @@ public class VocabraApp extends Application {
 
         }
         return appComponent;
+    }
+
+    public static ApiHelper getApiHelper() {
+        return apiHelper;
     }
 }
