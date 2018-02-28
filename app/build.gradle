@@ -21,18 +21,6 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
-    packagingOptions {
-        exclude 'META-INF/DEPENDENCIES'
-        exclude 'META-INF/LICENSE'
-        exclude 'META-INF/LICENSE.txt'
-        exclude 'META-INF/license.txt'
-        exclude 'META-INF/NOTICE'
-        exclude 'META-INF/NOTICE.txt'
-        exclude 'META-INF/notice.txt'
-        exclude 'META-INF/ASL2.0'
-        exclude 'META-INF/io.netty.versions.properties'
-        exclude 'META-INF/INDEX.LIST'
-    }
 }
 
 dependencies {
@@ -60,12 +48,13 @@ dependencies {
     compile 'com.arello-mobile:moxy-android:1.5.3'
     compile 'com.arello-mobile:moxy-app-compat:1.5.3'
     annotationProcessor 'com.arello-mobile:moxy-compiler:1.5.3'
-    //Google Translate API
-    compile 'com.google.cloud:google-cloud-translate:0.5.0'
-    annotationProcessor 'com.google.auto.value:auto-value:1.2'
     //Rx
     compile 'io.reactivex.rxjava2:rxandroid:2.0.2'
     compile 'io.reactivex.rxjava2:rxjava:2.1.10'
     compile 'com.jakewharton.rxbinding2:rxbinding:2.0.0'
     compile 'com.annimon:stream:1.1.2'
+    //Retrofit
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
 }
