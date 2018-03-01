@@ -32,8 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiHelper {
     private ApiService mService;
 
-    @Inject
-    LanguagesRepository mLangRep;
+/*    @Inject
+    LanguagesRepository mLangRep;*/
 
     public ApiHelper(){
         Retrofit retrofit = new Retrofit.Builder()

@@ -13,6 +13,6 @@ import io.realm.Realm;
 public class LanguagesRepository {
 
     public void setLanguageData(ArrayList<Language> data) {
-        Realm realm = Realm.getDefaultInstance();
+        //Realm realm = Realm.getDefaultInstance();
     }
 }
