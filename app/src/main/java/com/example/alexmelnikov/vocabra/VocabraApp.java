@@ -7,6 +7,8 @@ import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.DaggerAppComponent;
 import com.example.alexmelnikov.vocabra.dagger.AppComponent;
 
+import io.realm.Realm;
+
 /**
  * Created by AlexMelnikov on 28.02.18.
  */
@@ -20,6 +22,8 @@ public class VocabraApp extends Application {
         super.onCreate();
 
         apiHelper = new ApiHelper();
+
+        Realm.init(this);
     }
 
     public AppComponent getAppComponent() {

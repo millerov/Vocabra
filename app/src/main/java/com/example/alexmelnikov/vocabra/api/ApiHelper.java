@@ -1,14 +1,23 @@
 package com.example.alexmelnikov.vocabra.api;
 
+import android.content.Context;
+import android.os.StrictMode;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.api.LanguageDetectionResult;
+import com.example.alexmelnikov.vocabra.model.api.TranslationDirs;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
 import com.example.alexmelnikov.vocabra.utils.Constants;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -23,6 +32,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiHelper {
     private ApiService mService;
 
+    @Inject
+    LanguagesRepository mLangRep;
 
     public ApiHelper(){
         Retrofit retrofit = new Retrofit.Builder()
@@ -52,6 +63,44 @@ public class ApiHelper {
                shown.setText("Error");
             }
         });
+    }
+
+
+    public void getLanguagesAndSave(){
+
+        mService.getLangs(Constants.API_KEY, "ru").enqueue(new Callback<TranslationDirs>() {
+
+            @Override
+            public void onResponse(Call<TranslationDirs> call, Response<TranslationDirs> response) {
+                Log.d("API", response.toString());
+                if (response.body() != null){
+
+                    ArrayList<Language> transformed = new ArrayList<>();
+
+                    LinkedHashMap<String, String> data = response.body().getLangs();
+
+                    if (data != null) {
+                        for (String key : data.keySet()) {
+                            String value = data.get(key);
+                            transformed.add(new Language(key, value));
+                        }
+                    }
+
+                    for (Language lang : transformed) {
+                        Log.d("MyTag", lang.getId() + " " + lang.getLang());
+                    }
+
+                 }
+            }
+
+            @Override
+            public void onFailure(Call<TranslationDirs> call, Throwable t) {
+                Log.d("MyTag","Error");
+            }
+        });
 
     }
+
+
+
 }

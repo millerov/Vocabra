@@ -6,4 +6,6 @@
 
     <string name="buttom_nav_bar_text">-</string>
     <string name="hint_history_search">Найти</string>
+
+    <string name="inf_yandex_translate_api"><![CDATA[Приложение использует <a href="https://tech.yandex.ru/translate">Yandex Translate API</a>]]></string>
 </resources>

@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.dagger;
 
+import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.module.TranslatorModule;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 
@@ -18,5 +19,7 @@ import dagger.Component;
 public interface AppComponent {
 
     void inject (TranslatorFragment fragment);
+
+    void inject (ApiHelper apiHelper);
 
 }

@@ -1,7 +1,10 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,12 +20,14 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.api.ApiService;
+import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
 import com.example.alexmelnikov.vocabra.utils.Constants;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -53,6 +58,11 @@ public class TranslatorFragment extends MvpFragment {
     @BindView(R.id.btn_clear)
     ImageButton btnClear;
 
+    @BindView(R.id.tv_message)
+    TextView tvMessage;
+
+    public ArrayList<Language> langList;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -65,7 +75,14 @@ public class TranslatorFragment extends MvpFragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
+
+        tvMessage.setMovementMethod(LinkMovementMethod.getInstance());
+        tvMessage.setClickable(true);
+        tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
+
         setupRxListener();
+       // langList = getLanguages();
+
 
     }
 
@@ -95,6 +112,10 @@ public class TranslatorFragment extends MvpFragment {
         }
     }
 
+
+/*    public ArrayList<Language> getLanguages() {
+        VocabraApp.getApiHelper().getLanguagesAndSave();
+    }*/
 
 
 }
