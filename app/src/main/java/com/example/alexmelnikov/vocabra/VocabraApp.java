@@ -22,6 +22,7 @@ public class VocabraApp extends Application {
         super.onCreate();
 
         apiHelper = new ApiHelper();
+        apiHelper.getLanguagesAndSaveToDB();
 
         Realm.init(this);
     }

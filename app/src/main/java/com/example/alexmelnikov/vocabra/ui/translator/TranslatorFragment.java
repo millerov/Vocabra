@@ -20,6 +20,7 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.api.ApiService;
+import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
 import com.example.alexmelnikov.vocabra.utils.Constants;
@@ -61,6 +62,7 @@ public class TranslatorFragment extends MvpFragment {
     @BindView(R.id.tv_message)
     TextView tvMessage;
 
+    LanguagesRepository mLangRep;
     public ArrayList<Language> langList;
 
     @Nullable
@@ -80,10 +82,13 @@ public class TranslatorFragment extends MvpFragment {
         tvMessage.setClickable(true);
         tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
 
+        //getLanguages перенести в presenter!
+        mLangRep = new LanguagesRepository();
+
+
+        langList = getLanguages();
+
         setupRxListener();
-       // langList = getLanguages();
-
-
     }
 
     public void setupRxListener() {
@@ -99,11 +104,6 @@ public class TranslatorFragment extends MvpFragment {
     }
 
 
-    /*
-     Hardcoded language
-     */
-
-
     public void translate(String data) {
         try {
             VocabraApp.getApiHelper().translateAsync(data, "ru-en", tvTranslated);
@@ -113,9 +113,10 @@ public class TranslatorFragment extends MvpFragment {
     }
 
 
-/*    public ArrayList<Language> getLanguages() {
-        VocabraApp.getApiHelper().getLanguagesAndSave();
-    }*/
+    public ArrayList<Language> getLanguages() {
+
+       return mLangRep.getLanguagesFromDB();
+    }
 
 
 }

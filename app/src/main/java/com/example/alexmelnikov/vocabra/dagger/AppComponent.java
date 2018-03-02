@@ -1,7 +1,7 @@
 package com.example.alexmelnikov.vocabra.dagger;
 
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
-import com.example.alexmelnikov.vocabra.dagger.module.TranslatorModule;
+import com.example.alexmelnikov.vocabra.dagger.module.ApiHelperModule;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 
 import javax.inject.Singleton;
@@ -14,7 +14,7 @@ import dagger.Component;
 
 @Singleton
 @Component(modules = {
-        TranslatorModule.class
+        ApiHelperModule.class
 })
 public interface AppComponent {
 

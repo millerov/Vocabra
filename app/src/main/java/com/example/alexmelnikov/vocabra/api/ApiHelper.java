@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 
 import javax.inject.Inject;
 
+import io.realm.Realm;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -32,10 +33,10 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class ApiHelper {
     private ApiService mService;
 
-/*    @Inject
-    LanguagesRepository mLangRep;*/
+    private LanguagesRepository mLangRep;
 
     public ApiHelper(){
+        mLangRep = new LanguagesRepository();
         Retrofit retrofit = new Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
                 .baseUrl(Constants.API_BASE_URL)
@@ -43,6 +44,8 @@ public class ApiHelper {
         mService = retrofit.create(ApiService.class);
     }
 
+
+    //Перенести setText в presenter!
     public void translateAsync(String text, String lang, final TextView shown) throws IOException {
 
 
@@ -60,13 +63,14 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<TranslationResult> call, Throwable t) {
                Log.d("MyTag","Error");
+               Log.d("API", t.toString());
                shown.setText("Error");
             }
         });
     }
 
 
-    public void getLanguagesAndSave(){
+    public void getLanguagesAndSaveToDB(){
 
         mService.getLangs(Constants.API_KEY, "ru").enqueue(new Callback<TranslationDirs>() {
 
@@ -86,9 +90,12 @@ public class ApiHelper {
                         }
                     }
 
-                    for (Language lang : transformed) {
-                        Log.d("MyTag", lang.getId() + " " + lang.getLang());
+
+                    if (!transformed.isEmpty() && mLangRep.getLanguagesFromDB().size() == 0) {
+                        Log.d("MyTag", "Updating database");
+                        mLangRep.insertLanguagesToDB(transformed);
                     }
+
 
                  }
             }
@@ -96,10 +103,13 @@ public class ApiHelper {
             @Override
             public void onFailure(Call<TranslationDirs> call, Throwable t) {
                 Log.d("MyTag","Error");
+                Log.d("API", t.toString());
             }
         });
 
     }
+
+
 
 
 
