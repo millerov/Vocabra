@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toLeftOf="@+id/ib_swap"
-            android:background="@android:color/transparent"/>
+            android:background="@android:color/transparent"
+            android:gravity="center" />
 
         <ImageButton
             android:id="@+id/ib_swap"
@@ -30,7 +31,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_toRightOf="@+id/ib_swap"
-            android:background="@android:color/transparent" />
+            android:background="@android:color/transparent"
+            android:gravity="center" />
 
     </RelativeLayout>
 
