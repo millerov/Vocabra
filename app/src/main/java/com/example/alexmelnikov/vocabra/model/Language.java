@@ -1,5 +1,9 @@
 package com.example.alexmelnikov.vocabra.model;
 
+import android.support.annotation.NonNull;
+
+import java.util.Comparator;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -7,7 +11,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by AlexMelnikov on 01.03.18.
  */
 
-public class Language extends RealmObject {
+public class Language extends RealmObject implements Comparable<Language> {
 
     @PrimaryKey
     private String id;
@@ -36,5 +40,10 @@ public class Language extends RealmObject {
 
     public void setLang(String lang) {
         this.lang = lang;
+    }
+
+    @Override
+    public int compareTo(@NonNull Language language) {
+        return (this.getLang()).compareTo(language.getLang());
     }
 }

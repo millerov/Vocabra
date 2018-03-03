@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Html;
@@ -16,6 +17,7 @@ import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.arellomobile.mvp.MvpAppCompatFragment;
 import com.arellomobile.mvp.MvpFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
@@ -26,13 +28,17 @@ import com.example.alexmelnikov.vocabra.api.ApiService;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
+import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
 import com.example.alexmelnikov.vocabra.utils.Constants;
+import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
+import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -41,6 +47,8 @@ import butterknife.OnClick;
 import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.CompositeDisposable;
+import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import io.reactivex.subjects.PublishSubject;
 import retrofit2.Call;
@@ -51,7 +59,7 @@ import retrofit2.Response;
  * Created by AlexMelnikov on 25.02.18.
  */
 
-public class TranslatorFragment extends MvpFragment implements TranslatorView {
+public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @InjectPresenter
     TranslatorPresenter mTranslatorPresenter;
@@ -63,13 +71,16 @@ public class TranslatorFragment extends MvpFragment implements TranslatorView {
     @BindView(R.id.btn_clear)
     ImageButton btnClear;
     @BindView(R.id.spin_from)
-    Spinner spinFrom;
+    Spinner mSpinFrom;
     @BindView(R.id.spin_to)
-    Spinner spinTo;
+    Spinner mSpinTo;
     @BindView(R.id.tv_message)
     TextView tvMessage;
+    @BindView(R.id.btn_swap)
+    ImageButton btnSwap;
+    @BindView(R.id.tv_langtag)
+    TextView tvLangTag;
 
-    public ArrayList<Language> langList;
 
     @Nullable
     @Override
@@ -83,9 +94,6 @@ public class TranslatorFragment extends MvpFragment implements TranslatorView {
         tvMessage.setClickable(true);
         tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
 
-        setupRxListener();
-        configureSpinners();
-
         return view;
     }
 
@@ -95,39 +103,81 @@ public class TranslatorFragment extends MvpFragment implements TranslatorView {
 
     }
 
-    private void configureSpinners() {
-        if (spinFrom.getAdapter() == null || spinTo.getAdapter() == null) {
-            langList = mTranslatorPresenter.getLanguages();
-            for (Language lang : langList)
-                Log.d("MyTag", lang.getId());
-            LanguageAdapter spinFromAdapter = new LanguageAdapter(getActivity(), langList);
-            LanguageAdapter spinToAdapter = new LanguageAdapter(getActivity(), langList);
-            spinFrom.setAdapter(spinFromAdapter);
-            spinTo.setAdapter(spinToAdapter);
+    @Override
+    public void setupSpinners(ArrayList<Language> langList, int from, int to) {
+        if (mSpinFrom.getAdapter() == null || mSpinTo.getAdapter() == null) {
+            Collections.sort(langList);
+            LanguageAdapter spinAdapter = new LanguageAdapter(getActivity(), langList);
+            mSpinFrom.setAdapter(spinAdapter);
+            mSpinTo.setAdapter(spinAdapter);
+
+            mSpinFrom.setSelection(from);
+            mSpinTo.setSelection(to);
         }
 
     }
 
-    private void setupRxListener() {
-         RxTextView.textChanges(etTranslate)
+    @Override
+    public void attachInputListeners() {
+        Disposable spinnerFrom = RxAdapterView.itemSelections(mSpinFrom)
+                .skip(1)
+                .subscribe(index -> mTranslatorPresenter.selectorFrom(index));
+
+        Disposable spinnerTo = RxAdapterView.itemSelections(mSpinFrom)
+                .skip(1)
+                .subscribe(index -> mTranslatorPresenter.selectorTo(index));
+
+        Disposable inputChanges = RxTextView.textChanges(etTranslate)
                  .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                  .map(charSequence -> charSequence.toString())
                  .filter(text -> !text.isEmpty())
                  .subscribe(text -> {
                      Log.d("MyTag", "Text:" + text);
-                     translate(text);
+                     mTranslatorPresenter.inputChanges(text);
+                     mTranslatorPresenter.translationRequested(text, mSpinFrom.getSelectedItem().toString(), mSpinTo.getSelectedItem().toString());
                      Log.d("MyTag", "Text went to translate");
                  });
+
+        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo);
     }
 
-
-    public void translate(String data) {
-        try {
-            VocabraApp.getApiHelper().translateAsync(data, mTranslatorPresenter.getTranslationDir(spinFrom, spinTo), tvTranslated);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    @Override
+    public void detachInputListeners() {
+        mDisposable.clear();
     }
 
+    @Override
+    public void showTranslationResult(String result) {
+        tvTranslated.setText(result);
+        tvTranslated.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void changeLanguagesSelected(int from, int to) {
+        mSpinFrom.setSelection(from);
+        mSpinTo.setSelection(to);
+    }
+
+    @Override
+    public void fillTextFields(String from, String translated, String to) {
+        etTranslate.setText(from);
+        tvTranslated.setText(translated);
+        tvLangTag.setText(to);
+    }
+
+    @Override
+    public void showMessage(String message) {
+        tvMessage.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideMessage() {
+        tvMessage.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void hideResults() {
+        tvTranslated.setVisibility(View.GONE);
+    }
 }
 

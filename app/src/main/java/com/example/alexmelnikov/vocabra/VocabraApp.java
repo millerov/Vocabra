@@ -6,8 +6,10 @@ import android.content.res.Configuration;
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.DaggerAppComponent;
 import com.example.alexmelnikov.vocabra.dagger.AppComponent;
+import com.orhanobut.hawk.Hawk;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by AlexMelnikov on 28.02.18.
@@ -24,6 +26,7 @@ public class VocabraApp extends Application {
         apiHelper = new ApiHelper();
         apiHelper.getLanguagesAndSaveToDB();
 
+        Hawk.init(this).build();
         Realm.init(this);
     }
 

@@ -58,6 +58,7 @@ dependencies {
     compile 'com.squareup.retrofit2:retrofit:2.3.0'
     compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
-    //Realm
+    //Hawk
+    compile 'com.orhanobut:hawk:2.0.1'
 
 }

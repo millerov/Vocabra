@@ -14,12 +14,12 @@
             android:id="@+id/spin_from"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toLeftOf="@+id/ib_swap"
+            android:layout_toLeftOf="@+id/btn_swap"
             android:background="@android:color/transparent"
             android:gravity="center" />
 
         <ImageButton
-            android:id="@+id/ib_swap"
+            android:id="@+id/btn_swap"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_centerInParent="true"
@@ -30,7 +30,7 @@
             android:id="@+id/spin_to"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_toRightOf="@+id/ib_swap"
+            android:layout_toRightOf="@+id/btn_swap"
             android:background="@android:color/transparent"
             android:gravity="center" />
 
@@ -108,7 +108,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
-                android:text="Английский"
                 android:textSize="20dp"
                 android:id="@+id/tv_langtag"
                 android:fontFamily="sans-serif-condensed"/>
@@ -126,7 +125,7 @@
                 android:minLines="2"
                 android:scrollbars="vertical"
                 android:textColor="@android:color/white"
-                android:textSize="23dp" />
+                android:textSize="23dp"/>
 
             <ImageButton
                 android:id="@+id/fav_btn"
@@ -153,6 +152,6 @@
         android:maxLines="3"
         android:padding="4dp"
         android:textColor="@color/grey_md700"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
 </RelativeLayout>

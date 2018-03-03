@@ -10,6 +10,7 @@ import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.api.LanguageDetectionResult;
 import com.example.alexmelnikov.vocabra.model.api.TranslationDirs;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
+import com.example.alexmelnikov.vocabra.ui.translator.TranslatorPresenter;
 import com.example.alexmelnikov.vocabra.utils.Constants;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
@@ -46,7 +47,7 @@ public class ApiHelper {
 
 
     //Перенести setText в presenter!
-    public void translateAsync(String text, String lang, final TextView shown) throws IOException {
+    public void translateAsync(String text, String lang, TranslatorPresenter mTranslatorPresenter) throws IOException {
 
 
         mService.translate(Constants.API_KEY, text, lang).enqueue(new Callback<TranslationResult>() {
@@ -56,7 +57,7 @@ public class ApiHelper {
                 Log.d("API", response.toString());
                 if (response.body() != null){
                     Log.d("MyTag", TextUtils.unescape(response.body().getText().toString()));
-                    shown.setText(TextUtils.unescape(response.body().getText().toString()));
+                    mTranslatorPresenter.translationResultPassed(TextUtils.unescape(response.body().getText().toString()));
                 }
             }
 
@@ -64,7 +65,8 @@ public class ApiHelper {
             public void onFailure(Call<TranslationResult> call, Throwable t) {
                Log.d("MyTag","Error");
                Log.d("API", t.toString());
-               shown.setText("Error");
+            //   shown.setText("Error");
+                mTranslatorPresenter.translationResultPassed("Ошибка");
             }
         });
     }
