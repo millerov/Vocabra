@@ -6,7 +6,9 @@ import android.util.Log;
 import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.model.api.LanguageDetectionResult;
 import com.example.alexmelnikov.vocabra.model.api.TranslationDirs;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
@@ -36,6 +38,8 @@ public class ApiHelper {
 
     private LanguagesRepository mLangRep;
 
+    private Translation nextTranslation;
+
     public ApiHelper(){
         mLangRep = new LanguagesRepository();
         Retrofit retrofit = new Retrofit.Builder()
@@ -57,7 +61,9 @@ public class ApiHelper {
                 Log.d("API", response.toString());
                 if (response.body() != null){
                     Log.d("MyTag", TextUtils.unescape(response.body().getText().toString()));
-                    mTranslatorPresenter.translationResultPassed(TextUtils.unescape(response.body().getText().toString()));
+
+                    nextTranslation = new Translation(0, lang, TextUtils.unescape(text), response.body().getText().toString(), false);
+                    mTranslatorPresenter.translationResultPassed(nextTranslation);
                 }
             }
 
@@ -65,8 +71,7 @@ public class ApiHelper {
             public void onFailure(Call<TranslationResult> call, Throwable t) {
                Log.d("MyTag","Error");
                Log.d("API", t.toString());
-            //   shown.setText("Error");
-                mTranslatorPresenter.translationResultPassed("Ошибка");
+               mTranslatorPresenter.translationResultError();
             }
         });
     }

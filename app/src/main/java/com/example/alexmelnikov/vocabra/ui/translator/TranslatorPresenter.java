@@ -1,10 +1,16 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
+import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
+import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
@@ -30,16 +36,34 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
     private String mInput = "";
     private String mOutput = "";
 
-    //private Translation mLastLoadedTranslation;
+    private Translation mLastLoadedTranslation;
+
+    private TranslationsRepository mTransRep;
+    private UserDataRepository mUserData;
 
     public TranslatorPresenter() {
         mLangRep = new LanguagesRepository();
         mLangList = mLangRep.getLanguagesFromDB();
+        mTransRep = new TranslationsRepository();
+        mUserData = new UserDataRepository();
         Collections.sort(mLangList);
-        //Setting default values "ru"/"en"
-        mSelectedFrom = mLangList.indexOf(LanguageUtils.findByKey("ru"));
-        mSelectedTo = mLangList.indexOf(LanguageUtils.findByKey("en"));
-        mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
+
+        SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(mUserData.SELECTED_LANGUAGES, new SelectedLanguages(
+                mLangList.indexOf(LanguageUtils.findByKey("ru")),
+                mLangList.indexOf(LanguageUtils.findByKey("en"))));
+
+        Log.d("MyTag", "Got new value: " + selectedLanguages.from() + "-" + selectedLanguages.to());
+
+        mSelectedFrom = selectedLanguages.from();
+        mSelectedTo = selectedLanguages.to();
+
+
+        try {
+            mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
+        } catch (NullPointerException e) {
+            Log.e("MyTag", e.toString());
+            mSelectedToLanguage = "Error";
+        }
     }
 
     @Override
@@ -74,9 +98,15 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         }
     }
 
-    public void translationResultPassed(String translationRes) {
-        mOutput = translationRes;
+    public void translationResultPassed(Translation nextTranslation) {
+        mLastLoadedTranslation = nextTranslation;
+        mOutput = TextUtils.unescape(nextTranslation.getToText());
         getViewState().showTranslationResult(mOutput);
+        getViewState().showMessage();
+    }
+
+    public void translationResultError() {
+        getViewState().showTranslationResult("Error");
     }
 
     public void selectorFrom(int index) {
@@ -84,24 +114,19 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             swapSelection();
         } else {
             mSelectedFrom = index;
-           // updateSelectedLangs();
+            updateSelectedLangs();
         }
     }
 
     public void selectorTo(int index) {
-        if (index == mSelectedTo) {
+        if (index == mSelectedFrom) {
             swapSelection();
         } else {
             mSelectedTo = index;
-            // updateSelectedLangs();
+            updateSelectedLangs();
         }
     }
 
-
-    private void wipeTextFields() {
-        mInput = mOutput = "";
-        getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
-    }
 
     private void swapSelection() {
         int temp = mSelectedFrom;
@@ -115,6 +140,26 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             mOutput = tempStr;
             getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
         }
-        // updateSelectedLangs();
+         updateSelectedLangs();
+    }
+
+    public void clearInputPressed() {
+        if (!mInput.isEmpty()) {
+            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            wipeTextFields();
+        }
+    }
+
+    private void updateSelectedLangs() {
+        SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);
+        Log.d("MyTag", "Adding new value: " + mSelectedFrom + "-" + mSelectedTo);
+        mUserData.putValue(mUserData.SELECTED_LANGUAGES, newValue);
+    }
+
+    private void wipeTextFields() {
+        mLastLoadedTranslation = null;
+        mInput = mOutput = "";
+        getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
+        getViewState().hideMessage();
     }
 }

@@ -33,6 +33,7 @@ import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
 import com.example.alexmelnikov.vocabra.utils.Constants;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
+import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
@@ -49,11 +50,7 @@ import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-import io.reactivex.subjects.PublishSubject;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+
 
 /**
  * Created by AlexMelnikov on 25.02.18.
@@ -80,7 +77,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     ImageButton btnSwap;
     @BindView(R.id.tv_langtag)
     TextView tvLangTag;
-
+    @BindView(R.id.btn_favourite)
+    ImageButton btnFavoutite;
 
     @Nullable
     @Override
@@ -123,9 +121,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 .skip(1)
                 .subscribe(index -> mTranslatorPresenter.selectorFrom(index));
 
-        Disposable spinnerTo = RxAdapterView.itemSelections(mSpinFrom)
+        Disposable spinnerTo = RxAdapterView.itemSelections(mSpinTo)
                 .skip(1)
                 .subscribe(index -> mTranslatorPresenter.selectorTo(index));
+
+        Disposable clearInputButton = RxView.clicks(btnClear)
+                .subscribe(o -> mTranslatorPresenter.clearInputPressed());
 
         Disposable inputChanges = RxTextView.textChanges(etTranslate)
                  .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
@@ -138,7 +139,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                      Log.d("MyTag", "Text went to translate");
                  });
 
-        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo);
+        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo, clearInputButton);
     }
 
     @Override
@@ -166,7 +167,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void showMessage(String message) {
+    public void showMessage() {
         tvMessage.setVisibility(View.VISIBLE);
     }
 

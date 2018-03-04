@@ -29,7 +29,7 @@ public interface TranslatorView extends BaseView {
     void fillTextFields(String from, String translated, String to);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void showMessage(String message);
+    void showMessage();
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void hideMessage();
