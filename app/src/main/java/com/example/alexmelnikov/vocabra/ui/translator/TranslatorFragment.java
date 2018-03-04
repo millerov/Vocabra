@@ -1,9 +1,9 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
-import android.content.Context;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
@@ -11,44 +11,30 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.arellomobile.mvp.MvpAppCompatFragment;
-import com.arellomobile.mvp.MvpFragment;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
-import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
-import com.example.alexmelnikov.vocabra.api.ApiHelper;
-import com.example.alexmelnikov.vocabra.api.ApiService;
-import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
-import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
-import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
-import com.example.alexmelnikov.vocabra.utils.Constants;
-import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
-import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 
 
@@ -58,7 +44,7 @@ import io.reactivex.disposables.Disposable;
 
 public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
-    @InjectPresenter
+    @InjectPresenter(type = PresenterType.GLOBAL, tag = "translator")
     TranslatorPresenter mTranslatorPresenter;
 
     @BindView(R.id.ed_translate)
@@ -79,6 +65,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     TextView tvLangTag;
     @BindView(R.id.btn_favourite)
     ImageButton btnFavoutite;
+    @BindView(R.id.rv_history)
+    RecyclerView rvHistory;
+
+    private HistoryAdapter mHistoryAdapter;
 
     @Nullable
     @Override
@@ -98,7 +88,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d("Adapter", "adaper creation");
+        mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>());
+        rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvHistory.setAdapter(mHistoryAdapter);
     }
 
     @Override
@@ -114,6 +107,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         }
 
     }
+
 
     @Override
     public void attachInputListeners() {
@@ -140,6 +134,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                  });
 
         mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo, clearInputButton);
+    }
+
+
+    @Override
+    public void replaceData(ArrayList<Translation> translations) {
+        mHistoryAdapter.replaceData(translations);
     }
 
     @Override

@@ -61,8 +61,7 @@ public class ApiHelper {
                 Log.d("API", response.toString());
                 if (response.body() != null){
                     Log.d("MyTag", TextUtils.unescape(response.body().getText().toString()));
-
-                    nextTranslation = new Translation(0, lang, TextUtils.unescape(text), response.body().getText().toString(), false);
+                    nextTranslation = new Translation(0, lang, text, TextUtils.unescape(response.body().getText().toString()), false);
                     mTranslatorPresenter.translationResultPassed(nextTranslation);
                 }
             }

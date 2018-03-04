@@ -72,6 +72,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         getViewState().attachInputListeners();
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
         getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
+        loadData();
     }
 
     @Override
@@ -100,7 +101,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
 
     public void translationResultPassed(Translation nextTranslation) {
         mLastLoadedTranslation = nextTranslation;
-        mOutput = TextUtils.unescape(nextTranslation.getToText());
+        mOutput = nextTranslation.getToText();
         getViewState().showTranslationResult(mOutput);
         getViewState().showMessage();
     }
@@ -149,6 +150,12 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             wipeTextFields();
         }
     }
+
+    private void loadData() {
+        Log.d("Adapter", "loading new translations: size=" + mTransRep.getTranslationsFromDB().size());
+        getViewState().replaceData(mTransRep.getTranslationsFromDB());
+    }
+
 
     private void updateSelectedLangs() {
         SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);

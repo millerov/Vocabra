@@ -6,9 +6,11 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.alexmelnikov.vocabra.model.Language;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by AlexMelnikov on 27.02.18.
@@ -36,5 +38,8 @@ public interface TranslatorView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void hideResults();
+
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void replaceData(ArrayList<Translation> translations);
 
 }
