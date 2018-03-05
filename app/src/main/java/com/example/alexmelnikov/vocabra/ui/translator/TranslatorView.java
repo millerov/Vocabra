@@ -28,7 +28,7 @@ public interface TranslatorView extends BaseView {
     void changeLanguagesSelected(int from, int to);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void fillTextFields(String from, String translated, String to);
+    void fillTextFields(String from, String translated, String fromLang, String toLang);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showMessage();

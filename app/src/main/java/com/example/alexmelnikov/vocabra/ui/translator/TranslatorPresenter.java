@@ -32,6 +32,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
     private int mSelectedTo;
 
     private String mSelectedToLanguage;
+    private String mSelectedFromLanguage;
 
     private String mInput = "";
     private String mOutput = "";
@@ -40,6 +41,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
 
     private TranslationsRepository mTransRep;
     private UserDataRepository mUserData;
+
 
     public TranslatorPresenter() {
         mLangRep = new LanguagesRepository();
@@ -57,13 +59,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
 
-
-        try {
-            mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
-        } catch (NullPointerException e) {
-            Log.e("MyTag", e.toString());
-            mSelectedToLanguage = "Error";
-        }
+        updateSelectedLanguages();
     }
 
     @Override
@@ -71,7 +67,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         super.attachView(view);
         getViewState().attachInputListeners();
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
-        getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
+        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
         loadData();
     }
 
@@ -88,12 +84,11 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
 
     public void inputChanges(String newValue) {
         mInput = newValue;
-        getViewState().hideMessage();
     }
 
-    public void translationRequested(String data, String langNameFrom, String langNameTo) {
+    public void translationRequested(String data) {
         try {
-            VocabraApp.getApiHelper().translateAsync(data, TextUtils.getTranslationDir(langNameFrom, langNameTo), this);
+            VocabraApp.getApiHelper().translateAsync(data, TextUtils.getTranslationDir(mSelectedFromLanguage, mSelectedToLanguage), this);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -103,7 +98,6 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         mLastLoadedTranslation = nextTranslation;
         mOutput = nextTranslation.getToText();
         getViewState().showTranslationResult(mOutput);
-        getViewState().showMessage();
     }
 
     public void translationResultError() {
@@ -115,7 +109,12 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             swapSelection();
         } else {
             mSelectedFrom = index;
-            updateSelectedLangs();
+            updateSelectedLangsIndexes();
+            updateSelectedLanguages();
+            getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+            if (!mInput.isEmpty() && mLastLoadedTranslation != null) {
+                translationRequested(mInput);
+            }
         }
     }
 
@@ -124,12 +123,25 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             swapSelection();
         } else {
             mSelectedTo = index;
-            updateSelectedLangs();
+            updateSelectedLangsIndexes();
+            updateSelectedLanguages();
+            getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+            if (!mInput.isEmpty() && mLastLoadedTranslation != null) {
+                translationRequested(mInput);
+            }
         }
     }
 
 
-    private void swapSelection() {
+    public void clearInputPressed() {
+        if (!mInput.isEmpty()) {
+            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            wipeTextFields();
+        }
+    }
+
+
+    public void swapSelection() {
         int temp = mSelectedFrom;
         mSelectedFrom = mSelectedTo;
         mSelectedTo = temp;
@@ -139,17 +151,14 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
             String tempStr = mInput;
             mInput = mOutput;
             mOutput = tempStr;
-            getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
         }
-         updateSelectedLangs();
+
+        updateSelectedLangsIndexes();
+        updateSelectedLanguages();
+        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
-    public void clearInputPressed() {
-        if (!mInput.isEmpty()) {
-            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
-            wipeTextFields();
-        }
-    }
+    //=========Private logic==========
 
     private void loadData() {
         Log.d("Adapter", "loading new translations: size=" + mTransRep.getTranslationsFromDB().size());
@@ -157,16 +166,27 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
     }
 
 
-    private void updateSelectedLangs() {
+    private void updateSelectedLangsIndexes() {
         SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);
         Log.d("MyTag", "Adding new value: " + mSelectedFrom + "-" + mSelectedTo);
         mUserData.putValue(mUserData.SELECTED_LANGUAGES, newValue);
     }
 
+    private void updateSelectedLanguages() {
+        try {
+            mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
+            mSelectedFromLanguage = mLangList.get(mSelectedFrom).getLang();
+        } catch (NullPointerException e) {
+            Log.e("MyTag", e.toString());
+            mSelectedToLanguage = "Error";
+            mSelectedFromLanguage = "Error";
+        }
+    }
+
     private void wipeTextFields() {
         mLastLoadedTranslation = null;
         mInput = mOutput = "";
-        getViewState().fillTextFields(mInput, mOutput, mSelectedToLanguage);
-        getViewState().hideMessage();
+        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
+
 }

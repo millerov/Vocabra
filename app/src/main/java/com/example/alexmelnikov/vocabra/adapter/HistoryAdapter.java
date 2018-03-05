@@ -2,6 +2,7 @@ package com.example.alexmelnikov.vocabra.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +55,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
-        Translation translation = mData.get(position);
-
-        holder.tvFrom.setText(translation.getFromText());
-        holder.tvTo.setText(translation.getToText());
+        Log.d("adapter", "position: " + position);
+        Translation translation = mData.get(mData.size()-position-1);
+        if (translation.getFromText().length() > 29 || translation.getToText().length() > 29) {
+            holder.tvFrom.setText(translation.getFromText().substring(0,30).trim() + "...");
+            holder.tvTo.setText(translation.getToText().substring(0,30).trim() + "...");
+        } else {
+            holder.tvFrom.setText(translation.getFromText());
+            holder.tvTo.setText(translation.getToText());
+        }
     }
 
     @Override

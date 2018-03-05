@@ -9,10 +9,12 @@ import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -44,6 +46,8 @@ import io.reactivex.disposables.Disposable;
 
 public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
+    private static final String TAG = "TranslatorFragment";
+    
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translator")
     TranslatorPresenter mTranslatorPresenter;
 
@@ -61,12 +65,14 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     TextView tvMessage;
     @BindView(R.id.btn_swap)
     ImageButton btnSwap;
-    @BindView(R.id.tv_langtag)
-    TextView tvLangTag;
+    @BindView(R.id.tv_langtagto)
+    TextView tvLangTagTo;
     @BindView(R.id.btn_favourite)
     ImageButton btnFavoutite;
     @BindView(R.id.rv_history)
     RecyclerView rvHistory;
+    @BindView(R.id.tv_langtagfrom)
+    TextView tvLangTagFrom;
 
     private HistoryAdapter mHistoryAdapter;
 
@@ -90,7 +96,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         super.onViewCreated(view, savedInstanceState);
         Log.d("Adapter", "adaper creation");
         mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>());
-        rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()) {
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         rvHistory.setAdapter(mHistoryAdapter);
     }
 
@@ -129,11 +140,14 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                  .subscribe(text -> {
                      Log.d("MyTag", "Text:" + text);
                      mTranslatorPresenter.inputChanges(text);
-                     mTranslatorPresenter.translationRequested(text, mSpinFrom.getSelectedItem().toString(), mSpinTo.getSelectedItem().toString());
+                     mTranslatorPresenter.translationRequested(text);
                      Log.d("MyTag", "Text went to translate");
                  });
 
-        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo, clearInputButton);
+        Disposable swapButton = RxView.clicks(btnSwap)
+                .subscribe(o -> mTranslatorPresenter.swapSelection());
+
+        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo, clearInputButton, swapButton);
     }
 
 
@@ -160,10 +174,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void fillTextFields(String from, String translated, String to) {
-        etTranslate.setText(from);
+    public void fillTextFields(String input, String translated, String fromLang, String toLang) {
+        etTranslate.setText(input);
         tvTranslated.setText(translated);
-        tvLangTag.setText(to);
+        tvLangTagFrom.setText(fromLang);
+        tvLangTagTo.setText(toLang);
     }
 
     @Override
