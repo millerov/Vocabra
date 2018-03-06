@@ -68,7 +68,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         getViewState().attachInputListeners();
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
         getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
-        loadData();
+        loadHistoryData();
     }
 
     @Override
@@ -160,9 +160,9 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
 
     //=========Private logic==========
 
-    private void loadData() {
+    private void loadHistoryData() {
         Log.d("Adapter", "loading new translations: size=" + mTransRep.getTranslationsFromDB().size());
-        getViewState().replaceData(mTransRep.getTranslationsFromDB());
+        getViewState().replaceHistoryData(mTransRep.getTranslationsFromDB());
     }
 
 

@@ -10,7 +10,7 @@ import io.reactivex.disposables.CompositeDisposable;
  * Created by AlexMelnikov on 03.03.18.
  */
 
-public class BaseFragment extends MvpFragment {
+public class BaseFragment extends MvpAppCompatFragment {
 
     protected CompositeDisposable mDisposable = new CompositeDisposable();
 

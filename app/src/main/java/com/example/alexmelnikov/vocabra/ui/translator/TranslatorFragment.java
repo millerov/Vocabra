@@ -2,30 +2,41 @@ package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.transition.Fade;
+import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
+import android.transition.ChangeBounds;
+import android.transition.Slide;
+import android.transition.TransitionManager;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
+import com.example.alexmelnikov.vocabra.ui.TranslationFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
@@ -73,6 +84,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     RecyclerView rvHistory;
     @BindView(R.id.tv_langtagfrom)
     TextView tvLangTagFrom;
+    @BindView(R.id.layout_translated)
+    LinearLayout transitionsContainer;
 
     private HistoryAdapter mHistoryAdapter;
 
@@ -133,7 +146,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Disposable clearInputButton = RxView.clicks(btnClear)
                 .subscribe(o -> mTranslatorPresenter.clearInputPressed());
 
-        Disposable inputChanges = RxTextView.textChanges(etTranslate)
+        Disposable inputTouched = RxView.clicks(etTranslate)
+                .subscribe(o -> openTranslationFragment());
+
+/*        Disposable inputChanges = RxTextView.textChanges(etTranslate)
                  .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                  .map(charSequence -> charSequence.toString())
                  .filter(text -> !text.isEmpty())
@@ -142,18 +158,43 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                      mTranslatorPresenter.inputChanges(text);
                      mTranslatorPresenter.translationRequested(text);
                      Log.d("MyTag", "Text went to translate");
-                 });
+                 });*/
 
         Disposable swapButton = RxView.clicks(btnSwap)
                 .subscribe(o -> mTranslatorPresenter.swapSelection());
 
-        mDisposable.addAll(inputChanges, spinnerFrom, spinnerTo, clearInputButton, swapButton);
+        mDisposable.addAll(spinnerFrom, spinnerTo, clearInputButton, swapButton);
     }
 
+    @Override
+    public void openTranslationFragment() {
+        TranslationFragment fragment = new TranslationFragment();
+        Slide enterTransition = new Slide(Gravity.RIGHT);
+        enterTransition.setDuration(500);
+
+        ChangeBounds changeBoundsTransition = new ChangeBounds();
+        changeBoundsTransition.setDuration(500);
+
+        fragment.setEnterTransition(enterTransition);
+       /*fragment.setAllowEnterTransitionOverlap(false);
+        fragment.setAllowReturnTransitionOverlap(false);*/
+        fragment.setSharedElementEnterTransition(changeBoundsTransition);
+
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .addSharedElement(btnClear, "transition")
+                .commit();
+    }
 
     @Override
-    public void replaceData(ArrayList<Translation> translations) {
+    public void replaceHistoryData(ArrayList<Translation> translations) {
         mHistoryAdapter.replaceData(translations);
+    }
+
+    @Override
+    public void updateHistoryData(ArrayList<Translation> translations) {
+        mHistoryAdapter.notifyItemInserted(translations.size() - 1);
     }
 
     @Override

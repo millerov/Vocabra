@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.support.design.widget.BottomSheetBehavior;
+
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
@@ -40,6 +42,13 @@ public interface TranslatorView extends BaseView {
     void hideResults();
 
     @StateStrategyType(AddToEndSingleStrategy.class)
-    void replaceData(ArrayList<Translation> translations);
+    void replaceHistoryData(ArrayList<Translation> translations);
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void updateHistoryData(ArrayList<Translation> translations);
+
+
+    @StateStrategyType(SkipStrategy.class)
+    void openTranslationFragment();
 
 }

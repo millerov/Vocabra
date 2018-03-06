@@ -1,10 +1,10 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -12,6 +12,7 @@ import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.ui.TranslationFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.example.alexmelnikov.vocabra.ui.WordBrowserFragment;
 
@@ -76,25 +77,32 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
     @Override
     public void replaceFragment(int index, int previousIndex) {
         Fragment fragment;
-        FragmentTransaction fts = getFragmentManager().beginTransaction();
+        FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
 
         if (index == 0) {
             fragment = new WordBrowserFragment();
-        } else { //if index = 2
+        } else if (index == 1) {
             fragment = new TranslatorFragment();
+        } else {
+            fragment = new TranslationFragment();
         }
+
 
         // Choose animations
         if (index == previousIndex) {
             fts.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        } /*else if (index == 1) {
-            if (previousIndex == 0) {
-                fts.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left);
-            } else {
-                fts.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_out_right);
+        } else if (index == 0) {
+            if (previousIndex == 1) {
+                fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             }
-        } else if (index == 2) {
-            fts.setCustomAnimations(R.animator.slide_in_right, R.animator.slide_out_left);
+        } else if (index == 1) {
+            if (previousIndex == 0) {
+                fts.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
+            } else {
+                fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
+            }
+        } /*else if (index == 2) {
+            fts.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         }*/
 
         // Execute transaction
