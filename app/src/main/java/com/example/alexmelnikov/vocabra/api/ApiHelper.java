@@ -12,6 +12,8 @@ import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.model.api.LanguageDetectionResult;
 import com.example.alexmelnikov.vocabra.model.api.TranslationDirs;
 import com.example.alexmelnikov.vocabra.model.api.TranslationResult;
+import com.example.alexmelnikov.vocabra.ui.Translating;
+import com.example.alexmelnikov.vocabra.ui.translation.TranslationPresenter;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorPresenter;
 import com.example.alexmelnikov.vocabra.utils.Constants;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
@@ -50,8 +52,7 @@ public class ApiHelper {
     }
 
 
-    //Перенести setText в presenter!
-    public void translateAsync(String text, String lang, TranslatorPresenter mTranslatorPresenter) throws IOException {
+    public void translateAsync(String text, String lang, Translating presenter) throws IOException {
 
 
         mService.translate(Constants.API_KEY, text, lang).enqueue(new Callback<TranslationResult>() {
@@ -62,7 +63,7 @@ public class ApiHelper {
                 if (response.body() != null){
                     Log.d("MyTag", TextUtils.unescape(response.body().getText().toString()));
                     nextTranslation = new Translation(0, lang, text, TextUtils.unescape(response.body().getText().toString()), false);
-                    mTranslatorPresenter.translationResultPassed(nextTranslation);
+                    presenter.translationResultPassed(nextTranslation);
                 }
             }
 
@@ -70,7 +71,7 @@ public class ApiHelper {
             public void onFailure(Call<TranslationResult> call, Throwable t) {
                Log.d("MyTag","Error");
                Log.d("API", t.toString());
-               mTranslatorPresenter.translationResultError();
+                presenter.translationResultError();
             }
         });
     }

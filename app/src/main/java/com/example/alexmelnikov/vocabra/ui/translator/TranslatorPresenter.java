@@ -11,6 +11,7 @@ import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
 import com.example.alexmelnikov.vocabra.model.Translation;
+import com.example.alexmelnikov.vocabra.ui.Translating;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
@@ -23,7 +24,7 @@ import java.util.Collections;
  */
 
 @InjectViewState
-public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
+public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating {
 
     LanguagesRepository mLangRep;
     ArrayList<Language> mLangList;

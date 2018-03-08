@@ -108,7 +108,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     public void attachInputListeners() {
         Disposable translateButton = RxView.clicks(btnTranslate)
                 .subscribe(o -> mTranslationPresenter.translationRequest());
-/*
+
         Disposable inputChanges = RxTextView.textChanges(etTranslate)
                 .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .map(charSequence -> charSequence.toString())
@@ -118,9 +118,9 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                     mTranslationPresenter.inputChanges(text);
                     mTranslationPresenter.translationRequested(text);
                     Log.d("MyTag", "Text went to translate");
-                });*/
+                });
 
-        mDisposable.addAll(translateButton);
+        mDisposable.addAll(translateButton, inputChanges);
     }
 
     @Override
@@ -164,5 +164,16 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                 .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
+    }
+
+    @Override
+    public void showTranslationResult(String result) {
+        tvTranslated.setText(result);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        mTranslationPresenter.translationRequest();
+        return true;
     }
 }

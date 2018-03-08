@@ -17,4 +17,7 @@ public interface TranslationView extends BaseView {
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void fillTextFields(String fromText, String toText, String fromLang, String toLang);
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void showTranslationResult(String result);
 }
