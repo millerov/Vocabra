@@ -82,8 +82,10 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
     }
 
 
-    public void inputChanges(String newValue) {
-        mInput = newValue;
+    public void setInputOutput(String fromText, String toText) {
+        mInput = fromText;
+        mOutput = toText;
+        getViewState().fillTextFields(fromText, toText, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
     public void translationRequested(String data) {
@@ -156,6 +158,10 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> {
         updateSelectedLangsIndexes();
         updateSelectedLanguages();
         getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+    }
+
+    public void inputRequested() {
+        getViewState().openTranslationFragment(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
     //=========Private logic==========

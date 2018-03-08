@@ -14,4 +14,8 @@ public class BaseFragment extends MvpAppCompatFragment {
 
     protected CompositeDisposable mDisposable = new CompositeDisposable();
 
+    public boolean onBackPressed() {
+        return false;
+    }
+
 }

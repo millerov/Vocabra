@@ -3,16 +3,17 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/Translator"
-        android:orientation="vertical"
-        android:id="@+id/layout_translator">
+        android:id="@+id/layout_translator"
+        android:transitionName="viewtrans">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:id="@+id/from"
             android:padding="12dp">
 
             <EditText
@@ -29,7 +30,8 @@
             android:scrollbars="vertical"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorGreyHint"
-            android:textSize="23sp" />
+            android:textSize="22sp"
+                android:transitionName="etTranslator"/>
 
             <ImageButton
                 android:id="@+id/btn_clear"
@@ -44,10 +46,12 @@
         </RelativeLayout>
 
         <RelativeLayout
+            android:id="@+id/to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:background="@drawable/white_grey_border_top"
+            android:layout_below="@id/from"
             android:padding="12dp">
 
             <TextView
@@ -55,8 +59,54 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Перевод (английский)"
-                android:textSize="23sp"/>
+                android:textSize="22sp"/>
+
+            <ImageButton
+                android:id="@+id/btn_translate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignRight="@id/tv_translated"
+                android:layout_centerVertical="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_forward_black_27dp"/>
+
         </RelativeLayout>
 
-    </LinearLayout>
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/tv_message"
+        android:layout_marginTop="5dp"
+        android:text="@string/inf_yandex_translate_api"
+        android:fontFamily="fonts/Roboto-Medium.ttf"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_translator"
+        android:ellipsize="end"
+        android:gravity="center"
+        android:maxLines="3"
+        android:textColor="@color/grey_md700"
+        android:visibility="visible" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:descendantFocusability="blocksDescendants"
+        android:layout_below="@id/tv_message">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_history"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="45dp"
+            android:overScrollMode="never">
+        </android.support.v7.widget.RecyclerView>
+
+    </RelativeLayout>
+
+
 </LinearLayout>

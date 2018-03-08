@@ -47,7 +47,8 @@
         android:paddingLeft="12dp"
         android:paddingRight="10dp"
         android:paddingTop="10dp"
-        android:paddingBottom="8dp">
+        android:paddingBottom="8dp"
+        android:transitionName="viewtrans">
 
 
         <TextView
@@ -84,7 +85,9 @@
             android:scrollbars="vertical"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorGreyHint"
-            android:textSize="20sp" />
+            android:textColorLink="@color/invis"
+            android:textSize="20sp"
+            android:transitionName="etTranslator"/>
 
     </RelativeLayout>
 
@@ -160,31 +163,18 @@
 
             </LinearLayout>
 
-            <TextView
-                android:id="@+id/tv_message"
-                android:text="@string/inf_yandex_translate_api"
-                android:fontFamily="fonts/Roboto-Medium.ttf"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/layout_translated"
-                android:ellipsize="end"
-                android:gravity="center"
-                android:maxLines="3"
-                android:textColor="@color/grey_md700"
-                android:visibility="visible" />
 
             <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:descendantFocusability="blocksDescendants"
-            android:layout_below="@id/tv_message">
+            android:layout_below="@id/layout_translated">
 
                 <android.support.v7.widget.RecyclerView
                     app:layout_behavior="@string/appbar_scrolling_view_behavior"
                     android:id="@+id/rv_history"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:animateLayoutChanges="true"
                     android:paddingLeft="12dp"
                     android:paddingRight="12dp"
                     android:paddingTop="4dp"

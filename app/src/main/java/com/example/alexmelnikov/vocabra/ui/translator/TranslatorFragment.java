@@ -2,52 +2,39 @@ package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.transition.Fade;
-import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
+import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
-import android.transition.Slide;
-import android.transition.TransitionManager;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
-import com.example.alexmelnikov.vocabra.ui.TranslationFragment;
+import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 
@@ -72,8 +59,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     Spinner mSpinFrom;
     @BindView(R.id.spin_to)
     Spinner mSpinTo;
-    @BindView(R.id.tv_message)
-    TextView tvMessage;
     @BindView(R.id.btn_swap)
     ImageButton btnSwap;
     @BindView(R.id.tv_langtagto)
@@ -86,8 +71,19 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     TextView tvLangTagFrom;
     @BindView(R.id.layout_translated)
     LinearLayout transitionsContainer;
+    @BindView(R.id.layout_translator)
+    RelativeLayout rlTranslator;
 
     private HistoryAdapter mHistoryAdapter;
+
+    public static TranslatorFragment newInstance(String fromText, String toText) {
+        Bundle args = new Bundle();
+        args.putSerializable("fromText", fromText);
+        args.putSerializable("toText", toText);
+        TranslatorFragment fragment = new TranslatorFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -96,11 +92,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ButterKnife.bind(this, view);
 
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
-
-        tvMessage.setMovementMethod(LinkMovementMethod.getInstance());
-        tvMessage.setClickable(true);
-        tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
-
+        mTranslatorPresenter.setInputOutput(getArguments().getSerializable("fromText").toString(),
+                                            getArguments().getSerializable("toText").toString());
         return view;
     }
 
@@ -116,6 +109,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             }
         });
         rvHistory.setAdapter(mHistoryAdapter);
+        etTranslate.setFocusable(false);
     }
 
     @Override
@@ -147,7 +141,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 .subscribe(o -> mTranslatorPresenter.clearInputPressed());
 
         Disposable inputTouched = RxView.clicks(etTranslate)
-                .subscribe(o -> openTranslationFragment());
+                .subscribe(o -> mTranslatorPresenter.inputRequested());
 
 /*        Disposable inputChanges = RxTextView.textChanges(etTranslate)
                  .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
@@ -163,27 +157,25 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Disposable swapButton = RxView.clicks(btnSwap)
                 .subscribe(o -> mTranslatorPresenter.swapSelection());
 
-        mDisposable.addAll(spinnerFrom, spinnerTo, clearInputButton, swapButton);
+        mDisposable.addAll(inputTouched, spinnerFrom, spinnerTo, clearInputButton, swapButton);
     }
 
     @Override
-    public void openTranslationFragment() {
-        TranslationFragment fragment = new TranslationFragment();
-        Slide enterTransition = new Slide(Gravity.RIGHT);
-        enterTransition.setDuration(500);
+    public void openTranslationFragment(String fromText, String toText, String fromLang, String toLang) {
+        TranslationFragment fragment = TranslationFragment.newInstance(fromText, toText, fromLang, toLang);
 
         ChangeBounds changeBoundsTransition = new ChangeBounds();
         changeBoundsTransition.setDuration(500);
 
-        fragment.setEnterTransition(enterTransition);
-       /*fragment.setAllowEnterTransitionOverlap(false);
-        fragment.setAllowReturnTransitionOverlap(false);*/
+        fragment.setEnterTransition(new AutoTransition());
         fragment.setSharedElementEnterTransition(changeBoundsTransition);
+        fragment.setSharedElementReturnTransition(changeBoundsTransition);
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .addSharedElement(btnClear, "transition")
+                .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
     }
 
@@ -216,20 +208,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Override
     public void fillTextFields(String input, String translated, String fromLang, String toLang) {
-        etTranslate.setText(input);
-        tvTranslated.setText(translated);
+        if (!input.isEmpty())
+            etTranslate.setText(input);
+        if (!translated.isEmpty())
+            tvTranslated.setText(translated);
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
-    }
-
-    @Override
-    public void showMessage() {
-        tvMessage.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void hideMessage() {
-        tvMessage.setVisibility(View.INVISIBLE);
     }
 
     @Override

@@ -5,14 +5,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.MenuItem;
 
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
-import com.example.alexmelnikov.vocabra.VocabraApp;
-import com.example.alexmelnikov.vocabra.ui.TranslationFragment;
+import com.example.alexmelnikov.vocabra.ui.BaseActivity;
+import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.example.alexmelnikov.vocabra.ui.WordBrowserFragment;
 
@@ -20,14 +19,13 @@ import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
 
 
 import java.io.File;
-import java.io.IOException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.realm.Realm;
 
 
-public class MainActivity extends MvpAppCompatActivity implements MainView {
+public class MainActivity extends BaseActivity implements MainView {
     private WordBrowserFragment wordBrowserFragment;
     private TranslatorFragment translatorFragment;
 
@@ -82,16 +80,14 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
         if (index == 0) {
             fragment = new WordBrowserFragment();
         } else if (index == 1) {
-            fragment = new TranslatorFragment();
+            fragment = TranslatorFragment.newInstance("", "");
         } else {
             fragment = new TranslationFragment();
         }
-
-
         // Choose animations
         if (index == previousIndex) {
             fts.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        } else if (index == 0) {
+        } /*else if (index == 0) {
             if (previousIndex == 1) {
                 fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             }
@@ -101,7 +97,7 @@ public class MainActivity extends MvpAppCompatActivity implements MainView {
             } else {
                 fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
             }
-        } /*else if (index == 2) {
+        } else if (index == 2) {
             fts.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
         }*/
 

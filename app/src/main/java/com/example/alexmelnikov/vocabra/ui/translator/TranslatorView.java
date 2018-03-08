@@ -32,11 +32,11 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void fillTextFields(String from, String translated, String fromLang, String toLang);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+/*    @StateStrategyType(OneExecutionStateStrategy.class)
     void showMessage();
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void hideMessage();
+    void hideMessage();*/
 
     @StateStrategyType(SkipStrategy.class)
     void hideResults();
@@ -49,6 +49,6 @@ public interface TranslatorView extends BaseView {
 
 
     @StateStrategyType(SkipStrategy.class)
-    void openTranslationFragment();
+    void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);
 
 }
