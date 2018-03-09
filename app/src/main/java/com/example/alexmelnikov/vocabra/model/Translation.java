@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.model;
 
+import java.io.Serializable;
+
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
@@ -7,7 +9,7 @@ import io.realm.annotations.PrimaryKey;
  * Common class.
  * Get used by repository, interactor and presenter without transformation.
  */
-public class Translation extends RealmObject {
+public class Translation extends RealmObject implements Serializable {
 
     @PrimaryKey
     private int id;

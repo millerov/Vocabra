@@ -83,10 +83,18 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void setInputOutput(String fromText, String toText) {
-        mInput = fromText;
-        mOutput = toText;
-        getViewState().fillTextFields(fromText, toText, mSelectedFromLanguage, mSelectedToLanguage);
+    public void setInputOutput(Translation translation) {
+        if (translation != null && translation.getFromText() != null) {
+            mLastLoadedTranslation = translation;
+            mInput = translation.getFromText();
+            mOutput = translation.getToText();
+            if (mOutput != "" || mInput == mOutput)
+                updateDatabase();
+        } else {
+            mInput = "";
+            mOutput = "";
+        }
+        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
     public void translationRequested(String data) {
@@ -135,11 +143,11 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         }
     }
 
-
-    public void clearInputPressed() {
+    public void clearButtonPressed() {
         if (!mInput.isEmpty()) {
-            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
-            wipeTextFields();
+            mLastLoadedTranslation = null;
+            mInput = mOutput = "";
+            getViewState().clearInputOutput();
         }
     }
 
@@ -165,7 +173,9 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         getViewState().openTranslationFragment(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
-    //=========Private logic==========
+
+
+    //==================Private logic=================
 
     private void loadHistoryData() {
         Log.d("Adapter", "loading new translations: size=" + mTransRep.getTranslationsFromDB().size());
@@ -185,15 +195,23 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             mSelectedFromLanguage = mLangList.get(mSelectedFrom).getLang();
         } catch (NullPointerException e) {
             Log.e("MyTag", e.toString());
-            mSelectedToLanguage = "Error";
-            mSelectedFromLanguage = "Error";
+            mSelectedToLanguage = mSelectedFromLanguage = "Error";
         }
     }
 
-    private void wipeTextFields() {
-        mLastLoadedTranslation = null;
-        mInput = mOutput = "";
-        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+    private void updateDatabase() {
+        Log.d("similar", "updateDatabase: " + mTransRep.containsSimilarElementInDB(mLastLoadedTranslation));
+        if (!mTransRep.containsSimilarElementInDB(mLastLoadedTranslation)) {
+            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            getViewState().updateHistoryData(mTransRep.getTranslationsFromDB());
+        } else {
+            mTransRep.deleteTranslationFromDB(mLastLoadedTranslation);
+            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            getViewState().updateHistoryData(mTransRep.getTranslationsFromDB());
+        }
     }
 
+    private void clearDatabase() {
+        mTransRep.clearTranslationsDB();
+    }
 }

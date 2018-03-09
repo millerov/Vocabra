@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import com.arellomobile.mvp.MvpAppCompatActivity;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseActivity;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
@@ -80,7 +81,7 @@ public class MainActivity extends BaseActivity implements MainView {
         if (index == 0) {
             fragment = new WordBrowserFragment();
         } else if (index == 1) {
-            fragment = TranslatorFragment.newInstance("", "");
+            fragment = TranslatorFragment.newInstance(new Translation());
         } else {
             fragment = new TranslationFragment();
         }

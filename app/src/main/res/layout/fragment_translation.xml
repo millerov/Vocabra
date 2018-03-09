@@ -13,7 +13,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/from"
+            android:id="@+id/rl_from"
             android:padding="12dp">
 
             <EditText
@@ -25,13 +25,14 @@
             android:gravity="top|left"
             android:hint="Введите текст (русский)"
             android:inputType="textMultiLine"
-            android:maxLines="4"
+            android:maxLines="3"
             android:minLines="1"
             android:scrollbars="vertical"
             android:textColor="@android:color/black"
             android:textColorHint="@color/colorGreyHint"
-            android:textSize="22sp"
-                android:transitionName="etTranslator"/>
+            android:textSize="21sp"
+                android:transitionName="etTranslator"
+                android:paddingRight="25dp"/>
 
             <ImageButton
                 android:id="@+id/btn_clear"
@@ -46,12 +47,12 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:id="@+id/to"
+            android:id="@+id/rl_to"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:background="@drawable/white_grey_border_top"
-            android:layout_below="@id/from"
+            android:layout_below="@id/rl_from"
             android:padding="12dp">
 
             <TextView
@@ -59,7 +60,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Перевод (английский)"
-                android:textSize="22sp"/>
+                android:inputType="textMultiLine"
+                android:scrollbars="vertical"
+                android:maxLines="3"
+                android:minLines="1"
+                android:textSize="21sp"
+                android:paddingRight="25dp" />
 
             <ImageButton
                 android:id="@+id/btn_translate"
@@ -68,7 +74,7 @@
                 android:layout_alignRight="@id/tv_translated"
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_arrow_forward_black_27dp"/>
+                android:src="@drawable/ic_arrow_forward_black_27dp" />
 
         </RelativeLayout>
 

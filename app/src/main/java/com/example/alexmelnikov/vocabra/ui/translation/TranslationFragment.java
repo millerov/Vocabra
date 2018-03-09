@@ -7,6 +7,7 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.FragmentManager;
 import android.text.Html;
 import android.text.method.LinkMovementMethod;
+import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.util.Log;
@@ -47,6 +48,8 @@ import io.reactivex.disposables.Disposable;
 
 public class TranslationFragment extends BaseFragment implements TranslationView {
 
+    private static final String TAG = "TranslationFragment";
+
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translation")
     TranslationPresenter mTranslationPresenter;
 
@@ -62,6 +65,8 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     ImageView btnTranslate;
     @BindView(R.id.layout_translator)
     RelativeLayout rlTranslator;
+    @BindView(R.id.rl_to)
+    RelativeLayout rlTo;
 
     public static TranslationFragment newInstance(String fromText, String toText, String fromLang, String toLang) {
         Bundle args = new Bundle();
@@ -80,6 +85,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         View view = inflater.inflate(R.layout.fragment_translation, container, false);
         ButterKnife.bind(this, view);
 
+        tvTranslated.setMovementMethod(new ScrollingMovementMethod());
         tvMessage.setMovementMethod(LinkMovementMethod.getInstance());
         tvMessage.setClickable(true);
         tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
@@ -106,11 +112,17 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
     @Override
     public void attachInputListeners() {
-        Disposable translateButton = RxView.clicks(btnTranslate)
-                .subscribe(o -> mTranslationPresenter.translationRequest());
+        Disposable translateButton = RxView.touches(btnTranslate)
+                .subscribe(o -> mTranslationPresenter.continueRequest());
+
+        Disposable translateText = RxView.touches(tvTranslated)
+                .subscribe(o -> mTranslationPresenter.continueRequest());
+
+        Disposable clearButton = RxView.clicks(btnClear)
+                .subscribe(o -> mTranslationPresenter.clearButtonPressed());
 
         Disposable inputChanges = RxTextView.textChanges(etTranslate)
-                .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                .debounce(150, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
                 .map(charSequence -> charSequence.toString())
                 .filter(text -> !text.isEmpty())
                 .subscribe(text -> {
@@ -120,7 +132,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                     Log.d("MyTag", "Text went to translate");
                 });
 
-        mDisposable.addAll(translateButton, inputChanges);
+        mDisposable.addAll(translateButton, inputChanges, clearButton, translateText);
     }
 
     @Override
@@ -132,14 +144,32 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     public void fillTextFields(String fromText, String toText, String fromLang, String toLang) {
         etTranslate.setHint("Введите текст (" + fromLang + ")");
         tvTranslated.setHint("Перевод (" + toLang + ")");
-        if (!fromText.isEmpty())
+        if (!fromText.isEmpty()) {
             etTranslate.setText(fromText);
-        if(!toText.isEmpty())
             tvTranslated.setText(toText);
+        }
+        etTranslate.setSelection(etTranslate.getText().length());
     }
 
     @Override
-    public void closeFragment(String fromText, String toText) {
+    public void showTranslationResult(String result) {
+        tvTranslated.setText(result);
+    }
+
+    @Override
+    public void clearInputOutput() {
+        etTranslate.setText("");
+        tvTranslated.setText("");
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        mTranslationPresenter.continueRequest();
+        return true;
+    }
+
+    @Override
+    public void closeFragment(Translation translation) {
         View view = this.getView();
         view.postDelayed(new Runnable() {
             @Override
@@ -149,7 +179,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
             }
         }, 400);
 
-        TranslatorFragment fragment = TranslatorFragment.newInstance(fromText, toText);
+        TranslatorFragment fragment = TranslatorFragment.newInstance(translation);
 
         ChangeBounds changeBoundsTransition = new ChangeBounds();
         changeBoundsTransition.setDuration(500);
@@ -164,16 +194,5 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                 .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
-    }
-
-    @Override
-    public void showTranslationResult(String result) {
-        tvTranslated.setText(result);
-    }
-
-    @Override
-    public boolean onBackPressed() {
-        mTranslationPresenter.translationRequest();
-        return true;
     }
 }

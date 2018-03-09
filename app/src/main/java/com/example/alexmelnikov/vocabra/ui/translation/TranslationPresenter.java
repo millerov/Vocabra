@@ -23,9 +23,12 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
     private String mFromLanguage;
     private String mToLanguage;
 
+    private Translation mLastLoadedTranslation;
+
 
     @Override
     public void attachView(TranslationView view) {
+        mLastLoadedTranslation = null;
         super.attachView(view);
         getViewState().attachInputListeners();
     }
@@ -44,12 +47,13 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
         getViewState().fillTextFields(fromText, toText, fromLang, toLang);
     }
 
-    public void translationRequest() {
-        getViewState().closeFragment(mInput, mOutput);
+    public void continueRequest() {
+        getViewState().closeFragment(mLastLoadedTranslation);
     }
 
     public void inputChanges(String input) {
-        mInput = input;
+        if (!input.trim().isEmpty())
+            mInput = input;
     }
 
     public void translationRequested(String data) {
@@ -61,6 +65,7 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
     }
 
     public void translationResultPassed(Translation translation) {
+        mLastLoadedTranslation = translation;
         mOutput = translation.getToText();
         getViewState().showTranslationResult(mOutput);
     }
@@ -68,6 +73,16 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
     public void translationResultError() {
         mOutput = "Error";
         getViewState().showTranslationResult(mOutput);
+    }
+
+    public void clearButtonPressed() {
+        if (!mInput.isEmpty()) {
+            mInput = mOutput = "";
+            mLastLoadedTranslation = null;
+            getViewState().clearInputOutput();
+        } else {
+            continueRequest();
+        }
     }
 
 

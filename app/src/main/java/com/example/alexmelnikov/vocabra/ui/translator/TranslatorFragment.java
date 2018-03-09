@@ -76,10 +76,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     private HistoryAdapter mHistoryAdapter;
 
-    public static TranslatorFragment newInstance(String fromText, String toText) {
+    public static TranslatorFragment newInstance(Translation translation) {
         Bundle args = new Bundle();
-        args.putSerializable("fromText", fromText);
-        args.putSerializable("toText", toText);
+        args.putSerializable("translation", translation);
         TranslatorFragment fragment = new TranslatorFragment();
         fragment.setArguments(args);
         return fragment;
@@ -92,8 +91,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ButterKnife.bind(this, view);
 
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
-        mTranslatorPresenter.setInputOutput(getArguments().getSerializable("fromText").toString(),
-                                            getArguments().getSerializable("toText").toString());
+        mTranslatorPresenter.setInputOutput((Translation) getArguments().getSerializable("translation"));
         return view;
     }
 
@@ -126,7 +124,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     }
 
-
     @Override
     public void attachInputListeners() {
         Disposable spinnerFrom = RxAdapterView.itemSelections(mSpinFrom)
@@ -138,21 +135,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 .subscribe(index -> mTranslatorPresenter.selectorTo(index));
 
         Disposable clearInputButton = RxView.clicks(btnClear)
-                .subscribe(o -> mTranslatorPresenter.clearInputPressed());
+                .subscribe(o -> mTranslatorPresenter.clearButtonPressed());
 
         Disposable inputTouched = RxView.clicks(etTranslate)
                 .subscribe(o -> mTranslatorPresenter.inputRequested());
-
-/*        Disposable inputChanges = RxTextView.textChanges(etTranslate)
-                 .debounce(300, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
-                 .map(charSequence -> charSequence.toString())
-                 .filter(text -> !text.isEmpty())
-                 .subscribe(text -> {
-                     Log.d("MyTag", "Text:" + text);
-                     mTranslatorPresenter.inputChanges(text);
-                     mTranslatorPresenter.translationRequested(text);
-                     Log.d("MyTag", "Text went to translate");
-                 });*/
 
         Disposable swapButton = RxView.clicks(btnSwap)
                 .subscribe(o -> mTranslatorPresenter.swapSelection());
@@ -180,6 +166,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
+    public void detachInputListeners() {
+        mDisposable.clear();
+    }
+
+    @Override
     public void replaceHistoryData(ArrayList<Translation> translations) {
         mHistoryAdapter.replaceData(translations);
     }
@@ -187,11 +178,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void updateHistoryData(ArrayList<Translation> translations) {
         mHistoryAdapter.notifyItemInserted(translations.size() - 1);
-    }
-
-    @Override
-    public void detachInputListeners() {
-        mDisposable.clear();
     }
 
     @Override
@@ -214,6 +200,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             tvTranslated.setText(translated);
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
+    }
+
+    @Override
+    public void clearInputOutput() {
+        etTranslate.setText("");
+        tvTranslated.setText("");
     }
 
     @Override
