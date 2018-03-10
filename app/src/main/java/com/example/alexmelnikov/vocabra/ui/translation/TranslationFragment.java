@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translation;
 
 import android.content.Context;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
@@ -115,7 +116,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         Disposable translateButton = RxView.touches(btnTranslate)
                 .subscribe(o -> mTranslationPresenter.continueRequest());
 
-        Disposable translateText = RxView.touches(tvTranslated)
+        Disposable translateText = RxView.clicks(tvTranslated)
                 .subscribe(o -> mTranslationPresenter.continueRequest());
 
         Disposable clearButton = RxView.clicks(btnClear)
@@ -158,6 +159,10 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
     @Override
     public void clearInputOutput() {
+        AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
+                .getDrawable(R.drawable.ic_clear_black_anim_24dp);
+        btnClear.setImageDrawable(drawable);
+        drawable.start();
         etTranslate.setText("");
         tvTranslated.setText("");
     }

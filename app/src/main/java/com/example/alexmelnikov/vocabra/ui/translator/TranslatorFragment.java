@@ -1,5 +1,9 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.graphics.drawable.Animatable;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -17,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
@@ -49,30 +54,19 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translator")
     TranslatorPresenter mTranslatorPresenter;
 
-    @BindView(R.id.ed_translate)
-    EditText etTranslate;
-    @BindView(R.id.tv_translated)
-    TextView tvTranslated;
-    @BindView(R.id.btn_clear)
-    ImageButton btnClear;
-    @BindView(R.id.spin_from)
-    Spinner mSpinFrom;
-    @BindView(R.id.spin_to)
-    Spinner mSpinTo;
-    @BindView(R.id.btn_swap)
-    ImageButton btnSwap;
-    @BindView(R.id.tv_langtagto)
-    TextView tvLangTagTo;
-    @BindView(R.id.btn_favourite)
-    ImageButton btnFavoutite;
-    @BindView(R.id.rv_history)
-    RecyclerView rvHistory;
-    @BindView(R.id.tv_langtagfrom)
-    TextView tvLangTagFrom;
-    @BindView(R.id.layout_translated)
-    LinearLayout transitionsContainer;
-    @BindView(R.id.layout_translator)
-    RelativeLayout rlTranslator;
+    @BindView(R.id.ed_translate) EditText etTranslate;
+    @BindView(R.id.tv_translated) TextView tvTranslated;
+    @BindView(R.id.btn_clear) ImageButton btnClear;
+    @BindView(R.id.btn_copy) ImageButton btnCopy;
+    @BindView(R.id.spin_from) Spinner mSpinFrom;
+    @BindView(R.id.spin_to) Spinner mSpinTo;
+    @BindView(R.id.btn_swap) ImageButton btnSwap;
+    @BindView(R.id.tv_langtagto) TextView tvLangTagTo;
+    @BindView(R.id.btn_favourite) ImageButton btnFavoutite;
+    @BindView(R.id.rv_history) RecyclerView rvHistory;
+    @BindView(R.id.tv_langtagfrom) TextView tvLangTagFrom;
+    @BindView(R.id.layout_translated) LinearLayout transitionsContainer;
+    @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
 
     private HistoryAdapter mHistoryAdapter;
 
@@ -143,6 +137,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Disposable swapButton = RxView.clicks(btnSwap)
                 .subscribe(o -> mTranslatorPresenter.swapSelection());
 
+        Disposable copyButton = RxView.clicks(btnCopy)
+                .subscribe(o -> mTranslatorPresenter.copyButtonPressed());
+
         mDisposable.addAll(inputTouched, spinnerFrom, spinnerTo, clearInputButton, swapButton);
     }
 
@@ -184,6 +181,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void showTranslationResult(String result) {
         tvTranslated.setText(result);
         tvTranslated.setVisibility(View.VISIBLE);
+        btnCopy.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -196,21 +194,31 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void fillTextFields(String input, String translated, String fromLang, String toLang) {
         if (!input.isEmpty())
             etTranslate.setText(input);
-        if (!translated.isEmpty())
+        if (!translated.isEmpty()) {
             tvTranslated.setText(translated);
+            btnCopy.setVisibility(View.VISIBLE);
+        }
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
     }
 
     @Override
     public void clearInputOutput() {
+        AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
+                .getDrawable(R.drawable.ic_clear_black_anim_24dp);
+        btnClear.setImageDrawable(drawable);
+        drawable.start();
         etTranslate.setText("");
         tvTranslated.setText("");
+        btnCopy.setVisibility(View.GONE);
     }
 
     @Override
-    public void hideResults() {
-        tvTranslated.setVisibility(View.GONE);
+    public void copyAction(String text) {
+        ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
+        ClipData clip = ClipData.newPlainText("output", text);
+        clipboard.setPrimaryClip(clip);
+        Toast.makeText(getActivity(), "Перевод скопирован", Toast.LENGTH_SHORT).show();
     }
 }
 

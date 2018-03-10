@@ -41,9 +41,6 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(SkipStrategy.class)
     void clearInputOutput();
 
-    @StateStrategyType(SkipStrategy.class)
-    void hideResults();
-
     @StateStrategyType(AddToEndSingleStrategy.class)
     void replaceHistoryData(ArrayList<Translation> translations);
 
@@ -52,5 +49,8 @@ public interface TranslatorView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);
+
+    @StateStrategyType(SkipStrategy.class)
+    void copyAction(String text);
 
 }

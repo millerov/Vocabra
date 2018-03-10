@@ -54,7 +54,6 @@ public class ApiHelper {
 
     public void translateAsync(String text, String lang, Translating presenter) throws IOException {
 
-
         mService.translate(Constants.API_KEY, text, lang).enqueue(new Callback<TranslationResult>() {
 
             @Override
@@ -71,7 +70,7 @@ public class ApiHelper {
             public void onFailure(Call<TranslationResult> call, Throwable t) {
                Log.d("MyTag","Error");
                Log.d("API", t.toString());
-                presenter.translationResultError();
+               presenter.translationResultError();
             }
         });
     }

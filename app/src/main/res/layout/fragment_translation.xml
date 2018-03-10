@@ -65,6 +65,7 @@
                 android:maxLines="3"
                 android:minLines="1"
                 android:textSize="21sp"
+                android:textColor="@color/colorPrimary"
                 android:paddingRight="25dp" />
 
             <ImageButton

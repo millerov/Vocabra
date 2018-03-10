@@ -84,7 +84,4 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
             continueRequest();
         }
     }
-
-
-
 }

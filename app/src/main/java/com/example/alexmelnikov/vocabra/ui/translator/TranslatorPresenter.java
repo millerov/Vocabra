@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.content.ClipboardManager;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -171,6 +172,10 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     public void inputRequested() {
         getViewState().openTranslationFragment(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+    }
+
+    public void copyButtonPressed() {
+        getViewState().copyAction(mOutput);
     }
 
 
