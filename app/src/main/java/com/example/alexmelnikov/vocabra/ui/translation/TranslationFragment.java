@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translation;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -44,7 +45,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by AlexMelnikov on 06.03.18.
+ * Translation Fragment
  */
 
 public class TranslationFragment extends BaseFragment implements TranslationView {
@@ -54,20 +55,13 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translation")
     TranslationPresenter mTranslationPresenter;
 
-    @BindView(R.id.ed_translate)
-    EditText etTranslate;
-    @BindView(R.id.tv_translated)
-    TextView tvTranslated;
-    @BindView(R.id.btn_clear)
-    ImageButton btnClear;
-    @BindView(R.id.tv_message)
-    TextView tvMessage;
-    @BindView(R.id.btn_translate)
-    ImageView btnTranslate;
-    @BindView(R.id.layout_translator)
-    RelativeLayout rlTranslator;
-    @BindView(R.id.rl_to)
-    RelativeLayout rlTo;
+    @BindView(R.id.ed_translate) EditText etTranslate;
+    @BindView(R.id.tv_translated) TextView tvTranslated;
+    @BindView(R.id.btn_clear) ImageButton btnClear;
+    @BindView(R.id.tv_message) TextView tvMessage;
+    @BindView(R.id.btn_translate) ImageView btnTranslate;
+    @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
+    @BindView(R.id.rl_to) RelativeLayout rlTo;
 
     public static TranslationFragment newInstance(String fromText, String toText, String fromLang, String toLang) {
         Bundle args = new Bundle();
@@ -127,10 +121,8 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                 .map(charSequence -> charSequence.toString())
                 .filter(text -> !text.isEmpty())
                 .subscribe(text -> {
-                    Log.d("MyTag", "Text:" + text);
                     mTranslationPresenter.inputChanges(text);
                     mTranslationPresenter.translationRequested(text);
-                    Log.d("MyTag", "Text went to translate");
                 });
 
         mDisposable.addAll(translateButton, inputChanges, clearButton, translateText);

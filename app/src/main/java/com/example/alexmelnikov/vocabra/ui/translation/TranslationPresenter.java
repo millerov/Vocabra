@@ -11,12 +11,14 @@ import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import java.io.IOException;
 
 /**
- * Created by AlexMelnikov on 08.03.18.
+ * Translation Fragment Presenter
  */
 
 @InjectViewState
 public class TranslationPresenter extends MvpPresenter<TranslationView> implements Translating {
 
+    private static final String TAG = "TranslationPresenter";
+    
     private String mInput = "";
     private String mOutput = "";
 

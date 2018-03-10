@@ -40,11 +40,14 @@ public class LanguagesRepository {
 
     public ArrayList<Language> getLanguagesFromDB() {
 
-        ArrayList<Language> langList;
+      ArrayList<Language> langList;
+
+      //Easy Migration for Realm
+        //===========================
 /*        RealmConfiguration config2 = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
-                .build();*/
-        //Realm realm = Realm.getInstance(config2);
+                .build();
+        Realm realm = Realm.getInstance(config2);*/
         Realm realm = Realm.getDefaultInstance();
 
         langList = new ArrayList(realm.where(Language.class).findAll());

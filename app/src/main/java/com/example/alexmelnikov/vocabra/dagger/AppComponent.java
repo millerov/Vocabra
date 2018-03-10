@@ -9,17 +9,17 @@ import javax.inject.Singleton;
 import dagger.Component;
 
 /**
- * Created by AlexMelnikov on 28.02.18.
+ * Created by AlexMelnikov on 10.03.18.
  */
+
 
 @Singleton
 @Component(modules = {
-        ApiHelperModule.class
 })
 public interface AppComponent {
 
-    void inject (TranslatorFragment fragment);
+    void inject(TranslatorFragment fragment);
 
-    void inject (ApiHelper apiHelper);
+    void inject(ApiHelper apiHelper);
 
 }

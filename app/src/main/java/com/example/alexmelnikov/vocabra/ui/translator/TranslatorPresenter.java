@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
@@ -20,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.inject.Inject;
+
 /**
  * Created by AlexMelnikov on 27.02.18.
  */
@@ -27,36 +30,36 @@ import java.util.Collections;
 @InjectViewState
 public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating {
 
+    private static final String TAG = "TranslatorPresenter";
+
+    @Inject
     LanguagesRepository mLangRep;
+    @Inject
+    TranslationsRepository mTransRep;
+    @Inject
+    UserDataRepository mUserData;
+
     ArrayList<Language> mLangList;
 
-    private int mSelectedFrom;
-    private int mSelectedTo;
+    private int mSelectedFrom; //TranslatonFragment spinner index
+    private int mSelectedTo; //TranslationFragment spinner index
 
-    private String mSelectedToLanguage;
-    private String mSelectedFromLanguage;
+    private String mSelectedToLanguage; //e.g. "Английский"
+    private String mSelectedFromLanguage; //e.g. "Русский"
 
     private String mInput = "";
     private String mOutput = "";
 
     private Translation mLastLoadedTranslation;
 
-    private TranslationsRepository mTransRep;
-    private UserDataRepository mUserData;
-
-
     public TranslatorPresenter() {
-        mLangRep = new LanguagesRepository();
+        VocabraApp.getPresenterComponent().inject(this);
         mLangList = mLangRep.getLanguagesFromDB();
-        mTransRep = new TranslationsRepository();
-        mUserData = new UserDataRepository();
         Collections.sort(mLangList);
 
         SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(mUserData.SELECTED_LANGUAGES, new SelectedLanguages(
                 mLangList.indexOf(LanguageUtils.findByKey("ru")),
                 mLangList.indexOf(LanguageUtils.findByKey("en"))));
-
-        Log.d("MyTag", "Got new value: " + selectedLanguages.from() + "-" + selectedLanguages.to());
 
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
@@ -183,14 +186,12 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     //==================Private logic=================
 
     private void loadHistoryData() {
-        Log.d("Adapter", "loading new translations: size=" + mTransRep.getTranslationsFromDB().size());
         getViewState().replaceHistoryData(mTransRep.getTranslationsFromDB());
     }
 
 
     private void updateSelectedLangsIndexes() {
         SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);
-        Log.d("MyTag", "Adding new value: " + mSelectedFrom + "-" + mSelectedTo);
         mUserData.putValue(mUserData.SELECTED_LANGUAGES, newValue);
     }
 
@@ -199,13 +200,11 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
             mSelectedFromLanguage = mLangList.get(mSelectedFrom).getLang();
         } catch (NullPointerException e) {
-            Log.e("MyTag", e.toString());
             mSelectedToLanguage = mSelectedFromLanguage = "Error";
         }
     }
 
     private void updateDatabase() {
-        Log.d("similar", "updateDatabase: " + mTransRep.containsSimilarElementInDB(mLastLoadedTranslation));
         if (!mTransRep.containsSimilarElementInDB(mLastLoadedTranslation)) {
             mTransRep.insertTranslationToDB(mLastLoadedTranslation);
             getViewState().updateHistoryData(mTransRep.getTranslationsFromDB());
