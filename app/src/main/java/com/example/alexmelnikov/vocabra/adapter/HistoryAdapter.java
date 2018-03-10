@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.adapter;
 
 import android.content.Context;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
+import com.example.alexmelnikov.vocabra.ui.translator.TranslatorPresenter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,10 +28,12 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     Context mContext;
     ArrayList<Translation> mData;
+    TranslatorPresenter fragmentPresenter;
 
-    public HistoryAdapter(Context mContext, ArrayList<Translation> mData) {
+    public HistoryAdapter(Context mContext, ArrayList<Translation> mData, TranslatorPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
+        this.fragmentPresenter = presenter;
     }
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
@@ -60,6 +64,11 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             holder.tvFrom.setText(translation.getFromText());
             holder.tvTo.setText(translation.getToText());
         }
+
+        holder.btnFavorite.setOnClickListener((view) -> {
+            holder.btnFavorite.setImageResource(R.drawable.ic_star_yellow_24dp);
+            //fragmentPresenter.addToCardsRequest(position);
+        });
     }
 
     @Override

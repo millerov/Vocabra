@@ -46,5 +46,4 @@ public interface TranslatorView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void copyAction(String text);
-
 }

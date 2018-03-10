@@ -92,7 +92,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>());
+        mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>(), mTranslatorPresenter);
         rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override
             public boolean canScrollVertically() {
@@ -219,5 +219,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         clipboard.setPrimaryClip(clip);
         Toast.makeText(getActivity(), "Перевод скопирован", Toast.LENGTH_SHORT).show();
     }
+
+
 }
 
