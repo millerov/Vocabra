@@ -92,7 +92,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Log.d("Adapter", "adaper creation");
         mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>());
         rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()) {
             @Override

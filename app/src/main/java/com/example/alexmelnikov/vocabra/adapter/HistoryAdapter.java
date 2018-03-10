@@ -34,12 +34,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tv_From)
-        TextView tvFrom;
-        @BindView(R.id.tv_To)
-        TextView tvTo;
-        @BindView(R.id.ib_favourite)
-        ImageButton btnFavorite;
+        @BindView(R.id.tv_From) TextView tvFrom;
+        @BindView(R.id.tv_To) TextView tvTo;
+        @BindView(R.id.ib_favourite) ImageButton btnFavorite;
 
         public HistoryViewHolder(View itemView) {
             super(itemView);
@@ -55,7 +52,6 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
-        Log.d("adapter", "position: " + position);
         Translation translation = mData.get(mData.size()-position-1);
         if (translation.getFromText().length() > 29 || translation.getToText().length() > 29) {
             holder.tvFrom.setText(translation.getFromText().substring(0,30).trim() + "...");

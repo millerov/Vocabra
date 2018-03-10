@@ -32,18 +32,24 @@ public class Card extends RealmObject {
 
     public Card() {}
 
+    //=======================
+    //ADD DECK TO CONSTRUCTOR
+    //=======================
     public Card(int id, String front, String back, Language frontLanguage,
-                    Language backLanguage, Deck deck) {
+                    Language backLanguage) {
         this.id = id;
         this.front = front;
         this.back = back;
         this.frontLanguage = frontLanguage;
         this.backLanguage = backLanguage;
-        this.deck = deck;
+
         this.isReadyForTraining = true;
         this.timesTrained = 0;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }
