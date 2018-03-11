@@ -56,7 +56,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     @Override
     public void onBindViewHolder(HistoryViewHolder holder, int position) {
-        Translation translation = mData.get(mData.size()-position-1);
+        Translation translation = mData.get(mData.size() - position - 1);
         if (translation.getFromText().length() > 29 || translation.getToText().length() > 29) {
             holder.tvFrom.setText(translation.getFromText().substring(0,30).trim() + "...");
             holder.tvTo.setText(translation.getToText().substring(0,30).trim() + "...");
@@ -67,7 +67,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
         holder.btnFavorite.setOnClickListener((view) -> {
             holder.btnFavorite.setImageResource(R.drawable.ic_star_yellow_24dp);
-            //fragmentPresenter.addToCardsRequest(position);
+            fragmentPresenter.addNewCardFromTranslationRequest(mData.size() - position - 1);
         });
     }
 

@@ -18,6 +18,8 @@ public class Card extends RealmObject {
 
     private String back;
 
+    private String context;
+
     private Language frontLanguage;
 
     private Language backLanguage;
@@ -68,6 +70,14 @@ public class Card extends RealmObject {
 
     public void setBack(String back) {
         this.back = back;
+    }
+
+    public String getContext() {
+        return context;
+    }
+
+    public void setContext(String context) {
+        this.context = context;
     }
 
     public Language getFrontLanguage() {

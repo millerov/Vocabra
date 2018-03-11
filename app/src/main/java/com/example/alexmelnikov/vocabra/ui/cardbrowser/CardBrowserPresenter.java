@@ -9,4 +9,5 @@ import com.arellomobile.mvp.MvpPresenter;
 
 @InjectViewState
 public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
+
 }

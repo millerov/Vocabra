@@ -12,6 +12,7 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.CardsAdapter;
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 
 import java.util.ArrayList;
@@ -57,5 +58,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void detachInputListeners() {
 
+    }
+
+    @Override
+    public void replaceCardsRecyclerData(ArrayList<Card> cards) {
+        mCardsAdapter.replaceData(cards);
+    }
+
+    @Override
+    public void updateCardsRecyclerData(ArrayList<Card> cards) {
+        mCardsAdapter.notifyItemInserted(cards.size() - 1);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.support.design.widget.BottomSheetBehavior;
+import android.test.suitebuilder.annotation.SmallTest;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
@@ -46,4 +47,7 @@ public interface TranslatorView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void copyAction(String text);
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void showAddCardDialog(Translation translation);
 }

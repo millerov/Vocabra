@@ -33,9 +33,12 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
     class CardsViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.iv_color) ImageView ivColor;
-        @BindView(R.id.tv_From) TextView tvFrom;
-        @BindView(R.id.tv_To) TextView tvTo;
+        @BindView(R.id.iv_color)
+        ImageView ivColor;
+        @BindView(R.id.tv_From)
+        TextView tvFrom;
+        @BindView(R.id.tv_To)
+        TextView tvTo;
 
         public CardsViewHolder(View itemView) {
             super(itemView);
@@ -58,5 +61,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
     @Override
     public int getItemCount() {
         return mData.size();
+    }
+
+    public void replaceData(ArrayList<Card> cards) {
+        mData.clear();
+        mData.addAll(cards);
+        notifyDataSetChanged();
     }
 }

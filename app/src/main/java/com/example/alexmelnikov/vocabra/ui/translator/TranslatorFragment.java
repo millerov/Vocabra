@@ -23,6 +23,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
@@ -220,6 +221,26 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Toast.makeText(getActivity(), "Перевод скопирован", Toast.LENGTH_SHORT).show();
     }
 
+    @Override
+    public void showAddCardDialog(Translation translation) {
+        MaterialDialog dialog =
+                new MaterialDialog.Builder(getActivity())
+                        .title("Добавление карточки")
+                        .customView(R.layout.dialog_add_card, true)
+                        .positiveText("Добавить")
+                        .negativeText(android.R.string.cancel)
+                        .onPositive((dialog1, which) -> Log.d(TAG, "showAddCardDialog: hello there boy"))
+                        .build();
 
+        EditText etFront = (EditText) dialog.getView().findViewById(R.id.et_front);
+        EditText etBack = (EditText) dialog.getView().findViewById(R.id.et_back);
+        EditText etContext = (EditText) dialog.getView().findViewById(R.id.et_context);
+        Spinner mSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        etFront.setText(translation.getFromText());
+        etBack.setText(translation.getToText());
+        etFront.requestFocus();
+        etFront.setSelection(etFront.getText().length());
+        dialog.show();
+    }
 }
 
