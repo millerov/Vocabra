@@ -2,6 +2,7 @@ package com.example.alexmelnikov.vocabra.adapter;
 
 import android.content.Context;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -26,6 +27,8 @@ import butterknife.ButterKnife;
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
+    private static final String TAG = "MyTag";
+
     Context mContext;
     ArrayList<Translation> mData;
     TranslatorPresenter fragmentPresenter;
@@ -41,6 +44,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         @BindView(R.id.tv_From) TextView tvFrom;
         @BindView(R.id.tv_To) TextView tvTo;
         @BindView(R.id.ib_favourite) ImageButton btnFavorite;
+        @BindView(R.id.card_history) CardView cardHistory;
 
         public HistoryViewHolder(View itemView) {
             super(itemView);
@@ -65,10 +69,17 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             holder.tvTo.setText(translation.getToText());
         }
 
-        holder.btnFavorite.setOnClickListener((view) -> {
+        if (translation.getFavorite())
             holder.btnFavorite.setImageResource(R.drawable.ic_star_yellow_24dp);
-            fragmentPresenter.addNewCardFromTranslationRequest(mData.size() - position - 1);
-        });
+        else
+            holder.btnFavorite.setImageResource(R.drawable.ic_star_border_accent_24dp);
+
+        holder.btnFavorite.setOnClickListener((view) ->
+                fragmentPresenter.addNewCardFromTranslationRequest(mData.size() - position - 1));
+
+        holder.cardHistory.setOnClickListener((view) ->
+            fragmentPresenter.addNewCardFromTranslationRequest(mData.size() - position - 1));
+
     }
 
     @Override
@@ -85,5 +96,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     public void clear() {
         mData.clear();
         notifyDataSetChanged();
+    }
+
+    public void updateElement(int pos, Translation translation) {
+        mData.set(mData.size() - 1 - pos, translation);
+        super.notifyItemChanged(mData.size() - 1 - pos);
     }
 }

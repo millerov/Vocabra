@@ -183,9 +183,27 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     public void addNewCardFromTranslationRequest(int pos) {
-        getViewState().showAddCardDialog(mTransRep.getTranslationsFromDB().get(pos));
+        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos));
     }
 
+    //===============
+    //ADD DECK SUPPORT
+    //===============
+    public void addNewCardFromTranslationResultPassed(int pos, Translation initialTranslation, String front,
+                                                       String back, String context) {
+        //check if translation from db texts equal to set by user front and back
+        //if not, update translation element in db also update history element on view
+        if (initialTranslation.getFromText().equals(front)
+                && initialTranslation.getToText().equals(back)) {
+            mTransRep.updateTranslationFavoriteStateDB(initialTranslation, initialTranslation.getFromText(),
+                    initialTranslation.getToText(), true);
+            getViewState().updateHistoryDataElement(pos, initialTranslation);
+        } else {
+            mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true);
+            getViewState().updateHistoryDataElement(pos, initialTranslation);
+
+        }
+    }
 
     //==================Private logic=================
 

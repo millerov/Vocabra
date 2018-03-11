@@ -39,6 +39,7 @@ import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
@@ -68,6 +69,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.tv_langtagfrom) TextView tvLangTagFrom;
     @BindView(R.id.layout_translated) LinearLayout transitionsContainer;
     @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
+
+    EditText etDialogFront;
+    EditText etDialogBack;
+    EditText etDialogContext;
+    Spinner mDialogSpinDecks;
 
     private HistoryAdapter mHistoryAdapter;
 
@@ -178,6 +184,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
+    public void updateHistoryDataElement(int pos, Translation translation) {
+        mHistoryAdapter.updateElement(pos, translation);
+//        mHistoryAdapter.notifyItemChanged(pos, translation);
+    }
+
+    @Override
     public void showTranslationResult(String result) {
         tvTranslated.setText(result);
         tvTranslated.setVisibility(View.VISIBLE);
@@ -222,24 +234,26 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void showAddCardDialog(Translation translation) {
+    public void showAddCardDialog(int pos, Translation translation) {
         MaterialDialog dialog =
                 new MaterialDialog.Builder(getActivity())
                         .title("Добавление карточки")
                         .customView(R.layout.dialog_add_card, true)
                         .positiveText("Добавить")
                         .negativeText(android.R.string.cancel)
-                        .onPositive((dialog1, which) -> Log.d(TAG, "showAddCardDialog: hello there boy"))
+                        .onPositive((dialog1, which) -> mTranslatorPresenter
+                                .addNewCardFromTranslationResultPassed(pos, translation, etDialogFront.getText().toString(),
+                                        etDialogBack.getText().toString(), etDialogContext.getText().toString()))
                         .build();
 
-        EditText etFront = (EditText) dialog.getView().findViewById(R.id.et_front);
-        EditText etBack = (EditText) dialog.getView().findViewById(R.id.et_back);
-        EditText etContext = (EditText) dialog.getView().findViewById(R.id.et_context);
-        Spinner mSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
-        etFront.setText(translation.getFromText());
-        etBack.setText(translation.getToText());
-        etFront.requestFocus();
-        etFront.setSelection(etFront.getText().length());
+        etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
+        etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
+        etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
+        mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        etDialogFront.setText(translation.getFromText());
+        etDialogBack.setText(translation.getToText());
+        etDialogFront.requestFocus();
+        etDialogFront.setSelection(etDialogFront.getText().length());
         dialog.show();
     }
 }

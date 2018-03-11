@@ -20,7 +20,9 @@ public class Translation extends RealmObject implements Serializable {
 
     private String toText;
 
-    private Boolean favorite;
+    private boolean favorite;
+
+    private Card card;
 
     public Translation() {}
 
@@ -64,11 +66,19 @@ public class Translation extends RealmObject implements Serializable {
         this.toText = toText;
     }
 
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
     public Boolean getFavorite() {
         return favorite;
     }
 
-    public void setFavorite(Boolean favorite) {
+    public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
 }

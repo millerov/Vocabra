@@ -42,7 +42,7 @@ public class LanguagesRepository {
 
       ArrayList<Language> langList;
 
-      //Easy Migration for Realm
+      //Autistic Realm Migration setup
         //===========================
 /*        RealmConfiguration config2 = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()

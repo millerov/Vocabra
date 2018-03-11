@@ -42,6 +42,9 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void updateHistoryData(ArrayList<Translation> translations);
 
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void updateHistoryDataElement(int pos, Translation translation);
+
     @StateStrategyType(SkipStrategy.class)
     void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);
 
@@ -49,5 +52,5 @@ public interface TranslatorView extends BaseView {
     void copyAction(String text);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void showAddCardDialog(Translation translation);
+    void showAddCardDialog(int pos, Translation translation);
 }

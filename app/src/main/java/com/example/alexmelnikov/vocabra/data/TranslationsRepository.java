@@ -99,4 +99,23 @@ public class TranslationsRepository {
         realm.close();
     }
 
+    //SHOULD WORK, if not uncomment line 112
+    public void updateTranslationFavoriteStateDB(Translation translation, String fromText, String toText,
+                                                 boolean favorite) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Translation updatedTranslation = realm.where(Translation.class)
+                        .equalTo("id", translation.getId())
+                        .findFirst();
+                updatedTranslation.setFavorite(favorite);
+                updatedTranslation.setFromText(fromText);
+                updatedTranslation.setToText(toText);
+              //  realm.copyToRealmOrUpdate(translation);
+            }
+        });
+        realm.close();
+    }
+
 }
