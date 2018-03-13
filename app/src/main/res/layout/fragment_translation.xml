@@ -42,7 +42,7 @@
                 android:layout_centerVertical="true"
                 android:background="?selectableItemBackgroundBorderless"
                 android:src="@drawable/ic_clear_black_27dp"
-                android:transitionName="transition"/>
+                android:transitionName="transition" />
 
         </RelativeLayout>
 

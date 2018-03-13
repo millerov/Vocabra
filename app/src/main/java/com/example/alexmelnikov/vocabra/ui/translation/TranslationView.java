@@ -23,5 +23,5 @@ public interface TranslationView extends BaseView {
     void showTranslationResult(String result);
 
     @StateStrategyType(SkipStrategy.class)
-    void clearInputOutput();
+    void clearInputOutput(boolean withButton);
 }

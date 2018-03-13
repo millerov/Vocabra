@@ -2,12 +2,14 @@ package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
@@ -15,6 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -51,7 +54,7 @@ import io.reactivex.disposables.Disposable;
 
 public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
-    private static final String TAG = "TranslatorFragment";
+    private static final String TAG = "MyTag";
     
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translator")
     TranslatorPresenter mTranslatorPresenter;
@@ -67,7 +70,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.btn_favourite) ImageButton btnFavoutite;
     @BindView(R.id.rv_history) RecyclerView rvHistory;
     @BindView(R.id.tv_langtagfrom) TextView tvLangTagFrom;
-    @BindView(R.id.layout_translated) LinearLayout transitionsContainer;
+    @BindView(R.id.layout_translated) RelativeLayout transitionsContainer;
     @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
 
     EditText etDialogFront;
@@ -154,7 +157,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         TranslationFragment fragment = TranslationFragment.newInstance(fromText, toText, fromLang, toLang);
 
         ChangeBounds changeBoundsTransition = new ChangeBounds();
-        changeBoundsTransition.setDuration(500);
+        changeBoundsTransition.setDuration(370);
 
         fragment.setEnterTransition(new AutoTransition());
         fragment.setSharedElementEnterTransition(changeBoundsTransition);
@@ -163,7 +166,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
-                .addSharedElement(btnClear, "transition")
+               // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
     }
@@ -179,11 +182,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void updateHistoryData(ArrayList<Translation> translations) {
-        mHistoryAdapter.notifyItemInserted(translations.size() - 1);
-    }
-
-    @Override
     public void updateHistoryDataElement(int pos, Translation translation) {
         mHistoryAdapter.updateElement(pos, translation);
 //        mHistoryAdapter.notifyItemChanged(pos, translation);
@@ -194,6 +192,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         tvTranslated.setText(result);
         tvTranslated.setVisibility(View.VISIBLE);
         btnCopy.setVisibility(View.VISIBLE);
+        btnClear.setVisibility(View.VISIBLE);
+        btnFavoutite.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -209,6 +209,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         if (!translated.isEmpty()) {
             tvTranslated.setText(translated);
             btnCopy.setVisibility(View.VISIBLE);
+            btnClear.setVisibility(View.VISIBLE);
+            btnFavoutite.setVisibility(View.VISIBLE);
         }
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
@@ -223,6 +225,14 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         etTranslate.setText("");
         tvTranslated.setText("");
         btnCopy.setVisibility(View.GONE);
+        btnFavoutite.setVisibility(View.GONE);
+        btnClear.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                btnClear.setVisibility(View.INVISIBLE);
+            }
+        }, 400);
+
     }
 
     @Override

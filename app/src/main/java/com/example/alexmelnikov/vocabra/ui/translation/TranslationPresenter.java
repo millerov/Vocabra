@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.translation;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
@@ -17,7 +19,7 @@ import java.io.IOException;
 @InjectViewState
 public class TranslationPresenter extends MvpPresenter<TranslationView> implements Translating {
 
-    private static final String TAG = "TranslationPresenter";
+    private static final String TAG = "myTag";
     
     private String mInput = "";
     private String mOutput = "";
@@ -54,8 +56,8 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
     }
 
     public void inputChanges(String input) {
-        if (!input.trim().isEmpty())
-            mInput = input;
+        mInput = input;
+        translationRequested(input);
     }
 
     public void translationRequested(String data) {
@@ -81,7 +83,7 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
         if (!mInput.isEmpty()) {
             mInput = mOutput = "";
             mLastLoadedTranslation = null;
-            getViewState().clearInputOutput();
+            getViewState().clearInputOutput(true);
         } else {
             continueRequest();
         }

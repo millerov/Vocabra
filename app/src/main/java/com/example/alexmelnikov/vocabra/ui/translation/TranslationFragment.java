@@ -7,15 +7,20 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -50,7 +55,7 @@ import io.reactivex.disposables.Disposable;
 
 public class TranslationFragment extends BaseFragment implements TranslationView {
 
-    private static final String TAG = "TranslationFragment";
+    private static final String TAG = "MyTag";
 
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "translation")
     TranslationPresenter mTranslationPresenter;
@@ -85,17 +90,20 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         tvMessage.setClickable(true);
         tvMessage.setText(Html.fromHtml(getString(R.string.inf_yandex_translate_api)));
 
-        mTranslationPresenter.setInputOutput(getArguments().getSerializable("fromText").toString(),
-                                             getArguments().getSerializable("toText").toString(),
-                                             getArguments().getSerializable("fromLang").toString(),
-                                             getArguments().getSerializable("toLang").toString());
         return view;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        mTranslationPresenter.setInputOutput(getArguments().getSerializable("fromText").toString(),
+                getArguments().getSerializable("toText").toString(),
+                getArguments().getSerializable("fromLang").toString(),
+                getArguments().getSerializable("toLang").toString());
+
+        etTranslate.setInputType(InputType.TYPE_CLASS_TEXT);
         etTranslate.requestFocus();
+        etTranslate.setSelection(etTranslate.getText().length());
         etTranslate.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -122,10 +130,17 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                 .filter(text -> !text.isEmpty())
                 .subscribe(text -> {
                     mTranslationPresenter.inputChanges(text);
-                    mTranslationPresenter.translationRequested(text);
                 });
 
-        mDisposable.addAll(translateButton, inputChanges, clearButton, translateText);
+        etTranslate.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+                mTranslationPresenter.continueRequest();
+                return false;
+            }
+        });
+
+        mDisposable.addAll(translateButton, clearButton, translateText);
     }
 
     @Override
@@ -137,11 +152,11 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     public void fillTextFields(String fromText, String toText, String fromLang, String toLang) {
         etTranslate.setHint("Введите текст (" + fromLang + ")");
         tvTranslated.setHint("Перевод (" + toLang + ")");
+        etTranslate.setText(fromText);
+        tvTranslated.setText(toText);
         if (!fromText.isEmpty()) {
-            etTranslate.setText(fromText);
-            tvTranslated.setText(toText);
+            etTranslate.setSelection(etTranslate.getText().length());
         }
-        etTranslate.setSelection(etTranslate.getText().length());
     }
 
     @Override
@@ -150,14 +165,17 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     }
 
     @Override
-    public void clearInputOutput() {
-        AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
-                .getDrawable(R.drawable.ic_clear_black_anim_24dp);
-        btnClear.setImageDrawable(drawable);
-        drawable.start();
+    public void clearInputOutput(boolean withButton) {
+        if (withButton) {
+            AnimatedVectorDrawable drawable = (AnimatedVectorDrawable) getResources()
+                    .getDrawable(R.drawable.ic_clear_black_anim_24dp);
+            btnClear.setImageDrawable(drawable);
+            drawable.start();
+        }
         etTranslate.setText("");
         tvTranslated.setText("");
     }
+
 
     @Override
     public boolean onBackPressed() {
@@ -174,12 +192,12 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-        }, 400);
+        }, 350);
 
         TranslatorFragment fragment = TranslatorFragment.newInstance(translation);
 
         ChangeBounds changeBoundsTransition = new ChangeBounds();
-        changeBoundsTransition.setDuration(500);
+        changeBoundsTransition.setDuration(370);
 
         fragment.setEnterTransition(new AutoTransition());
         fragment.setSharedElementEnterTransition(changeBoundsTransition);
@@ -188,7 +206,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
-                .addSharedElement(btnClear, "transition")
+               // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
     }

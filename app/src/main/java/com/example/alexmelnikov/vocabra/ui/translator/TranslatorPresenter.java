@@ -229,11 +229,9 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private void updateDatabase() {
         if (!mTransRep.containsSimilarElementInDB(mLastLoadedTranslation)) {
             mTransRep.insertTranslationToDB(mLastLoadedTranslation);
-            getViewState().updateHistoryData(mTransRep.getTranslationsFromDB());
         } else {
             mTransRep.deleteTranslationFromDB(mLastLoadedTranslation);
             mTransRep.insertTranslationToDB(mLastLoadedTranslation);
-            getViewState().updateHistoryData(mTransRep.getTranslationsFromDB());
         }
     }
 
