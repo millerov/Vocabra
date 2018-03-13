@@ -184,7 +184,8 @@
                     android:paddingRight="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="45dp"
-                    android:overScrollMode="never">
+                    android:overScrollMode="never"
+                    android:layoutAnimation="@anim/layout_animation_fall_down">
                 </android.support.v7.widget.RecyclerView>
 
             </RelativeLayout>

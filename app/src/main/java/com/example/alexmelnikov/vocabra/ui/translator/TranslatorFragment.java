@@ -79,10 +79,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     Spinner mDialogSpinDecks;
 
     private HistoryAdapter mHistoryAdapter;
+    private int adapterAnimDelay;
 
-    public static TranslatorFragment newInstance(Translation translation) {
+    public static TranslatorFragment newInstance(@Nullable Translation translation, boolean fromTranslationFragment) {
         Bundle args = new Bundle();
         args.putSerializable("translation", translation);
+        args.putSerializable("fromTranslationFragment", fromTranslationFragment);
         TranslatorFragment fragment = new TranslatorFragment();
         fragment.setArguments(args);
         return fragment;
@@ -95,6 +97,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ButterKnife.bind(this, view);
 
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
+
+        // Setting delay so transition animation from transitionFragment wouldn't conflict with recyclerview animation
+        adapterAnimDelay = getArguments().getSerializable("fromTranslationFragment").toString().equals("false") ? 70 : 410;
+
         mTranslatorPresenter.setInputOutput((Translation) getArguments().getSerializable("translation"));
         return view;
     }
@@ -103,13 +109,24 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>(), mTranslatorPresenter);
-        rvHistory.setLayoutManager(new LinearLayoutManager(getActivity()) {
+        RecyclerView.LayoutManager layman= new LinearLayoutManager(getActivity()) {
             @Override
             public boolean canScrollVertically() {
                 return false;
             }
-        });
-        rvHistory.setAdapter(mHistoryAdapter);
+        };
+
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                rvHistory.setLayoutManager(layman);
+                rvHistory.setAdapter(mHistoryAdapter);
+                Log.d(TAG, "run: " + adapterAnimDelay);
+                rvHistory.scheduleLayoutAnimation();
+                rvHistory.invalidate();
+            }
+        }, adapterAnimDelay);
+
         etTranslate.setFocusable(false);
     }
 
@@ -165,7 +182,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
+              //  .addToBackStack(null)
                // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();

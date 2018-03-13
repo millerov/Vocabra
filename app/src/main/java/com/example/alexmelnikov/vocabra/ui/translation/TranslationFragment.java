@@ -186,28 +186,33 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     @Override
     public void closeFragment(Translation translation) {
         View view = this.getView();
-        view.postDelayed(new Runnable() {
+        /*view.postDelayed(new Runnable() {
             @Override
             public void run() {
                 InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
-        }, 350);
+        }, 350);*/
 
-        TranslatorFragment fragment = TranslatorFragment.newInstance(translation);
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+
+        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
+        TranslatorFragment fragment = TranslatorFragment.newInstance(translation, true);
 
         ChangeBounds changeBoundsTransition = new ChangeBounds();
-        changeBoundsTransition.setDuration(370);
+        changeBoundsTransition.setDuration(350);
 
         fragment.setEnterTransition(new AutoTransition());
         fragment.setSharedElementEnterTransition(changeBoundsTransition);
         fragment.setSharedElementReturnTransition(changeBoundsTransition);
 
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-               // .addSharedElement(btnClear, "transition")
-                .addSharedElement(rlTranslator, "viewtrans")
-                .commit();
+                        .replace(R.id.fragment_container, fragment)
+                        //  .addToBackStack(null)
+                        // .addSharedElement(btnClear, "transition")
+                        .addSharedElement(rlTranslator, "viewtrans")
+                        .commit();
+
     }
 }
