@@ -7,6 +7,8 @@ import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
@@ -121,7 +123,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             public void run() {
                 rvHistory.setLayoutManager(layman);
                 rvHistory.setAdapter(mHistoryAdapter);
-                Log.d(TAG, "run: " + adapterAnimDelay);
                 rvHistory.scheduleLayoutAnimation();
                 rvHistory.invalidate();
             }
@@ -166,7 +167,13 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Disposable copyButton = RxView.clicks(btnCopy)
                 .subscribe(o -> mTranslatorPresenter.copyButtonPressed());
 
-        mDisposable.addAll(inputTouched, spinnerFrom, spinnerTo, clearInputButton, swapButton);
+        mDisposable.addAll(inputTouched, spinnerFrom, spinnerTo, clearInputButton,
+                swapButton, copyButton);
+    }
+
+    @Override
+    public void detachInputListeners() {
+        mDisposable.clear();
     }
 
     @Override
@@ -182,15 +189,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-              //  .addToBackStack(null)
-               // .addSharedElement(btnClear, "transition")
+                //  .addToBackStack(null)
+                // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
-    }
-
-    @Override
-    public void detachInputListeners() {
-        mDisposable.clear();
     }
 
     @Override
@@ -257,7 +259,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
         clipboard.setPrimaryClip(clip);
-        Toast.makeText(getActivity(), "Перевод скопирован", Toast.LENGTH_SHORT).show();
+        Snackbar.make(getView(), "Перевод скопирован", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
@@ -269,7 +271,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         .positiveText("Добавить")
                         .negativeText(android.R.string.cancel)
                         .onPositive((dialog1, which) -> mTranslatorPresenter
-                                .addNewCardFromTranslationResultPassed(pos, translation, etDialogFront.getText().toString(),
+                                .addNewCardFromHistoryResultPassed(pos, translation, etDialogFront.getText().toString(),
                                         etDialogBack.getText().toString(), etDialogContext.getText().toString()))
                         .build();
 

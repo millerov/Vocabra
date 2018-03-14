@@ -7,6 +7,7 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
@@ -38,6 +39,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     TranslationsRepository mTransRep;
     @Inject
     UserDataRepository mUserData;
+    @Inject
+    CardsRepository mCardsRep;
 
     ArrayList<Language> mLangList;
 
@@ -182,14 +185,14 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void addNewCardFromTranslationRequest(int pos) {
+    public void addNewCardFromHistoryRequest(int pos) {
         getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos));
     }
 
     //===============
     //ADD DECK SUPPORT
     //===============
-    public void addNewCardFromTranslationResultPassed(int pos, Translation initialTranslation, String front,
+    public void addNewCardFromHistoryResultPassed(int pos, Translation initialTranslation, String front,
                                                        String back, String context) {
         //check if translation from db texts equal to set by user front and back
         //if not, update translation element in db also update history element on view
@@ -201,7 +204,6 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         } else {
             mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true);
             getViewState().updateHistoryDataElement(pos, initialTranslation);
-
         }
     }
 

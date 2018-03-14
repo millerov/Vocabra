@@ -2,6 +2,8 @@ package com.example.alexmelnikov.vocabra.ui.main;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.alexmelnikov.vocabra.R;
 
@@ -13,6 +15,7 @@ public interface MainView  extends MvpView {
     int WORD_BROWSER_TAB_POS = R.id.word_browser_menu_item;
     int TRANSLATOR_TAB_POS = R.id.translator_menu_item;
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void replaceFragment(int prevIndex, int currentIndex);
+
 }

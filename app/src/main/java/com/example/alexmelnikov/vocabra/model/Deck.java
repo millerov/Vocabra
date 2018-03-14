@@ -43,6 +43,9 @@ public class Deck extends RealmObject {
         this.secondLanguage = secondLanguage;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }

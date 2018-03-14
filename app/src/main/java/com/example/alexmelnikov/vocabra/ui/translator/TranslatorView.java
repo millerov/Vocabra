@@ -6,6 +6,7 @@ import android.test.suitebuilder.annotation.SmallTest;
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.alexmelnikov.vocabra.model.Language;
@@ -42,7 +43,7 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void updateHistoryDataElement(int pos, Translation translation);
 
-    @StateStrategyType(SkipStrategy.class)
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);
 
     @StateStrategyType(SkipStrategy.class)
@@ -50,6 +51,5 @@ public interface TranslatorView extends BaseView {
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showAddCardDialog(int pos, Translation translation);
-
 
 }

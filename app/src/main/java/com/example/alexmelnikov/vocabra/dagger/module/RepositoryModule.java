@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.dagger.module;
 
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
+import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
@@ -33,5 +34,10 @@ public class RepositoryModule {
     @Provides
     CardsRepository provideCardsRepository() {
         return new CardsRepository();
+    }
+
+    @Provides
+    DecksRepository provideDecksRepository() {
+        return new DecksRepository();
     }
 }
