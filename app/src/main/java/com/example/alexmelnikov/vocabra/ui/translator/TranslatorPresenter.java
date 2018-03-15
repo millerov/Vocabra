@@ -223,7 +223,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         try {
             mSelectedToLanguage = mLangList.get(mSelectedTo).getLang();
             mSelectedFromLanguage = mLangList.get(mSelectedFrom).getLang();
-        } catch (NullPointerException e) {
+        } catch (Exception e) {
             mSelectedToLanguage = mSelectedFromLanguage = "Error";
         }
     }

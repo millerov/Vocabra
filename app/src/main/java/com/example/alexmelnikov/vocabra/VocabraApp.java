@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra;
 
 import android.app.Application;
+import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.DaggerPresenterComponent;

@@ -18,7 +18,7 @@ public class Deck extends RealmObject {
 
     private String name;
 
-    private String color;
+    private int color;
 
     private Language firstLanguage;
 
@@ -35,7 +35,7 @@ public class Deck extends RealmObject {
 
     public Deck() {}
 
-    public Deck(int id, String name, String color, Language firstLanguage, Language secondLanguage) {
+    public Deck(int id, String name, int color, Language firstLanguage, Language secondLanguage) {
         this.id = id;
         this.name = name;
         this.color = color;
@@ -58,11 +58,11 @@ public class Deck extends RealmObject {
         this.name = name;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

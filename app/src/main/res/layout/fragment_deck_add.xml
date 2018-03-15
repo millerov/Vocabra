@@ -25,6 +25,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
+            android:layout_marginBottom="12dp"
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:textStyle="bold"
@@ -39,20 +40,28 @@
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_color_lens_white_26dp" />
 
-        <EditText
-            android:id="@+id/et_deck_name"
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_deck_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_heading"
-            android:textColor="@color/colorWhite"
-            android:textSize="20sp"
-            android:maxLines="1" />
+            android:layout_below="@id/tv_heading">
+
+            <EditText
+                android:id="@+id/et_deck_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                android:hint="Название колоды"
+                android:maxLines="1" />
+
+        </android.support.design.widget.TextInputLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/toolbar_layout"
-            android:layout_below="@id/et_deck_name"
+            android:layout_below="@id/input_layout_deck_name"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="24dp">
 
@@ -89,7 +98,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
-        android:src="@drawable/ic_check_white_30dp"
+        android:src="@drawable/ic_add_white_30dp"
         app:layout_anchor="@+id/rv_deck"
         app:layout_anchorGravity="bottom|center"
         android:transitionName="fabAdd"/>

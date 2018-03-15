@@ -130,11 +130,13 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
             fragment.setEnterTransition(new Slide().setDuration(370));
-            fragment.setSharedElementEnterTransition(changeBoundsTransition);
+         //   fragment.setSharedElementEnterTransition(changeBoundsTransition);
             fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
 
-        getFragmentManager().beginTransaction()
+        Log.d(TAG, "openDeckCreationFragment: " + this.getClass().getName());
+
+        getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .addSharedElement(btnAddCard, "fabAdd")
