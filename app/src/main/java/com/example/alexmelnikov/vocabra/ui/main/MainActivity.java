@@ -1,21 +1,29 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
 import android.content.Intent;
+import android.content.res.TypedArray;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.transition.Fade;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.transition.AutoTransition;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
+import com.afollestad.materialdialogs.color.ColorChooserDialog;
+import com.afollestad.materialdialogs.util.DialogUtils;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseActivity;
+import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 
@@ -46,6 +54,8 @@ public class MainActivity extends BaseActivity implements MainView {
         setContentView(R.layout.activity_main);
 
         ButterKnife.bind(this);
+
+        Log.d(TAG, "onCreate: " + R.color.colorPrimary);
 
         initViews();
 
@@ -96,7 +106,6 @@ public class MainActivity extends BaseActivity implements MainView {
             fts.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
         }
 
-
         fts.replace(R.id.fragment_container, fragment).commit();
     }
 
@@ -110,6 +119,7 @@ public class MainActivity extends BaseActivity implements MainView {
         params.setMargins(0, 0, 0, bottomNavBar.getItemHeight()-4);
         snack.getView().setLayoutParams(params);
         snack.show();
+
     }
 
 

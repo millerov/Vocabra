@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -7,14 +8,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.Slide;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -122,10 +127,13 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             ChangeBounds changeBoundsTransition = new ChangeBounds();
             changeBoundsTransition.setDuration(370);
 
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+
             fragment.setEnterTransition(new Slide().setDuration(370));
             fragment.setSharedElementEnterTransition(changeBoundsTransition);
             fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
+
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)

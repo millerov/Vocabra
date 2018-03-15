@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <array name="custom_colors">
+        <item>#F44336</item>
+        <item>#E91E63</item>
+        <item>#9C27B0</item>
+        <item>#673AB7</item>
+        <item>#3949AB</item>
+        <item>#1E88E5</item>
+        <item>#03A9F4</item>
+        <item>#00ACC1</item>
+        <item>#009688</item>
+        <item>#4CAF50</item>
+        <item>#8BC34A</item>
+        <item>#FFC107</item>
+        <item>#FF9800</item>
+        <item>#9E9E9E</item>
+        <item>#607D8B</item>
+        <item>#000000</item>
+    </array>
+
+</resources>

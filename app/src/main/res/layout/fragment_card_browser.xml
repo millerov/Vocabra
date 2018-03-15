@@ -104,7 +104,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="54dp"
         android:layout_marginRight="16dp"
-        android:src="@drawable/ic_add_white_24dp"
+        android:src="@drawable/ic_add_white_30dp"
         android:clickable="true"
         android:transitionName="fabAdd"/>
 

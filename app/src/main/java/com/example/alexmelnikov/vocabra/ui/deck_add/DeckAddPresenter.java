@@ -53,11 +53,17 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
         super.attachView(view);
         Log.d(TAG, "attachView: " + mSelectedFrom + "-" + mSelectedTo + "/" + mLangList.size());
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
+        getViewState().attachInputListeners();
     }
 
     @Override
     public void detachView(DeckAddView view) {
         super.detachView(view);
+        getViewState().detachInputListeners();
+    }
+
+    public void colorChangeButtonPressed() {
+        getViewState().showSelectColorDialog();
     }
 
 }

@@ -39,6 +39,8 @@ dependencies {
     compile "com.andkulikov:transitionseverywhere:1.7.9"
     compile 'com.daimajia.easing:library:2.0@aar'
     compile 'com.daimajia.androidanimations:library:2.3@aar'
+    //Color pick dialog
+    compile 'com.thebluealliance:spectrum:0.7.1'
     //Material Dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
     implementation 'com.afollestad.material-dialogs:commons:0.9.6.0'

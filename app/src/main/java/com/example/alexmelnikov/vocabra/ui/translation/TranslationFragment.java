@@ -187,13 +187,6 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     @Override
     public void closeFragment(Translation translation) {
         View view = this.getView();
-        /*view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-            }
-        }, 350);*/
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -211,8 +204,6 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         }
         getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, fragment)
-                        //  .addToBackStack(null)
-                        // .addSharedElement(btnClear, "transition")
                         .addSharedElement(rlTranslator, "viewtrans")
                         .commit();
 

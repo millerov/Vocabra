@@ -10,4 +10,7 @@
     <string name="inf_yandex_translate_api"><![CDATA[Приложение использует <a href="https://tech.yandex.ru/translate">Yandex Translate API</a>]]></string>
     <string name="title_activity_test">testActivity</string>
 
+    <string name="select_deck_color">Цвет колоды</string>
+    <string name="colors">Цвета</string>
+
 </resources>

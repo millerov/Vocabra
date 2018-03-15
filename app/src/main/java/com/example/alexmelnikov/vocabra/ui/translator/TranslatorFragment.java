@@ -17,6 +17,7 @@ import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -189,6 +190,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             ChangeBounds changeBoundsTransition = new ChangeBounds();
             changeBoundsTransition.setDuration(370);
 
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
             fragment.setEnterTransition(new AutoTransition());
             fragment.setSharedElementEnterTransition(changeBoundsTransition);
@@ -201,6 +203,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
+
     }
 
     @Override
