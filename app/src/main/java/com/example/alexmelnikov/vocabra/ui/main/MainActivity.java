@@ -3,10 +3,13 @@ package com.example.alexmelnikov.vocabra.ui.main;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Fade;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -87,25 +90,26 @@ public class MainActivity extends BaseActivity implements MainView {
         } else {
             fragment = new CardBrowserFragment();
         }
-        // Choose animations
+
+
         if (index == previousIndex) {
             fts.setCustomAnimations(android.R.animator.fade_in, android.R.animator.fade_out);
-        } /*else if (index == 0) {
-            if (previousIndex == 1) {
-                fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-            }
-        } else if (index == 1) {
-            if (previousIndex == 0) {
-                fts.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-            } else {
-                fts.setCustomAnimations(R.anim.slide_in_left, R.anim.slide_out_right);
-            }
-        } else if (index == 2) {
-            fts.setCustomAnimations(R.anim.slide_in_right, R.anim.slide_out_left);
-        }*/
+        }
 
-        // Execute transaction
+
         fts.replace(R.id.fragment_container, fragment).commit();
+    }
+
+    @Override
+    public void showMessage(String message) {
+        Snackbar snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), "Перевод скопирован", Snackbar.LENGTH_SHORT);
+
+        //Setting margins to display snackbar above the navigation bar
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
+                snack.getView().getLayoutParams();
+        params.setMargins(0, 0, 0, bottomNavBar.getItemHeight()-4);
+        snack.getView().setLayoutParams(params);
+        snack.show();
     }
 
 

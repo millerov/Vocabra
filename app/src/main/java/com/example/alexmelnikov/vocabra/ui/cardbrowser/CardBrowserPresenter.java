@@ -51,7 +51,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void createNewDeckRequest() {
-
+        getViewState().openDeckCreationFragment();
     }
 
 }

@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/rv_deck"
+        style="@style/Translated"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginBottom="10dp"
+        android:padding="12dp">
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="Новая колода"/>
+
+        <ImageButton
+            android:id="@+id/btn_favourite"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_color_lens_white_26dp" />
+
+        <EditText
+            android:id="@+id/et_deck_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_heading"
+            android:textColor="@color/colorWhite"
+            android:textSize="20sp"
+            android:maxLines="1"
+            android:text="Deck 1"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar_layout"
+            android:layout_below="@id/et_deck_name"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <Spinner
+                android:id="@+id/spin_from"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/btn_swap"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+            <ImageButton
+                android:id="@+id/btn_swap"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerInParent="true"
+                android:background="?selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_swap_horiz_white_24dp" />
+
+            <Spinner
+                android:id="@+id/spin_to"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/btn_swap"
+                android:background="@android:color/transparent"
+                android:gravity="center" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:src="@drawable/ic_add_white_24dp"
+        app:layout_anchor="@+id/rv_deck"
+        app:layout_anchorGravity="bottom|center"
+        android:transitionName="fabAdd"/>
+
+</android.support.design.widget.CoordinatorLayout>

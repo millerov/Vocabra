@@ -1,13 +1,20 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.AutoTransition;
+import android.transition.ChangeBounds;
+import android.transition.Slide;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -20,6 +27,7 @@ import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
+import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.ArrayList;
@@ -43,6 +51,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @BindView(R.id.btn_decks) ImageButton btnDecks;
     @BindView(R.id.rv_cards) RecyclerView rvCards;
+    @BindView(R.id.fab_add) FloatingActionButton btnAddCard;
 
 
     private CardsAdapter mCardsAdapter;
@@ -103,5 +112,24 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         rvDecks.setAdapter(new DecksDialogAdapter(getActivity(), decks));
 
         dialog.show();
+    }
+
+    @Override
+    public void openDeckCreationFragment() {
+        DeckAddFragment fragment = new DeckAddFragment();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(370);
+
+            fragment.setEnterTransition(new Slide().setDuration(370));
+            fragment.setSharedElementEnterTransition(changeBoundsTransition);
+            fragment.setSharedElementReturnTransition(changeBoundsTransition);
+        }
+        getFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .addSharedElement(btnAddCard, "fabAdd")
+                .commitAllowingStateLoss();
     }
 }

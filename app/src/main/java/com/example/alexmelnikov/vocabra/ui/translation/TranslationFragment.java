@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.ui.translation;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.VisibleForTesting;
@@ -200,13 +201,14 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
         TranslatorFragment fragment = TranslatorFragment.newInstance(translation, true);
 
-        ChangeBounds changeBoundsTransition = new ChangeBounds();
-        changeBoundsTransition.setDuration(350);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(350);
 
-        fragment.setEnterTransition(new AutoTransition());
-        fragment.setSharedElementEnterTransition(changeBoundsTransition);
-        fragment.setSharedElementReturnTransition(changeBoundsTransition);
-
+            fragment.setEnterTransition(new AutoTransition());
+            fragment.setSharedElementEnterTransition(changeBoundsTransition);
+            fragment.setSharedElementReturnTransition(changeBoundsTransition);
+        }
         getFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, fragment)
                         //  .addToBackStack(null)

@@ -5,10 +5,12 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Layout;
@@ -37,6 +39,8 @@ import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
+import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
@@ -82,6 +86,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     private HistoryAdapter mHistoryAdapter;
     private int adapterAnimDelay;
+
 
     public static TranslatorFragment newInstance(@Nullable Translation translation, boolean fromTranslationFragment) {
         Bundle args = new Bundle();
@@ -132,10 +137,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void setupSpinners(ArrayList<Language> langList, int from, int to) {
+    public void setupSpinners(ArrayList<Language> languages, int from, int to) {
         if (mSpinFrom.getAdapter() == null || mSpinTo.getAdapter() == null) {
-            Collections.sort(langList);
-            LanguageAdapter spinAdapter = new LanguageAdapter(getActivity(), langList);
+            Collections.sort(languages);
+            LanguageAdapter spinAdapter = new LanguageAdapter(getActivity(), languages);
             mSpinFrom.setAdapter(spinAdapter);
             mSpinTo.setAdapter(spinAdapter);
 
@@ -180,12 +185,15 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void openTranslationFragment(String fromText, String toText, String fromLang, String toLang) {
         TranslationFragment fragment = TranslationFragment.newInstance(fromText, toText, fromLang, toLang);
 
-        ChangeBounds changeBoundsTransition = new ChangeBounds();
-        changeBoundsTransition.setDuration(370);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(370);
 
-        fragment.setEnterTransition(new AutoTransition());
-        fragment.setSharedElementEnterTransition(changeBoundsTransition);
-        fragment.setSharedElementReturnTransition(changeBoundsTransition);
+
+            fragment.setEnterTransition(new AutoTransition());
+            fragment.setSharedElementEnterTransition(changeBoundsTransition);
+            fragment.setSharedElementReturnTransition(changeBoundsTransition);
+        }
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
@@ -259,7 +267,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
         clipboard.setPrimaryClip(clip);
-        Snackbar.make(getView(), "Перевод скопирован", Snackbar.LENGTH_SHORT).show();
+        //Snackbar.make(getView(), "Перевод скопирован", Snackbar.LENGTH_SHORT).show();
+        ((MainActivity)getActivity()).showMessage("Перевод скопирован");
+
     }
 
     @Override

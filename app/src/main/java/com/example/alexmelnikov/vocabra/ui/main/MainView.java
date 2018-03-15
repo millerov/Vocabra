@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
+import android.support.design.widget.BottomSheetBehavior;
+
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
@@ -18,4 +20,6 @@ public interface MainView  extends MvpView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void replaceFragment(int prevIndex, int currentIndex);
 
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void showMessage(String message);
 }
