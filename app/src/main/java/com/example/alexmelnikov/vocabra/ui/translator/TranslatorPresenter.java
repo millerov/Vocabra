@@ -5,9 +5,9 @@ import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
+import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
@@ -41,6 +41,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     UserDataRepository mUserData;
     @Inject
     CardsRepository mCardsRep;
+    @Inject
+    DecksRepository mDecksRep;
 
     ArrayList<Language> mLangList;
 
@@ -186,7 +188,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     public void addNewCardFromHistoryRequest(int pos) {
-        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos));
+        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos), mDecksRep.getDecksFromDB());
     }
 
     //===============

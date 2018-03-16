@@ -9,6 +9,7 @@ import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SingleStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseView;
@@ -50,6 +51,6 @@ public interface TranslatorView extends BaseView {
     void copyAction(String text);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void showAddCardDialog(int pos, Translation translation);
+    void showAddCardDialog(int pos, Translation translation, ArrayList<Deck> decks);
 
 }

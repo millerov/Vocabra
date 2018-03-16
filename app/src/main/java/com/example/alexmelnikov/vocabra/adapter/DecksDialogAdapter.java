@@ -66,7 +66,10 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_color);
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
         holder.ivColor.setBackground(drawable);
-        holder.tvDeckName.setText(deck.getName());
+        if (deck.getName().length() < 14)
+            holder.tvDeckName.setText(deck.getName());
+        else
+            holder.tvDeckName.setText(deck.getName().substring(0, 14) + "...");
 
         holder.tvLanguages.setText(deck.getFirstLanguage().getId() + "-" + deck.getSecondLanguage().getId());
     }

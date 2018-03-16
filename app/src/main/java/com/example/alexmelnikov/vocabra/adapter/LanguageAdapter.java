@@ -42,7 +42,7 @@ public class LanguageAdapter extends BaseAdapter implements SpinnerAdapter {
 
     @Override
     public long getItemId(int i) {
-        return i;
+        return 0;
     }
 
     @Override

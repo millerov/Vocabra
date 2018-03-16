@@ -72,6 +72,23 @@ public class DecksRepository {
     }
 
 
+    public Deck findDeckByName(String name) {
+        final Deck[] result = new Deck[1];
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Deck> realmResult = realm.where(Deck.class)
+                        .equalTo("name", name)
+                        .findAll();
+
+                result[0] = realmResult.first();
+            }
+        });
+        realm.close();
+        return result[0];
+    }
+
     public void clearDecksDB() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {

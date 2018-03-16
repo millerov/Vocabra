@@ -35,8 +35,10 @@ import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
+import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
@@ -276,7 +278,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void showAddCardDialog(int pos, Translation translation) {
+    public void showAddCardDialog(int pos, Translation translation, ArrayList<Deck> decks) {
         MaterialDialog dialog =
                 new MaterialDialog.Builder(getActivity())
                         .title("Добавление карточки")
@@ -294,8 +296,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
         etDialogFront.setText(translation.getFromText());
         etDialogBack.setText(translation.getToText());
-        etDialogFront.requestFocus();
+        etDialogContext.requestFocus();
         etDialogFront.setSelection(etDialogFront.getText().length());
+        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks));
         dialog.show();
     }
 }

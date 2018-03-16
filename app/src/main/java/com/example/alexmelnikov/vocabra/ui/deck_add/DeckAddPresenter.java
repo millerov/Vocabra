@@ -111,7 +111,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
 
     //
     public void addNewDeckRequest(String name) {
-        if (!name.isEmpty()) {
+        if (!name.trim().isEmpty()) {
             Deck deck = new Deck(-1, name.trim(), selectedColor,
                     mLangList.get(mSelectedFrom), mLangList.get(mSelectedTo));
             if (!mDecksRep.containsSimilarElementInDB(deck)) {

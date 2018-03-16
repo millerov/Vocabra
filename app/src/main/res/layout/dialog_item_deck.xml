@@ -30,6 +30,7 @@
             android:layout_marginLeft="10dp"
             android:textColor="@android:color/black"
             android:textSize="20sp"
+            android:maxLines="1"
             android:text="Колода 1"/>
 
         <TextView
