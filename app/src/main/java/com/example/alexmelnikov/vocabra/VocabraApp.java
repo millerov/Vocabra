@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra;
 
 import android.app.Application;
+import android.content.Context;
 import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
@@ -39,4 +40,5 @@ public class VocabraApp extends Application {
     public static ApiHelper getApiHelper() {
         return apiHelper;
     }
+
 }

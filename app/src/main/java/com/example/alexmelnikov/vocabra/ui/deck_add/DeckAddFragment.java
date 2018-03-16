@@ -34,6 +34,7 @@ import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.thebluealliance.spectrum.SpectrumDialog;
@@ -64,16 +65,11 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     @BindView(R.id.btn_change_color) ImageButton btnChangeColor;
     @BindView(R.id.rv_deck) RelativeLayout rvDeck;
 
-    private int lastDialogColor;
-
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deck_add, container, false);
         ButterKnife.bind(this, view);
-
-        lastDialogColor = getResources().getColor(R.color.colorPrimary);
-        mDeckAddPresenter.updateSelectedColor(lastDialogColor);
 
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
         etDeckName.requestFocus();
@@ -133,6 +129,18 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     }
 
     @Override
+    public void setupDefaultColor() {
+        mDeckAddPresenter.updateSelectedColor(getResources().getColor(R.color.colorPrimary));
+    }
+
+    @Override
+    public void updateCardColor(int color) {
+        final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        rvDeck.setBackground(drawable);
+    }
+
+    @Override
     public void changeLanguagesSelected(int from, int to) {
         mSpinFrom.setSelection(from);
         mSpinTo.setSelection(to);
@@ -140,6 +148,9 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
     @Override
     public void closeFragment() {
+
+        ((MainActivity)getActivity()).showMessage("Колода добавлена");
+
         View view = getView();
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -172,22 +183,15 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
         new SpectrumDialog.Builder((getContext()))
                 .setColors(R.array.custom_colors)
                 .setDismissOnColorSelected(true)
-                .setSelectedColor(lastDialogColor)
+                .setSelectedColor(mDeckAddPresenter.selectedColor)
                 .setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
                     @Override
                     public void onColorSelected(boolean positiveResult, int color) {
-                        colorChanged(color);
-                        lastDialogColor = color;
-                        mDeckAddPresenter.updateSelectedColor(lastDialogColor);
+                        mDeckAddPresenter.updateSelectedColor(color);
                     }
                 }).build().show(getFragmentManager(), "color_dialog");
 
     }
 
-    public void colorChanged(int color) {
-        final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
-        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
-        rvDeck.setBackground(drawable);
-    }
 
 }

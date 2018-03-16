@@ -111,7 +111,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showMessage(String message) {
-        Snackbar snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), "Перевод скопирован", Snackbar.LENGTH_SHORT);
+        Snackbar snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_SHORT);
 
         //Setting margins to display snackbar above the navigation bar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)

@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.deck_add;
 
+import android.support.design.widget.BottomSheetBehavior;
+
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
@@ -20,6 +22,9 @@ public interface DeckAddView extends BaseView {
     @StateStrategyType(SkipStrategy.class)
     void setupSpinners(ArrayList<Language> languages, int from, int to);
 
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void updateCardColor(int color);
+
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showSelectColorDialog();
 
@@ -31,5 +36,8 @@ public interface DeckAddView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void showEditTextError(String message);
+
+    @StateStrategyType(SkipStrategy.class)
+    void setupDefaultColor();
 
 }

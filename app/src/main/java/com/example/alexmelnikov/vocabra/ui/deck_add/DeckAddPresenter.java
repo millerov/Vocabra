@@ -34,11 +34,12 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
 
     ArrayList<Language> mLangList;
 
+    public static int selectedColor;
+
     private int mSelectedFrom; //TranslatonFragment spinner index
     private int mSelectedTo; //TraxnslationFragment spinner index
     private String mSelectedToLanguage; //e.g. "Английский"
     private String mSelectedFromLanguage; //e.g. "Русский"
-    private int selectedColor;
 
     public DeckAddPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -51,14 +52,17 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
 
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
+
     }
 
     @Override
     public void attachView(DeckAddView view) {
         super.attachView(view);
         Log.d(TAG, "attachView: " + mSelectedFrom + "-" + mSelectedTo + "/" + mLangList.size());
+
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
         getViewState().attachInputListeners();
+        getViewState().setupDefaultColor();
     }
 
     @Override
@@ -101,15 +105,21 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
 
     public void updateSelectedColor(int color) {
         selectedColor = color;
+        getViewState().updateCardColor(color);
     }
+
 
     //
     public void addNewDeckRequest(String name) {
         if (!name.isEmpty()) {
             Deck deck = new Deck(-1, name.trim(), selectedColor,
                     mLangList.get(mSelectedFrom), mLangList.get(mSelectedTo));
-            mDecksRep.insertDeckToDB(deck);
-            getViewState().closeFragment();
+            if (!mDecksRep.containsSimilarElementInDB(deck)) {
+                mDecksRep.insertDeckToDB(deck);
+                getViewState().closeFragment();
+            } else {
+                getViewState().showEditTextError("Колода с таким названием уже существует");
+            }
         } else {
             getViewState().showEditTextError("Введите название");
         }

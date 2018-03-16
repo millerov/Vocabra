@@ -4,10 +4,12 @@ import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Translation;
 
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by AlexMelnikov on 14.03.18.
@@ -48,6 +50,27 @@ public class DecksRepository {
         decks = new ArrayList(realm.where(Deck.class).findAll());
         return decks;
     }
+
+
+    public boolean containsSimilarElementInDB(Deck deck) {
+        final boolean[] result = new boolean[1];
+
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Deck> realmResult = realm.where(Deck.class)
+                        .equalTo("name", deck.getName())
+                        .findAll();
+                if (realmResult.size() != 0)
+                    result[0] = true;
+                else result[0] = false;
+            }
+        });
+        realm.close();
+        return result[0];
+    }
+
 
     public void clearDecksDB() {
         Realm realm = Realm.getDefaultInstance();

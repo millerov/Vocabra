@@ -104,7 +104,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void showDecksListDialog(ArrayList<Deck> decks) {
         MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
-                .title("Колоды")
+                .title("Мои колоды")
                 .customView(R.layout.dialog_decks, false)
                 .positiveText("Добавить колоду")
                 .negativeText("Назад")

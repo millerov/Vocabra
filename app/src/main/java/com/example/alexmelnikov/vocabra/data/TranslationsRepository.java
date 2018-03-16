@@ -99,7 +99,6 @@ public class TranslationsRepository {
         realm.close();
     }
 
-    //SHOULD WORK, if not uncomment line 112
     public void updateTranslationFavoriteStateDB(Translation translation, String fromText, String toText,
                                                  boolean favorite) {
         Realm realm = Realm.getDefaultInstance();
@@ -112,7 +111,6 @@ public class TranslationsRepository {
                 updatedTranslation.setFavorite(favorite);
                 updatedTranslation.setFromText(fromText);
                 updatedTranslation.setToText(toText);
-              //  realm.copyToRealmOrUpdate(translation);
             }
         });
         realm.close();
