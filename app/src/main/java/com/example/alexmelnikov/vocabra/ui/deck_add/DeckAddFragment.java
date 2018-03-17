@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.text.InputType;
 import android.transition.TransitionInflater;
@@ -37,13 +38,16 @@ import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.thebluealliance.spectrum.SpectrumDialog;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
@@ -64,6 +68,7 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     @BindView(R.id.fab_add) FloatingActionButton btnConfirm;
     @BindView(R.id.btn_change_color) ImageButton btnChangeColor;
     @BindView(R.id.rv_deck) RelativeLayout rvDeck;
+    @BindView(R.id.input_layout_deck_name) TextInputLayout tilDeckName;
 
     @Nullable
     @Override
@@ -106,6 +111,15 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
         Disposable confirmButton = RxView.clicks(btnConfirm)
                 .subscribe(o -> mDeckAddPresenter.addNewDeckRequest(etDeckName.getText().toString()));
+
+        Disposable inputChanges = RxTextView.textChanges(etDeckName)
+                .debounce(400, TimeUnit.MILLISECONDS, AndroidSchedulers.mainThread())
+                .map(charSequence -> charSequence.toString())
+                .filter(text -> !text.isEmpty())
+                .subscribe(text -> {
+                    mDeckAddPresenter.inputChanges(text);
+                });
+
 
         mDisposable.addAll(changeColorButton, spinnerFrom, spinnerTo, swapButton, confirmButton);
     }
@@ -168,8 +182,14 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     }
 
     @Override
-    public void showEditTextError(String message) {
-        etDeckName.setError(message);
+    public void hideNameEditTextError() {
+        tilDeckName.setErrorEnabled(false);
+    }
+
+    @Override
+    public void showNameEditTextError(String message) {
+        tilDeckName.setErrorEnabled(true);
+        tilDeckName.setError(message);
     }
 
     @Override

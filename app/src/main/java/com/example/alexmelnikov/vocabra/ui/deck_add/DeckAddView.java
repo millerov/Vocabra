@@ -34,8 +34,11 @@ public interface DeckAddView extends BaseView {
     @StateStrategyType(SkipStrategy.class)
     void closeFragment();
 
-    @StateStrategyType(SkipStrategy.class)
-    void showEditTextError(String message);
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void showNameEditTextError(String message);
+
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void hideNameEditTextError();
 
     @StateStrategyType(SkipStrategy.class)
     void setupDefaultColor();

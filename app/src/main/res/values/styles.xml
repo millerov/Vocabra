@@ -31,8 +31,8 @@
         <item name="android:elevation">4dp</item>
     </style>
 
-    <style name="LanguagesSpinner" parent="@android:style/Widget.TextView.SpinnerItem">
-        <item name="android:textColor">@android:color/white</item>
+    <style name="error_appearance" parent="@android:style/TextAppearance">
+        <item name="android:textColor">@color/colorAccent</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />

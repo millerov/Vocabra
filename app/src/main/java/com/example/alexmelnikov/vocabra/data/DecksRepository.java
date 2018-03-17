@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 
 import java.util.ArrayList;
@@ -48,6 +49,7 @@ public class DecksRepository {
         ArrayList<Deck> decks;
         Realm realm = Realm.getDefaultInstance();
         decks = new ArrayList(realm.where(Deck.class).findAll());
+        realm.close();
         return decks;
     }
 
@@ -72,21 +74,22 @@ public class DecksRepository {
     }
 
 
-    public Deck findDeckByName(String name) {
-        final Deck[] result = new Deck[1];
-        Realm realm = Realm.getDefaultInstance();
+    public ArrayList<Deck> findDecksByTranslationDirection(String translationDir) {
+        /*Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 RealmResults<Deck> realmResult = realm.where(Deck.class)
-                        .equalTo("name", name)
+                        .equalTo("translationDirection", translationDir)
                         .findAll();
-
-                result[0] = realmResult.first();
             }
-        });
-        realm.close();
-        return result[0];
+        });*/
+        ArrayList<Deck> decks;
+        Realm realm = Realm.getDefaultInstance();
+        decks = new ArrayList(realm.where(Deck.class)
+                .equalTo("translationDirection", translationDir)
+                .findAll());
+        return decks;
     }
 
     public void clearDecksDB() {

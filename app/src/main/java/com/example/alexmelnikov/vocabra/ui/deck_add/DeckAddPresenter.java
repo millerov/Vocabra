@@ -41,6 +41,8 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
     private String mSelectedToLanguage; //e.g. "Английский"
     private String mSelectedFromLanguage; //e.g. "Русский"
 
+    private boolean nameEtErrorEnabled;
+
     public DeckAddPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         mLangList = mLangRep.getLanguagesFromDB();
@@ -98,6 +100,13 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
         updateSelectedLanguages();
     }
 
+    public void inputChanges(String text) {
+        if (nameEtErrorEnabled) {
+            nameEtErrorEnabled = false;
+            getViewState().hideNameEditTextError();
+        }
+    }
+
 
     public void colorChangeButtonPressed() {
         getViewState().showSelectColorDialog();
@@ -118,10 +127,12 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
                 mDecksRep.insertDeckToDB(deck);
                 getViewState().closeFragment();
             } else {
-                getViewState().showEditTextError("Колода с таким названием уже существует");
+                nameEtErrorEnabled = true;
+                getViewState().showNameEditTextError("Колода с таким названием уже существует");
             }
         } else {
-            getViewState().showEditTextError("Введите название");
+            nameEtErrorEnabled = true;
+            getViewState().showNameEditTextError("Введите название");
         }
     }
 

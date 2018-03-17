@@ -20,6 +20,8 @@ public class Deck extends RealmObject {
 
     private int color;
 
+    private String translationDirection;
+
     private Language firstLanguage;
 
     private Language secondLanguage;
@@ -41,11 +43,13 @@ public class Deck extends RealmObject {
         this.color = color;
         this.firstLanguage = firstLanguage;
         this.secondLanguage = secondLanguage;
+        this.translationDirection = firstLanguage.getId() + "-" + secondLanguage.getId();
     }
 
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
@@ -104,6 +108,14 @@ public class Deck extends RealmObject {
 
     public void setNumberOfCardsToTrain(int numberOfCardsToTrain) {
         this.numberOfCardsToTrain = numberOfCardsToTrain;
+    }
+
+    public String getTranslationDirection() {
+        return translationDirection;
+    }
+
+    public void setTranslationDirection(String translationDirection) {
+        this.translationDirection = translationDirection;
     }
 
     public RealmResults<Card> getCards() {

@@ -188,7 +188,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     public void addNewCardFromHistoryRequest(int pos) {
-        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos), mDecksRep.getDecksFromDB());
+        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos),
+                mDecksRep.findDecksByTranslationDirection(mTransRep.getTranslationsFromDB().get(pos).getLangs()));
     }
 
     //===============

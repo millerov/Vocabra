@@ -14,4 +14,12 @@ public class TextUtils {
         String to = LanguageUtils.findKeyByName(langTo);
         return from + "-" + to;
     }
+
+    public static String getFirstLanguageFromDir(String langs) {
+        return langs.substring(0, langs.indexOf("-"));
+    }
+
+    public static String getSecondLanguageFromDir(String langs) {
+        return langs.substring(langs.indexOf("-")+1, langs.length());
+    }
 }

@@ -10,9 +10,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
+import android.support.design.widget.TextInputLayout;
 import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
@@ -45,8 +47,11 @@ import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
+import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -86,6 +91,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     EditText etDialogBack;
     EditText etDialogContext;
     Spinner mDialogSpinDecks;
+    TextInputLayout mDialogTilFront;
+    TextInputLayout mDialogTilBack;
+    TextInputLayout mDialogTilContext;
 
     private HistoryAdapter mHistoryAdapter;
     private int adapterAnimDelay;
@@ -285,8 +293,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         .customView(R.layout.dialog_add_card, true)
                         .positiveText("Добавить")
                         .negativeText(android.R.string.cancel)
-                        .onPositive((dialog1, which) -> mTranslatorPresenter
-                                .addNewCardFromHistoryResultPassed(pos, translation, etDialogFront.getText().toString(),
+                        .onPositive((dialog1, which) -> mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos, translation, etDialogFront.getText().toString(),
                                         etDialogBack.getText().toString(), etDialogContext.getText().toString()))
                         .build();
 
@@ -294,12 +301,23 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
         etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
         mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        mDialogTilFront = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_front);
+        mDialogTilBack = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_back);
+        mDialogTilContext = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_context);
+
         etDialogFront.setText(translation.getFromText());
         etDialogBack.setText(translation.getToText());
+        etDialogFront.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogBack.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogContext.setInputType(InputType.TYPE_CLASS_TEXT);
+        mDialogTilFront.setHint("Передняя сторона " + TextUtils.getFirstLanguageFromDir(translation.getLangs()));
+        mDialogTilBack.setHint("Задняя сторона " + TextUtils.getSecondLanguageFromDir(translation.getLangs()));
+        mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
         etDialogContext.requestFocus();
         etDialogFront.setSelection(etDialogFront.getText().length());
         mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks));
         dialog.show();
     }
+
 }
 
