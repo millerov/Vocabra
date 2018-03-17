@@ -75,21 +75,21 @@ public class DecksRepository {
 
 
     public ArrayList<Deck> findDecksByTranslationDirection(String translationDir) {
-        /*Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Deck> realmResult = realm.where(Deck.class)
-                        .equalTo("translationDirection", translationDir)
-                        .findAll();
-            }
-        });*/
         ArrayList<Deck> decks;
         Realm realm = Realm.getDefaultInstance();
         decks = new ArrayList(realm.where(Deck.class)
                 .equalTo("translationDirection", translationDir)
                 .findAll());
         return decks;
+    }
+
+    public Deck getDeckByName(String deckName) {
+        Deck deck;
+        Realm realm = Realm.getDefaultInstance();
+        deck = realm.where(Deck.class)
+                .equalTo("name", deckName)
+                .findFirst();
+        return deck;
     }
 
     public void clearDecksDB() {

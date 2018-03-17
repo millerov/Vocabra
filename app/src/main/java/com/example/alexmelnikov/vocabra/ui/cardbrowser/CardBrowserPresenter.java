@@ -5,6 +5,7 @@ import android.util.Log;
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.model.Deck;
@@ -28,6 +29,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     DecksRepository mDecksRep;
     @Inject
     LanguagesRepository mLangRep;
+    @Inject
+    CardsRepository mCardsRep;
 
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -37,6 +40,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     public void attachView(CardBrowserView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
+        loadCards();
     }
 
     @Override
@@ -52,6 +56,13 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
 
     public void createNewDeckRequest() {
         getViewState().openDeckCreationFragment();
+    }
+
+
+    //=============Private logic===============
+
+    private void loadCards() {
+        getViewState().replaceCardsRecyclerData(mCardsRep.getCardsFromDB());
     }
 
 }

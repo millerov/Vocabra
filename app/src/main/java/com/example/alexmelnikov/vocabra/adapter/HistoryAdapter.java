@@ -1,10 +1,8 @@
 package com.example.alexmelnikov.vocabra.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.AnimatedVectorDrawable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,8 +39,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
 
     class HistoryViewHolder extends RecyclerView.ViewHolder {
 
-        @BindView(R.id.tv_From) TextView tvFrom;
-        @BindView(R.id.tv_To) TextView tvTo;
+        @BindView(R.id.tv_front) TextView tvFrom;
+        @BindView(R.id.tv_back) TextView tvTo;
         @BindView(R.id.ib_favourite) ImageButton btnFavorite;
         @BindView(R.id.card_history) CardView cardHistory;
 

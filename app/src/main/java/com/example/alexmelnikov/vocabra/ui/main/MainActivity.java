@@ -60,7 +60,7 @@ public class MainActivity extends BaseActivity implements MainView {
         initViews();
 
         if (savedInstanceState == null) {
-            bottomNavBar.setSelectedItemId(R.id.translator_menu_item);
+            bottomNavBar.setSelectedItemId(R.id.word_browser_menu_item);
         }
     }
 

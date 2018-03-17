@@ -1,6 +1,5 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
-import android.content.ClipboardManager;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -11,6 +10,8 @@ import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
+import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
 import com.example.alexmelnikov.vocabra.model.Translation;
@@ -31,7 +32,7 @@ import javax.inject.Inject;
 @InjectViewState
 public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating {
 
-    private static final String TAG = "TranslatorPresenter";
+    private static final String TAG = "MyTag";
 
     @Inject
     LanguagesRepository mLangRep;
@@ -65,6 +66,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(mUserData.SELECTED_LANGUAGES, new SelectedLanguages(
                 mLangList.indexOf(LanguageUtils.findByKey("ru")),
                 mLangList.indexOf(LanguageUtils.findByKey("en"))));
+
+        Log.d(TAG, "TranslatorPresenter: " + selectedLanguages.to() + "-" + selectedLanguages.from());
 
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
@@ -192,20 +195,46 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
                 mDecksRep.findDecksByTranslationDirection(mTransRep.getTranslationsFromDB().get(pos).getLangs()));
     }
 
-    //===============
-    //ADD DECK SUPPORT
-    //===============
+
     public void addNewCardFromHistoryResultPassed(int pos, Translation initialTranslation, String front,
-                                                       String back, String context) {
-        //check if translation from db texts equal to set by user front and back
-        //if not, update translation element in db also update history element on view
+                                                  String back, String cardContext, String chosenDeck, int defaultColor) {
+
+        String firstLanguageName = LanguageUtils.findNameByKey(TextUtils.getFirstLanguageIndexFromDir(initialTranslation.getLangs()));
+        String secondLanguageName = LanguageUtils.findNameByKey(TextUtils.getSecondLanguageIndexFromDir(initialTranslation.getLangs()));
+        Language firstLanguage = LanguageUtils.findByName(firstLanguageName);
+        Language secondLanguage = LanguageUtils.findByName(secondLanguageName);
+        Deck deck;
+
+        //Check which deck option has been chosen
+        if (!chosenDeck.equals("По умолчанию")) {
+            deck = mDecksRep.getDeckByName(chosenDeck);
+        } else {
+            String defaultDeckName = firstLanguageName + "-" + secondLanguageName;
+            //if there hasn't yet default deck for this language direction been created then create one
+            if (mDecksRep.getDeckByName(defaultDeckName) == null) {
+                deck = new Deck(-1, defaultDeckName, defaultColor, firstLanguage,
+                        secondLanguage);
+                mDecksRep.insertDeckToDB(deck);
+            } else {
+                deck = mDecksRep.getDeckByName(defaultDeckName);
+            }
+        }
+
+        Card card = new Card(-1, front, back, firstLanguage, secondLanguage, deck, cardContext);
+        mCardsRep.insertCardToDB(card);
+
+        /*check if translation from db texts equal to set by user front and back
+        if not, update translation element in db
+        also update translation element favourite status and update recycler element on the fragment*/
         if (initialTranslation.getFromText().equals(front)
                 && initialTranslation.getToText().equals(back)) {
             mTransRep.updateTranslationFavoriteStateDB(initialTranslation, initialTranslation.getFromText(),
-                    initialTranslation.getToText(), true);
+                    initialTranslation.getToText(), true, card);
+
             getViewState().updateHistoryDataElement(pos, initialTranslation);
         } else {
-            mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true);
+            mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true, card);
+
             getViewState().updateHistoryDataElement(pos, initialTranslation);
         }
     }
@@ -232,15 +261,24 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
     private void updateDatabase() {
-        if (!mTransRep.containsSimilarElementInDB(mLastLoadedTranslation)) {
+
+        /*check if db already contains similar translation, delete it if yes
+        it is done to keep new translation on the top of history recyclerview*/
+        Translation similarTranslationFromDB = mTransRep.getSimilarElementInDB(mLastLoadedTranslation);
+        if (similarTranslationFromDB == null) {
             mTransRep.insertTranslationToDB(mLastLoadedTranslation);
         } else {
-            mTransRep.deleteTranslationFromDB(mLastLoadedTranslation);
-            mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            if (similarTranslationFromDB.getFavorite()) {
+                Card card = similarTranslationFromDB.getCard();
+                mTransRep.deleteTranslationFromDB(similarTranslationFromDB);
+                mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+                mTransRep.updateTranslationFavoriteStateDB(mLastLoadedTranslation, mLastLoadedTranslation.getFromText(),
+                        mLastLoadedTranslation.getToText(), true, card);
+            } else {
+                mTransRep.deleteTranslationFromDB(mLastLoadedTranslation);
+                mTransRep.insertTranslationToDB(mLastLoadedTranslation);
+            }
         }
     }
 
-    private void clearDatabase() {
-        mTransRep.clearTranslationsDB();
-    }
 }

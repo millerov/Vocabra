@@ -20,9 +20,6 @@ public interface CardBrowserView extends BaseView {
     void replaceCardsRecyclerData(ArrayList<Card> cards);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void updateCardsRecyclerData(ArrayList<Card> cards);
-
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showDecksListDialog(ArrayList<Deck> decks);
 
     @StateStrategyType(OneExecutionStateStrategy.class)

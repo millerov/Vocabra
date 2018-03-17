@@ -22,14 +22,14 @@
             android:paddingRight="20dp">
 
             <TextView
-                android:id="@+id/tv_From"
+                android:id="@+id/tv_front"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:textSize="16sp" />
 
             <TextView
-                android:id="@+id/tv_To"
+                android:id="@+id/tv_back"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"

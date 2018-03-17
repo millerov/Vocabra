@@ -1,7 +1,10 @@
 package com.example.alexmelnikov.vocabra.data;
 
+import android.transition.Transition;
 import android.util.Log;
 
+import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 
@@ -66,8 +69,8 @@ public class TranslationsRepository {
     }
 
 
-    public boolean containsSimilarElementInDB(Translation translation) {
-        final boolean[] result = new boolean[1];
+    public Translation getSimilarElementInDB(Translation translation) {
+/*        final Translation[] result = new Translation[1];
 
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -76,6 +79,7 @@ public class TranslationsRepository {
                 RealmResults<Translation> realmResult = realm.where(Translation.class)
                         .equalTo("fromText", translation.getFromText())
                         .equalTo("toText", translation.getToText())
+                        .equalTo("langs", translation.getLangs())
                         .findAll();
                 Log.d("similar", "execute: " + realmResult.size());
                 if (realmResult.size() != 0)
@@ -84,7 +88,17 @@ public class TranslationsRepository {
             }
         });
         realm.close();
-        return result[0];
+        return result[0];*/
+
+
+        Translation similarTranslation;
+        Realm realm = Realm.getDefaultInstance();
+        similarTranslation = realm.where(Translation.class)
+                .equalTo("fromText", translation.getFromText())
+                .equalTo("toText", translation.getToText())
+                .equalTo("langs", translation.getLangs())
+                .findFirst();
+        return similarTranslation;
     }
 
 
@@ -100,7 +114,7 @@ public class TranslationsRepository {
     }
 
     public void updateTranslationFavoriteStateDB(Translation translation, String fromText, String toText,
-                                                 boolean favorite) {
+                                                 boolean favorite, Card card) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -111,6 +125,14 @@ public class TranslationsRepository {
                 updatedTranslation.setFavorite(favorite);
                 updatedTranslation.setFromText(fromText);
                 updatedTranslation.setToText(toText);
+
+                Card managedCard = realm.where(Card.class)
+                        .equalTo("front", card.getFront())
+                        .equalTo("back", card.getBack())
+                        .equalTo("translationDirection", card.getTranslationDirection())
+                        .findFirst();
+
+                updatedTranslation.setCard(managedCard);
             }
         });
         realm.close();

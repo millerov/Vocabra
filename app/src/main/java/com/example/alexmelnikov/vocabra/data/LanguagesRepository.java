@@ -44,7 +44,7 @@ public class LanguagesRepository {
 
       //Autistic Realm Migration setup
         //===========================
-       /* RealmConfiguration config2 = new RealmConfiguration.Builder()
+        /*RealmConfiguration config2 = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
         Realm realm = Realm.getInstance(config2);*/

@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.ArrayList;
 
 import io.realm.RealmObject;

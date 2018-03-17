@@ -1,7 +1,10 @@
 package com.example.alexmelnikov.vocabra.adapter;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +25,8 @@ import butterknife.ButterKnife;
 
 public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHolder> {
 
+    private static final String TAG = "MyTag";
+
     Context mContext;
     ArrayList<Card> mData;
 
@@ -35,10 +40,10 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
         @BindView(R.id.iv_color)
         ImageView ivColor;
-        @BindView(R.id.tv_From)
-        TextView tvFrom;
-        @BindView(R.id.tv_To)
-        TextView tvTo;
+        @BindView(R.id.tv_front)
+        TextView tvFront;
+        @BindView(R.id.tv_back)
+        TextView tvBack;
 
         public CardsViewHolder(View itemView) {
             super(itemView);
@@ -55,7 +60,15 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
     @Override
     public void onBindViewHolder(CardsViewHolder holder, int position) {
+        Card card = mData.get(mData.size() - position - 1);
 
+        holder.tvFront.setText(card.getFront());
+        holder.tvBack.setText(card.getBack());
+
+        final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_color);
+        drawable.setColorFilter(card.getDeck().getColor(), PorterDuff.Mode.SRC_ATOP);
+        Log.d(TAG, "onBindViewHolder: " + card.getDeck().getName());
+        holder.ivColor.setBackground(drawable);
     }
 
     @Override

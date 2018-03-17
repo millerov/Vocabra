@@ -75,6 +75,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCardsAdapter = new CardsAdapter(getActivity(), new ArrayList<Card>());
+        rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvCards.setAdapter(mCardsAdapter);
     }
 
@@ -96,10 +97,6 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         mCardsAdapter.replaceData(cards);
     }
 
-    @Override
-    public void updateCardsRecyclerData(ArrayList<Card> cards) {
-        mCardsAdapter.notifyItemInserted(cards.size() - 1);
-    }
 
     @Override
     public void showDecksListDialog(ArrayList<Deck> decks) {

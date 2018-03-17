@@ -49,7 +49,11 @@ public class DecksSpinnerAdapter extends BaseAdapter implements SpinnerAdapter {
 
     @Override
     public Object getItem(int i) {
-        return mData.get(mData.size() - i - 1).getName();
+        try {
+            return mData.get(mData.size() - i - 1).getName();
+        } catch (NullPointerException e) {
+            return "По умолчанию";
+        }
     }
 
     @Override

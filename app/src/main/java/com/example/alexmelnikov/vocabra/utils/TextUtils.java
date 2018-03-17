@@ -15,11 +15,11 @@ public class TextUtils {
         return from + "-" + to;
     }
 
-    public static String getFirstLanguageFromDir(String langs) {
+    public static String getFirstLanguageIndexFromDir(String langs) {
         return langs.substring(0, langs.indexOf("-"));
     }
 
-    public static String getSecondLanguageFromDir(String langs) {
+    public static String getSecondLanguageIndexFromDir(String langs) {
         return langs.substring(langs.indexOf("-")+1, langs.length());
     }
 }

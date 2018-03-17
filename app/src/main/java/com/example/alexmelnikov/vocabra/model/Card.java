@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.model;
 
+import android.support.annotation.Nullable;
+
 import java.util.Date;
 
 import io.realm.RealmObject;
@@ -18,7 +20,9 @@ public class Card extends RealmObject {
 
     private String back;
 
-    private String context;
+    private String cardContext;
+
+    private String translationDirection;
 
     private Language frontLanguage;
 
@@ -38,13 +42,14 @@ public class Card extends RealmObject {
     //ADD DECK TO CONSTRUCTOR
     //=======================
     public Card(int id, String front, String back, Language frontLanguage,
-                    Language backLanguage) {
+                    Language backLanguage, Deck deck, String cardContext) {
         this.id = id;
         this.front = front;
         this.back = back;
         this.frontLanguage = frontLanguage;
         this.backLanguage = backLanguage;
-
+        this.deck = deck;
+        this.cardContext = cardContext;
         this.isReadyForTraining = true;
         this.timesTrained = 0;
     }
@@ -72,12 +77,12 @@ public class Card extends RealmObject {
         this.back = back;
     }
 
-    public String getContext() {
-        return context;
+    public String getCardContext() {
+        return cardContext;
     }
 
-    public void setContext(String context) {
-        this.context = context;
+    public void setCardContext(String cardContext) {
+        this.cardContext = cardContext;
     }
 
     public Language getFrontLanguage() {
@@ -110,6 +115,14 @@ public class Card extends RealmObject {
 
     public void setReadyForTraining(boolean readyForTraining) {
         isReadyForTraining = readyForTraining;
+    }
+
+    public String getTranslationDirection() {
+        return translationDirection;
+    }
+
+    public void setTranslationDirection(String translationDirection) {
+        this.translationDirection = translationDirection;
     }
 
     public Date getLastTimeTrained() {

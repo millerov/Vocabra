@@ -2,36 +2,26 @@ package com.example.alexmelnikov.vocabra.ui.translator;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
-import android.content.Context;
-import android.graphics.drawable.Animatable;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
-import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.text.Layout;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -45,18 +35,14 @@ import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
-import com.example.alexmelnikov.vocabra.ui.main.MainPresenter;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.Collections;
 
-import butterknife.BindString;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
@@ -164,11 +150,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void attachInputListeners() {
         Disposable spinnerFrom = RxAdapterView.itemSelections(mSpinFrom)
-                .skip(1)
+                .skip(2)
                 .subscribe(index -> mTranslatorPresenter.selectorFrom(index));
 
         Disposable spinnerTo = RxAdapterView.itemSelections(mSpinTo)
-                .skip(1)
+                .skip(2)
                 .subscribe(index -> mTranslatorPresenter.selectorTo(index));
 
         Disposable clearInputButton = RxView.clicks(btnClear)
@@ -293,8 +279,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         .customView(R.layout.dialog_add_card, true)
                         .positiveText("Добавить")
                         .negativeText(android.R.string.cancel)
-                        .onPositive((dialog1, which) -> mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos, translation, etDialogFront.getText().toString(),
-                                        etDialogBack.getText().toString(), etDialogContext.getText().toString()))
+                        .onPositive((dialog1, which) -> mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos,
+                                translation, etDialogFront.getText().toString(), etDialogBack.getText().toString(),
+                                etDialogContext.getText().toString(), (String) mDialogSpinDecks.getSelectedItem(),
+                                getResources().getColor(R.color.colorPrimary)))
                         .build();
 
         etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
@@ -310,8 +298,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         etDialogFront.setInputType(InputType.TYPE_CLASS_TEXT);
         etDialogBack.setInputType(InputType.TYPE_CLASS_TEXT);
         etDialogContext.setInputType(InputType.TYPE_CLASS_TEXT);
-        mDialogTilFront.setHint("Передняя сторона " + TextUtils.getFirstLanguageFromDir(translation.getLangs()));
-        mDialogTilBack.setHint("Задняя сторона " + TextUtils.getSecondLanguageFromDir(translation.getLangs()));
+        mDialogTilFront.setHint("Передняя сторона " + TextUtils.getFirstLanguageIndexFromDir(translation.getLangs()));
+        mDialogTilBack.setHint("Задняя сторона " + TextUtils.getSecondLanguageIndexFromDir(translation.getLangs()));
         mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
         etDialogContext.requestFocus();
         etDialogFront.setSelection(etDialogFront.getText().length());
