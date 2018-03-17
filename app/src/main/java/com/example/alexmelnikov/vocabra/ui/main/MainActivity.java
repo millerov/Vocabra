@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.transition.AutoTransition;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -23,6 +24,7 @@ import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseActivity;
+import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
@@ -110,14 +112,29 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void showMessage(String message) {
-        Snackbar snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_SHORT);
+    public void showMessage(String message, boolean withAction, SnackBarActionHandler presenter) {
+        Snackbar snack;
+        if (withAction) {
+            snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_LONG);
+        } else {
+            snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_SHORT);
+        }
 
         //Setting margins to display snackbar above the navigation bar
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams)
                 snack.getView().getLayoutParams();
         params.setMargins(0, 0, 0, bottomNavBar.getItemHeight()-4);
         snack.getView().setLayoutParams(params);
+
+        if (withAction) {
+            snack.setAction("Отменить", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    presenter.onSnackbarEvent();
+                }
+            });
+        }
+
         snack.show();
 
     }

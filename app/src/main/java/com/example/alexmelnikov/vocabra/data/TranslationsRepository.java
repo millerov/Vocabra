@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.data;
 
+import android.support.annotation.Nullable;
 import android.transition.Transition;
 import android.util.Log;
 
@@ -114,7 +115,7 @@ public class TranslationsRepository {
     }
 
     public void updateTranslationFavoriteStateDB(Translation translation, String fromText, String toText,
-                                                 boolean favorite, Card card) {
+                                                 boolean favorite, @Nullable Card card) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -126,13 +127,18 @@ public class TranslationsRepository {
                 updatedTranslation.setFromText(fromText);
                 updatedTranslation.setToText(toText);
 
-                Card managedCard = realm.where(Card.class)
-                        .equalTo("front", card.getFront())
-                        .equalTo("back", card.getBack())
-                        .equalTo("translationDirection", card.getTranslationDirection())
-                        .findFirst();
+                if (favorite) {
+                    Card managedCard = realm.where(Card.class)
+                            .equalTo("front", card.getFront())
+                            .equalTo("back", card.getBack())
+                            .equalTo("translationDirection", card.getTranslationDirection())
+                            .findFirst();
 
-                updatedTranslation.setCard(managedCard);
+                    updatedTranslation.setCard(managedCard);
+                } else {
+                    updatedTranslation.setCard(null);
+
+                }
             }
         });
         realm.close();

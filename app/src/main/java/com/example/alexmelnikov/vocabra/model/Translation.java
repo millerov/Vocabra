@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.model;
 
+import android.support.annotation.Nullable;
+
 import java.io.Serializable;
 
 import io.realm.RealmObject;
@@ -22,6 +24,7 @@ public class Translation extends RealmObject implements Serializable {
 
     private boolean favorite;
 
+    @Nullable
     private Card card;
 
     public Translation() {}

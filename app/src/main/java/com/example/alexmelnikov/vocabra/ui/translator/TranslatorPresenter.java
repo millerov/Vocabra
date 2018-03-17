@@ -15,6 +15,7 @@ import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
 import com.example.alexmelnikov.vocabra.model.Translation;
+import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.ui.Translating;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
@@ -23,6 +24,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
@@ -30,7 +32,7 @@ import javax.inject.Inject;
  */
 
 @InjectViewState
-public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating {
+public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating, SnackBarActionHandler {
 
     private static final String TAG = "MyTag";
 
@@ -57,6 +59,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private String mOutput = "";
 
     private Translation mLastLoadedTranslation;
+    private Translation LastDroppedFromFavoritesTranslation;
 
     public TranslatorPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -237,6 +240,23 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
             getViewState().updateHistoryDataElement(pos, initialTranslation);
         }
+
+        //Log.d(TAG, "addNewCardFromHistoryResultPassed: " + initialTranslation.getFavorite());
+    }
+
+    public void dropFavoriteStatusRequest(int pos) {
+        Translation affectedTranslation = mTransRep.getTranslationsFromDB().get(pos);
+        LastDroppedFromFavoritesTranslation = affectedTranslation;
+        mCardsRep.deleteCardFromDB(affectedTranslation.getCard());
+        mTransRep.updateTranslationFavoriteStateDB(affectedTranslation, affectedTranslation.getFromText(),
+                affectedTranslation.getToText(), false, null);
+        getViewState().updateHistoryDataElement(pos, affectedTranslation);
+        getViewState().showFavoriteDropMessage();
+    }
+
+    @Override
+    public void onSnackbarEvent() {
+        Log.d(TAG, "onSnackbarEvent: " + "action clicked");
     }
 
     //==================Private logic=================

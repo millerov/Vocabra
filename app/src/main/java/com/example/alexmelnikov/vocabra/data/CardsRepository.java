@@ -8,6 +8,7 @@ import com.example.alexmelnikov.vocabra.model.Translation;
 import java.util.ArrayList;
 
 import io.realm.Realm;
+import io.realm.RealmResults;
 
 /**
  * Created by AlexMelnikov on 10.03.18.
@@ -47,6 +48,17 @@ public class CardsRepository {
         Realm realm = Realm.getDefaultInstance();
         cards = new ArrayList(realm.where(Card.class).findAll());
         return cards;
+    }
+
+    public void deleteCardFromDB(Card card) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Card> result = realm.where(Card.class).equalTo("id", card.getId()).findAll();
+                result.deleteAllFromRealm();
+            }
+        });
     }
 
     public void clearCardsDB() {

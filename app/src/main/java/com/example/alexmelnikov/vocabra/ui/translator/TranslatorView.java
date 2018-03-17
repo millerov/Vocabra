@@ -50,6 +50,9 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(SkipStrategy.class)
     void copyAction(String text);
 
+    @StateStrategyType(SkipStrategy.class)
+    void showFavoriteDropMessage();
+
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showAddCardDialog(int pos, Translation translation, ArrayList<Deck> decks);
 

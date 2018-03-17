@@ -12,6 +12,7 @@ import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
+import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ import javax.inject.Inject;
  */
 
 @InjectViewState
-public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
+public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements SnackBarActionHandler {
 
     private static final String TAG = "MyTag";
 
@@ -134,6 +135,11 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> {
             nameEtErrorEnabled = true;
             getViewState().showNameEditTextError("Введите название");
         }
+    }
+
+    @Override
+    public void onSnackbarEvent() {
+
     }
 
     //==================Private logic=================

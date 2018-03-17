@@ -73,11 +73,19 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         else
             holder.btnFavorite.setImageResource(R.drawable.ic_star_border_accent_24dp);
 
-        holder.btnFavorite.setOnClickListener((view) ->
-                fragmentPresenter.addNewCardFromHistoryRequest(mData.size() - position - 1));
+        holder.btnFavorite.setOnClickListener((view) -> {
+            if (translation.getFavorite()) {
+                fragmentPresenter.dropFavoriteStatusRequest(mData.size() - position - 1);
+            } else {
+                fragmentPresenter.addNewCardFromHistoryRequest(mData.size() - position - 1);
+            }
+        });
 
-        holder.cardHistory.setOnClickListener((view) ->
-            fragmentPresenter.addNewCardFromHistoryRequest(mData.size() - position - 1));
+        holder.cardHistory.setOnClickListener((view) -> {
+            if (!translation.getFavorite()) {
+                fragmentPresenter.addNewCardFromHistoryRequest(mData.size() - position - 1);
+            }
+        });
 
     }
 
