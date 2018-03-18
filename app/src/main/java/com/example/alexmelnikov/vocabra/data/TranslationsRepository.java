@@ -71,27 +71,6 @@ public class TranslationsRepository {
 
 
     public Translation getSimilarElementInDB(Translation translation) {
-/*        final Translation[] result = new Translation[1];
-
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                RealmResults<Translation> realmResult = realm.where(Translation.class)
-                        .equalTo("fromText", translation.getFromText())
-                        .equalTo("toText", translation.getToText())
-                        .equalTo("langs", translation.getLangs())
-                        .findAll();
-                Log.d("similar", "execute: " + realmResult.size());
-                if (realmResult.size() != 0)
-                    result[0] = true;
-                else result[0] = false;
-            }
-        });
-        realm.close();
-        return result[0];*/
-
-
         Translation similarTranslation;
         Realm realm = Realm.getDefaultInstance();
         similarTranslation = realm.where(Translation.class)
@@ -113,6 +92,17 @@ public class TranslationsRepository {
         });
         realm.close();
     }
+
+    public void returnPreviouslyDeletedTranslation(Translation translation) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(translation);
+            }
+        });
+    }
+
 
     public void updateTranslationFavoriteStateDB(Translation translation, String fromText, String toText,
                                                  boolean favorite, @Nullable Card card) {

@@ -15,6 +15,8 @@ import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.SelectedLanguages;
 import com.example.alexmelnikov.vocabra.model.Translation;
+import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
+import com.example.alexmelnikov.vocabra.model.temp.TemporaryTranslation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.ui.Translating;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
@@ -59,7 +61,13 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private String mOutput = "";
 
     private Translation mLastLoadedTranslation;
-    private Translation LastDroppedFromFavoritesTranslation;
+
+    // this 3 variables initialized when user deletes translation from favorites (deletes card)
+    private TemporaryCard mTemporaryCard;
+    private Translation mTemporaryCardTranslation;
+    private int mTemporaryCardPositionInHistory;
+
+    //private TemporaryTranslation mTemporaryTranslation;
 
     public TranslatorPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -246,7 +254,14 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     public void dropFavoriteStatusRequest(int pos) {
         Translation affectedTranslation = mTransRep.getTranslationsFromDB().get(pos);
-        LastDroppedFromFavoritesTranslation = affectedTranslation;
+        Card card = affectedTranslation.getCard();
+
+        mTemporaryCard = new TemporaryCard(card.getFront(), card.getBack(), card.getCardContext(), card.getTranslationDirection(),
+                card.getFrontLanguage(), card.getBackLanguage(), card.getDeck(), card.isReadyForTraining(), card.getLastTimeTrained(),
+                card.getTimesTrained());
+        mTemporaryCardTranslation = affectedTranslation;
+        mTemporaryCardPositionInHistory = pos;
+
         mCardsRep.deleteCardFromDB(affectedTranslation.getCard());
         mTransRep.updateTranslationFavoriteStateDB(affectedTranslation, affectedTranslation.getFromText(),
                 affectedTranslation.getToText(), false, null);
@@ -256,7 +271,15 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     @Override
     public void onSnackbarEvent() {
-        Log.d(TAG, "onSnackbarEvent: " + "action clicked");
+        Card card = new Card(-1, mTemporaryCard);
+        mCardsRep.insertCardToDB(card);
+
+        mTransRep.updateTranslationFavoriteStateDB(mTemporaryCardTranslation,
+                mTemporaryCardTranslation.getFromText(),
+                mTemporaryCardTranslation.getToText(),
+                true, card);
+
+        getViewState().updateHistoryDataElement(mTemporaryCardPositionInHistory, mTemporaryCardTranslation);
     }
 
     //==================Private logic=================

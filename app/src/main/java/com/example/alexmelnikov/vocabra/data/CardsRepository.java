@@ -43,11 +43,23 @@ public class CardsRepository {
         }
     }
 
+
     public ArrayList<Card> getCardsFromDB() {
         ArrayList<Card> cards;
         Realm realm = Realm.getDefaultInstance();
         cards = new ArrayList(realm.where(Card.class).findAll());
         return cards;
+    }
+
+    public Card getSimilarElementInDB(Card card) {
+        Card similarCard;
+        Realm realm = Realm.getDefaultInstance();
+        similarCard = realm.where(Card.class)
+                .equalTo("front", card.getFront())
+                .equalTo("back", card.getBack())
+                .equalTo("translationDirection", card.getTranslationDirection())
+                .findFirst();
+        return similarCard;
     }
 
     public void deleteCardFromDB(Card card) {
@@ -57,6 +69,16 @@ public class CardsRepository {
             public void execute(Realm realm) {
                 RealmResults<Card> result = realm.where(Card.class).equalTo("id", card.getId()).findAll();
                 result.deleteAllFromRealm();
+            }
+        });
+    }
+
+    public void returnPreviouslyDeletedCard(Card card) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                realm.copyToRealmOrUpdate(card);
             }
         });
     }

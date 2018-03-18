@@ -1,85 +1,47 @@
-package com.example.alexmelnikov.vocabra.model;
+package com.example.alexmelnikov.vocabra.model.temp;
 
 import android.support.annotation.Nullable;
 
-import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
+import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Language;
 
 import java.util.Date;
 
-import io.realm.RealmObject;
-import io.realm.annotations.PrimaryKey;
-
 /**
- * Created by AlexMelnikov on 10.03.18.
+ * This class is used when user deletes card but chooses to undo action
+ * with the help of snackbar button
  */
 
-public class Card extends RealmObject {
-
-    @PrimaryKey
-    private int id;
+public class TemporaryCard {
 
     private String front;
-
     private String back;
-
     private String cardContext;
-
     private String translationDirection;
-
     private Language frontLanguage;
-
     private Language backLanguage;
-
-    @Nullable
     private Deck deck;
-
     private boolean isReadyForTraining;
-
     private Date lastTimeTrained;
-
     private int timesTrained;
 
-    public Card() {}
-
-    //=======================
-    //ADD DECK TO CONSTRUCTOR
-    //=======================
-    public Card(int id, String front, String back, Language frontLanguage,
-                    Language backLanguage, @Nullable Deck deck, String cardContext) {
-        this.id = id;
+    public TemporaryCard(String front, String back, String cardContext, String translationDirection, Language frontLanguage, Language backLanguage,
+                         Deck deck, boolean isReadyForTraining, Date lastTimeTrained, int timesTrained) {
         this.front = front;
         this.back = back;
+        this.cardContext = cardContext;
+        this.translationDirection = translationDirection;
         this.frontLanguage = frontLanguage;
         this.backLanguage = backLanguage;
         this.deck = deck;
-        this.cardContext = cardContext;
-        this.isReadyForTraining = true;
-        this.timesTrained = 0;
-        this.translationDirection = frontLanguage.getId() + "-" + backLanguage.getId();
-    }
-
-    public Card(int id, TemporaryCard tempCard) {
-        this.id = id;
-        this.front = tempCard.getFront();
-        this.back = tempCard.getBack();
-        this.frontLanguage = tempCard.getFrontLanguage();
-        this.backLanguage = tempCard.getBackLanguage();
-        this.deck = tempCard.getDeck();
-        this.cardContext = tempCard.getCardContext();
-        this.isReadyForTraining = tempCard.isReadyForTraining();
-        this.timesTrained = tempCard.getTimesTrained();
-        this.translationDirection = tempCard.getTranslationDirection();
-        this.lastTimeTrained = tempCard.getLastTimeTrained();
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-    public int getId() {
-        return id;
+        this.isReadyForTraining = isReadyForTraining;
+        this.lastTimeTrained = lastTimeTrained;
+        this.timesTrained = timesTrained;
     }
 
     public String getFront() {
+
+
         return front;
     }
 
@@ -101,6 +63,14 @@ public class Card extends RealmObject {
 
     public void setCardContext(String cardContext) {
         this.cardContext = cardContext;
+    }
+
+    public String getTranslationDirection() {
+        return translationDirection;
+    }
+
+    public void setTranslationDirection(String translationDirection) {
+        this.translationDirection = translationDirection;
     }
 
     public Language getFrontLanguage() {
@@ -133,14 +103,6 @@ public class Card extends RealmObject {
 
     public void setReadyForTraining(boolean readyForTraining) {
         isReadyForTraining = readyForTraining;
-    }
-
-    public String getTranslationDirection() {
-        return translationDirection;
-    }
-
-    public void setTranslationDirection(String translationDirection) {
-        this.translationDirection = translationDirection;
     }
 
     public Date getLastTimeTrained() {

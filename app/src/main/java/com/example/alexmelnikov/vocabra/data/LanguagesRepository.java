@@ -49,6 +49,7 @@ public class LanguagesRepository {
                 .build();
         Realm realm = Realm.getInstance(config2);*/
         Realm realm = Realm.getDefaultInstance();
+        //realm.deleteAll();
 
         langList = new ArrayList(realm.where(Language.class).findAll());
         return langList;
