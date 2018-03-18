@@ -249,7 +249,6 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             getViewState().updateHistoryDataElement(pos, initialTranslation);
         }
 
-        //Log.d(TAG, "addNewCardFromHistoryResultPassed: " + initialTranslation.getFavorite());
     }
 
     public void dropFavoriteStatusRequest(int pos) {
