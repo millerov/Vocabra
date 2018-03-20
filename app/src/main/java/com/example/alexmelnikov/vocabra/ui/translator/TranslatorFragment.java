@@ -14,6 +14,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,10 +91,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     private int adapterAnimDelay;
 
 
-    public static TranslatorFragment newInstance(@Nullable Translation translation, boolean fromTranslationFragment) {
+    public static TranslatorFragment newInstance(@Nullable Translation translation, boolean fromTranslationFragment, boolean translationNotNull) {
         Bundle args = new Bundle();
         args.putSerializable("translation", translation);
         args.putSerializable("fromTranslationFragment", fromTranslationFragment);
+        args.putSerializable("translationNotNull", translationNotNull);
         TranslatorFragment fragment = new TranslatorFragment();
         fragment.setArguments(args);
         return fragment;
@@ -107,8 +109,20 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
 
-        // Setting delay so transition animation from transitionFragment wouldn't conflict with recyclerview animation
-        adapterAnimDelay = getArguments().getSerializable("fromTranslationFragment").toString().equals("false") ? 70 : 410;
+        /*Setting delay before animating the history recycler view to avoid friction between it, transition animation and animation of the
+          translation card appearance */
+        String fromTranslationFragment = getArguments().getSerializable("fromTranslationFragment").toString();
+        String translationNotNull = getArguments().getSerializable("translationNotNull").toString();
+
+        if (fromTranslationFragment == "false") {
+            adapterAnimDelay = 70;
+        } else {
+            if (translationNotNull == "false") {
+                adapterAnimDelay = 410;
+            } else {
+                adapterAnimDelay = 850;
+            }
+        }
 
         mTranslatorPresenter.setInputOutput((Translation) getArguments().getSerializable("translation"));
         return view;
@@ -225,12 +239,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         btnCopy.setVisibility(View.VISIBLE);
         btnClear.setVisibility(View.VISIBLE);
         btnFavoutite.setVisibility(View.VISIBLE);
-
-        transitionsContainer.setVisibility(View.VISIBLE);
-        svTranslationAndHistory.animate()
-                .y(rlToolbar.getHeight() + rlTranslator.getHeight())
-                .setDuration(200)
-                .start();
     }
 
     @Override
@@ -248,12 +256,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             btnCopy.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
             btnFavoutite.setVisibility(View.VISIBLE);
-
-/*            transitionsContainer.setVisibility(View.VISIBLE);
-            svTranslationAndHistory.animate()
-                    .y(rlToolbar.getHeight() + rlTranslator.getHeight())
-                    .setDuration(200)
-                    .start();*/
         }
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
@@ -267,21 +269,15 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         drawable.start();
         etTranslate.setText("");
         tvTranslated.setText("");
-        btnCopy.setVisibility(View.GONE);
+        btnCopy.setVisibility(View.INVISIBLE);
         btnFavoutite.setVisibility(View.GONE);
-
-        transitionsContainer.setVisibility(View.INVISIBLE);
-        svTranslationAndHistory.animate()
-                .y(0)
-                .setDuration(200)
-                .start();
 
         btnClear.postDelayed(new Runnable() {
             @Override
             public void run() {
                 btnClear.setVisibility(View.INVISIBLE);
             }
-        }, 400);
+        }, 520);
 
     }
 
@@ -341,10 +337,16 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Override
     public void showTranslationCard() {
-        svTranslationAndHistory.animate()
-                .y(rlToolbar.getHeight() + rlTranslator.getHeight())
-                .setDuration(200)
-                .start();
+        svTranslationAndHistory.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                transitionsContainer.setVisibility(View.VISIBLE);
+                svTranslationAndHistory.animate()
+                        .y(rlToolbar.getHeight() + rlTranslator.getHeight())
+                        .setDuration(200)
+                        .start();
+            }
+        }, 550);
 
     }
 
@@ -352,8 +354,15 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void hideTranslationCard() {
         svTranslationAndHistory.animate()
                 .y(0)
-                .setDuration(200)
+                .setDuration(240)
                 .start();
+        svTranslationAndHistory.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                transitionsContainer.setVisibility(View.INVISIBLE);
+            }
+        }, 260);
+
     }
 
 }

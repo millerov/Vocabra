@@ -192,7 +192,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
-        TranslatorFragment fragment = TranslatorFragment.newInstance(translation, true);
+        TranslatorFragment fragment = TranslatorFragment.newInstance(translation, true, !(translation == null));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ChangeBounds changeBoundsTransition = new ChangeBounds();

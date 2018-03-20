@@ -98,7 +98,6 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-
         android:id="@+id/sv_mainscroll"
         android:scrollbars="none">
 
@@ -165,7 +164,7 @@
                         android:layout_alignParentRight="true"
                         android:background="?selectableItemBackgroundBorderless"
                         android:src="@drawable/ic_content_copy_white_24dp"
-                        android:visibility="gone"/>
+                        android:visibility="invisible"/>
 
 
             </RelativeLayout>
@@ -185,6 +184,7 @@
                     android:paddingRight="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="46dp"
+                    android:layout_marginTop="6dp"
                     android:overScrollMode="never"
                     android:layoutAnimation="@anim/layout_animation_fall_down">
                 </android.support.v7.widget.RecyclerView>

@@ -56,9 +56,9 @@ public interface TranslatorView extends BaseView {
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showAddCardDialog(int pos, Translation translation, ArrayList<Deck> decks);
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void showTranslationCard();
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void hideTranslationCard();
 }

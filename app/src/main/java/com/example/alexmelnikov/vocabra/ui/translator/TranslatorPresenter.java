@@ -114,11 +114,13 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             mOutput = translation.getToText();
             if (mOutput != "" || mInput == mOutput)
                 updateDatabase();
+            getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+            getViewState().showTranslationCard();
         } else {
             mInput = "";
             mOutput = "";
+            getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
         }
-        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
     public void translationRequested(String data) {
@@ -133,10 +135,12 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         mLastLoadedTranslation = nextTranslation;
         mOutput = nextTranslation.getToText();
         getViewState().showTranslationResult(mOutput);
+        getViewState().showTranslationCard();
     }
 
     public void translationResultError() {
         getViewState().showTranslationResult("Error");
+        getViewState().showTranslationCard();
     }
 
     public void selectorFrom(int index) {
@@ -172,6 +176,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             mLastLoadedTranslation = null;
             mInput = mOutput = "";
             getViewState().clearInputOutput();
+            getViewState().hideTranslationCard();
         }
     }
 

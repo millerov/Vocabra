@@ -88,8 +88,8 @@
             android:id="@+id/rv_cards"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="12dp"
-            android:paddingRight="12dp"
+            android:paddingLeft="6dp"
+            android:paddingRight="6dp"
             android:paddingTop="4dp"
             android:paddingBottom="45dp">
         </android.support.v7.widget.RecyclerView>

@@ -98,7 +98,7 @@ public class MainActivity extends BaseActivity implements MainView {
         if (index == 0) {
             fragment = new CardBrowserFragment();
         } else if (index == 1) {
-            fragment = TranslatorFragment.newInstance(null, false);
+            fragment = TranslatorFragment.newInstance(null, false, false);
         } else {
             fragment = new CardBrowserFragment();
         }
