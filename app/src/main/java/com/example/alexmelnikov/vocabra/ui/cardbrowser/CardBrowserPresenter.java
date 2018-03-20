@@ -8,6 +8,7 @@ import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
@@ -61,7 +62,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
 
     //=============Private logic===============
 
-    private void loadCards() {
+    public void loadCards() {
         getViewState().replaceCardsRecyclerData(mCardsRep.getCardsFromDB());
     }
 

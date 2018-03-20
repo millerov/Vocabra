@@ -19,6 +19,7 @@ import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
 import com.example.alexmelnikov.vocabra.model.temp.TemporaryTranslation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.ui.Translating;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 

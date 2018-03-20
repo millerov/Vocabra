@@ -109,7 +109,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 .build();
 
         Log.d(TAG, "showDecksListDialog: " + decks.size());
-        rvDecks = (RecyclerView) dialog.getView().findViewById(R.id.rv_decks);
+        rvDecks = dialog.getView().findViewById(R.id.rv_decks);
         rvDecks.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvDecks.setAdapter(new DecksDialogAdapter(getActivity(), decks));
 

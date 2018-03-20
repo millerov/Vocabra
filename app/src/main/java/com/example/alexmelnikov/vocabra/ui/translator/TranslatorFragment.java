@@ -20,12 +20,15 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
@@ -72,6 +75,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.tv_langtagfrom) TextView tvLangTagFrom;
     @BindView(R.id.layout_translated) RelativeLayout transitionsContainer;
     @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
+    @BindView(R.id.toolbar_layout) RelativeLayout rlToolbar;
+    @BindView(R.id.sv_mainscroll) ScrollView svTranslationAndHistory;
 
     EditText etDialogFront;
     EditText etDialogBack;
@@ -220,6 +225,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         btnCopy.setVisibility(View.VISIBLE);
         btnClear.setVisibility(View.VISIBLE);
         btnFavoutite.setVisibility(View.VISIBLE);
+
+        transitionsContainer.setVisibility(View.VISIBLE);
+        svTranslationAndHistory.animate()
+                .y(rlToolbar.getHeight() + rlTranslator.getHeight())
+                .setDuration(200)
+                .start();
     }
 
     @Override
@@ -237,6 +248,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             btnCopy.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
             btnFavoutite.setVisibility(View.VISIBLE);
+
+/*            transitionsContainer.setVisibility(View.VISIBLE);
+            svTranslationAndHistory.animate()
+                    .y(rlToolbar.getHeight() + rlTranslator.getHeight())
+                    .setDuration(200)
+                    .start();*/
         }
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
@@ -252,6 +269,13 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         tvTranslated.setText("");
         btnCopy.setVisibility(View.GONE);
         btnFavoutite.setVisibility(View.GONE);
+
+        transitionsContainer.setVisibility(View.INVISIBLE);
+        svTranslationAndHistory.animate()
+                .y(0)
+                .setDuration(200)
+                .start();
+
         btnClear.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -314,5 +338,24 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         dialog.show();
     }
 
+
+    @Override
+    public void showTranslationCard() {
+        svTranslationAndHistory.animate()
+                .y(rlToolbar.getHeight() + rlTranslator.getHeight())
+                .setDuration(200)
+                .start();
+
+    }
+
+    @Override
+    public void hideTranslationCard() {
+        svTranslationAndHistory.animate()
+                .y(0)
+                .setDuration(200)
+                .start();
+    }
+
 }
+
 

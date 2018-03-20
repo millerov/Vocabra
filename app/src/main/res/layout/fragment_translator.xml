@@ -46,8 +46,8 @@
         android:id="@+id/layout_translator"
         android:paddingLeft="12dp"
         android:paddingRight="10dp"
-        android:paddingTop="10dp"
-        android:paddingBottom="8dp"
+        android:paddingTop="7dp"
+        android:paddingBottom="4dp"
         android:transitionName="viewtrans">
 
 
@@ -98,7 +98,7 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_translator"
+
         android:id="@+id/sv_mainscroll"
         android:scrollbars="none">
 
@@ -120,7 +120,8 @@
                 android:paddingBottom="8dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="10dp"
-                android:paddingTop="10dp">
+                android:paddingTop="10dp"
+                android:visibility="invisible">
 
 
                     <TextView
