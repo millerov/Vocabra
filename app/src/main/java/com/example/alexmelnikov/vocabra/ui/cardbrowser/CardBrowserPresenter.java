@@ -33,8 +33,14 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     @Inject
     CardsRepository mCardsRep;
 
+    private ArrayList<Card> mCardsList;
+    private boolean showingDeckCards;
+
+
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
+        mCardsList = mCardsRep.getCardsFromDB();
+        showingDeckCards = false;
     }
 
     @Override
@@ -51,7 +57,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void decksButtonPressed() {
-        getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
+        if (!showingDeckCards) {
+            getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
+        } else {
+            showingDeckCards = false;
+            getViewState().changeDeckButtonSrc(showingDeckCards);
+            mCardsList = mCardsRep.getCardsFromDB();
+            getViewState().hideDeckCard();
+            getViewState().replaceCardsRecyclerData(mCardsList);
+        }
     }
 
     public void createNewDeckRequest() {
@@ -64,14 +78,20 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void decksDialogRecyclerItemPressed(int pos) {
+        Deck deck = mDecksRep.getDecksFromDB().get(pos);
         getViewState().hideDecksListDialog();
-        getViewState().showDeckCard(mDecksRep.getDecksFromDB().get(pos));
+        getViewState().showDeckCard(deck);
+        showingDeckCards = true;
+        getViewState().changeDeckButtonSrc(showingDeckCards);
+
+        mCardsList = mCardsRep.getCardsByDeckDB(deck);
+        getViewState().replaceCardsRecyclerData(mCardsList);
     }
 
     //=============Private logic===============
 
     public void loadCards() {
-        getViewState().replaceCardsRecyclerData(mCardsRep.getCardsFromDB());
+        getViewState().replaceCardsRecyclerData(mCardsList);
     }
 
 }

@@ -80,6 +80,11 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         return mData.size();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return mData.get(mData.size() - position - 1).hashCode();
+    }
+
     public void replaceData(ArrayList<Card> cards) {
         mData.clear();
         mData.addAll(cards);

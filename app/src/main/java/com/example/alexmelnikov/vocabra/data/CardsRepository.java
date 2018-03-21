@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.data;
 import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Translation;
 
 import java.util.ArrayList;
@@ -48,6 +49,15 @@ public class CardsRepository {
         ArrayList<Card> cards;
         Realm realm = Realm.getDefaultInstance();
         cards = new ArrayList(realm.where(Card.class).findAll());
+        return cards;
+    }
+
+    public ArrayList<Card> getCardsByDeckDB(Deck deck) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList(realm.where(Card.class)
+                .equalTo("deck.name", deck.getName())
+                .findAll());
         return cards;
     }
 

@@ -85,8 +85,11 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mCardsAdapter = new CardsAdapter(getActivity(), new ArrayList<Card>(), mCardBrowserPresenter);
-        rvCards.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mCardsAdapter.setHasStableIds(true);
+
+        rvCards.setLayoutManager(new CardsLinearLayoutManager(getActivity()));
         rvCards.setAdapter(mCardsAdapter);
+
     }
 
     @Override
@@ -165,10 +168,16 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
         rlDeck.setBackground(drawable);
 
-        layoutDeckCards.animate()
-                .y(layoutToolbar.getHeight())
-                .setDuration(200)
-                .start();
+        layoutDeckCards.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                layoutDeckCards.animate()
+                        .y(layoutToolbar.getHeight())
+                        .setDuration(200)
+                        .start();
+            }
+        }, 1000);
+
 
     }
 
@@ -180,5 +189,11 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 .start();
     }
 
+    public void changeDeckButtonSrc(boolean showingDeckCards) {
+        if (showingDeckCards)
+            btnDecks.setImageResource(R.drawable.ic_arrow_back_white_24dp);
+        else
+            btnDecks.setImageResource(R.drawable.ic_filter_none_white_24dp);
+    }
 
 }

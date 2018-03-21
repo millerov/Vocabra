@@ -92,9 +92,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
+                android:paddingRight="64dp"
                 android:textSize="20sp"
-                android:text="Название колоды"
-                android:textColor="@color/colorWhite"/>
+                android:textColor="@color/colorWhite"
+                android:maxLines="1"
+                android:ellipsize="end"/>
 
             <ImageButton
                 android:id="@+id/btn_train"
@@ -128,7 +130,8 @@
                 android:paddingLeft="6dp"
                 android:paddingRight="6dp"
                 android:paddingBottom="45dp"
-                android:overScrollMode="never">
+                android:overScrollMode="never"
+                android:layoutAnimation="@anim/layout_animation_fall_down">
             </android.support.v7.widget.RecyclerView>
 
         </RelativeLayout>

@@ -1,7 +1,9 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
+import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
+import com.arellomobile.mvp.viewstate.strategy.SkipStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
@@ -16,7 +18,7 @@ import java.util.ArrayList;
 
 public interface CardBrowserView extends BaseView {
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(SkipStrategy.class)
     void replaceCardsRecyclerData(ArrayList<Card> cards);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
@@ -33,4 +35,7 @@ public interface CardBrowserView extends BaseView {
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void hideDeckCard();
+
+    @StateStrategyType(AddToEndSingleStrategy.class)
+    void changeDeckButtonSrc(boolean showingDeckCards);
 }

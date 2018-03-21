@@ -68,7 +68,6 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private Translation mTemporaryCardTranslation;
     private int mTemporaryCardPositionInHistory;
 
-    //private TemporaryTranslation mTemporaryTranslation;
 
     public TranslatorPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
