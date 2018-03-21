@@ -23,6 +23,14 @@ public interface CardBrowserView extends BaseView {
     void showDecksListDialog(ArrayList<Deck> decks);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
+    void hideDecksListDialog();
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void openDeckCreationFragment();
 
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void showDeckCard(Deck deck);
+
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void hideDeckCard();
 }

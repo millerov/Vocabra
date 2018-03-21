@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 
 import java.util.ArrayList;
 
@@ -33,10 +34,12 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
     
     Context mContext;
     ArrayList<Deck> mData;
+    CardBrowserPresenter presenter;
 
-    public DecksDialogAdapter(Context mContext, ArrayList<Deck> mData) {
+    public DecksDialogAdapter(Context mContext, ArrayList<Deck> mData, CardBrowserPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
+        this.presenter = presenter;
     }
 
     class DecksViewHolder extends RecyclerView.ViewHolder {
@@ -72,6 +75,8 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
             holder.tvDeckName.setText(deck.getName().substring(0, 14) + "...");
 
         holder.tvLanguages.setText(deck.getFirstLanguage().getId() + "-" + deck.getSecondLanguage().getId());
+
+        holder.itemView.setOnClickListener(view -> presenter.decksDialogRecyclerItemPressed(mData.size() - position - 1));
     }
 
     @Override

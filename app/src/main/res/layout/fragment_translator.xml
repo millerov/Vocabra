@@ -115,7 +115,7 @@
                 android:layout_marginBottom="4dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="16dp"
                 android:paddingBottom="8dp"
                 android:paddingLeft="12dp"
                 android:paddingRight="10dp"
@@ -184,7 +184,7 @@
                     android:paddingRight="12dp"
                     android:paddingTop="4dp"
                     android:paddingBottom="46dp"
-                    android:layout_marginTop="6dp"
+                    android:layout_marginTop="10dp"
                     android:overScrollMode="never"
                     android:layoutAnimation="@anim/layout_animation_fall_down">
                 </android.support.v7.widget.RecyclerView>

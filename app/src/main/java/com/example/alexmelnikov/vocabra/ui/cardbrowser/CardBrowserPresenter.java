@@ -51,7 +51,6 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void decksButtonPressed() {
-        Log.d(TAG, "decksButtonPressed: " + mDecksRep.getDecksFromDB().size());
         getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
     }
 
@@ -59,6 +58,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
         getViewState().openDeckCreationFragment();
     }
 
+
+    public void cardsRecyclerItemPressed(int pos) {
+        Log.d(TAG, "cardsRecyclerItemPressed: " + mCardsRep.getCardsFromDB().get(pos).getFront());
+    }
+
+    public void decksDialogRecyclerItemPressed(int pos) {
+        getViewState().hideDecksListDialog();
+        getViewState().showDeckCard(mDecksRep.getDecksFromDB().get(pos));
+    }
 
     //=============Private logic===============
 

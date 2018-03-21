@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 
 import java.util.ArrayList;
 
@@ -29,11 +30,13 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
     Context mContext;
     ArrayList<Card> mData;
+    CardBrowserPresenter presenter;
 
 
-    public CardsAdapter(Context mContext, ArrayList<Card> mData) {
+    public CardsAdapter(Context mContext, ArrayList<Card> mData, CardBrowserPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
+        this.presenter = presenter;
     }
 
     class CardsViewHolder extends RecyclerView.ViewHolder {
@@ -67,8 +70,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_color);
         drawable.setColorFilter(card.getDeck().getColor(), PorterDuff.Mode.SRC_ATOP);
-        Log.d(TAG, "onBindViewHolder: " + card.getDeck().getName());
         holder.ivColor.setBackground(drawable);
+
+        holder.itemView.setOnClickListener(view -> presenter.cardsRecyclerItemPressed(mData.size() - position - 1));
     }
 
     @Override

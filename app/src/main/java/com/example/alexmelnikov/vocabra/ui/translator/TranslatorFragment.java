@@ -286,7 +286,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
         clipboard.setPrimaryClip(clip);
-        //Snackbar.make(getView(), "Перевод скопирован", Snackbar.LENGTH_SHORT).show();
         ((MainActivity)getActivity()).showMessage("Перевод скопирован", false, mTranslatorPresenter);
 
     }
