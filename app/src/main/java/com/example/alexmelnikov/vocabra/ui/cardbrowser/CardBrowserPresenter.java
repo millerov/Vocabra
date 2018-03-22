@@ -35,11 +35,10 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
 
     private ArrayList<Card> mCardsList;
     private boolean showingDeckCards;
-
+    private Deck currentDeckChoosen;
 
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
-        mCardsList = mCardsRep.getCardsFromDB();
         showingDeckCards = false;
     }
 
@@ -47,6 +46,14 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     public void attachView(CardBrowserView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
+
+        if (showingDeckCards) {
+            mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
+            getViewState().showDeckCardview(currentDeckChoosen);
+        } else {
+            mCardsList = mCardsRep.getCardsFromDB();
+        }
+        getViewState().changeDeckButtonSrc(showingDeckCards);
         loadCards();
     }
 
@@ -61,9 +68,10 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
             getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
         } else {
             showingDeckCards = false;
+            currentDeckChoosen = null;
             getViewState().changeDeckButtonSrc(showingDeckCards);
             mCardsList = mCardsRep.getCardsFromDB();
-            getViewState().hideDeckCard();
+            getViewState().hideDeckCardview();
             getViewState().replaceCardsRecyclerData(mCardsList);
         }
     }
@@ -78,13 +86,13 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void decksDialogRecyclerItemPressed(int pos) {
-        Deck deck = mDecksRep.getDecksFromDB().get(pos);
+        currentDeckChoosen = mDecksRep.getDecksFromDB().get(pos);
         getViewState().hideDecksListDialog();
-        getViewState().showDeckCard(deck);
+        getViewState().showDeckCardview(currentDeckChoosen);
         showingDeckCards = true;
         getViewState().changeDeckButtonSrc(showingDeckCards);
 
-        mCardsList = mCardsRep.getCardsByDeckDB(deck);
+        mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
         getViewState().replaceCardsRecyclerData(mCardsList);
     }
 

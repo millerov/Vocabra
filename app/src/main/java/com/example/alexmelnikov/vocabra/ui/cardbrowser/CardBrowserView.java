@@ -31,11 +31,11 @@ public interface CardBrowserView extends BaseView {
     void openDeckCreationFragment();
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void showDeckCard(Deck deck);
+    void showDeckCardview(Deck deck);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void hideDeckCard();
+    void hideDeckCardview();
 
-    @StateStrategyType(AddToEndSingleStrategy.class)
+    @StateStrategyType(OneExecutionStateStrategy.class)
     void changeDeckButtonSrc(boolean showingDeckCards);
 }

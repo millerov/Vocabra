@@ -160,7 +160,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
-    public void showDeckCard(Deck deck) {
+    public void showDeckCardview(Deck deck) {
         rlDeck.setVisibility(View.VISIBLE);
         tvDeckName.setText(deck.getName());
 
@@ -176,13 +176,13 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                         .setDuration(200)
                         .start();
             }
-        }, 1000);
+        }, 400);
 
 
     }
 
     @Override
-    public void hideDeckCard() {
+    public void hideDeckCardview() {
         layoutDeckCards.animate()
                 .y(0)
                 .setDuration(200)
