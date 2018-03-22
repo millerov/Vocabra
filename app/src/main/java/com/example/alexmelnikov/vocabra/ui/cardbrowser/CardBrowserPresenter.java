@@ -77,7 +77,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void createNewDeckRequest() {
-        getViewState().openDeckCreationFragment();
+        getViewState().openDeckCreationFragment(false, null);
     }
 
 
@@ -94,6 +94,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
 
         mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
         getViewState().replaceCardsRecyclerData(mCardsList);
+    }
+
+
+    public void editDeckButtonPressed() {
+        getViewState().openDeckCreationFragment(true, currentDeckChoosen.getName());
     }
 
     //=============Private logic===============

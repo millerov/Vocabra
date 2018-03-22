@@ -43,4 +43,7 @@ public interface DeckAddView extends BaseView {
     @StateStrategyType(SkipStrategy.class)
     void setupDefaultColor();
 
+    @StateStrategyType(OneExecutionStateStrategy.class)
+    void fillTextFields(String deckName);
+
 }

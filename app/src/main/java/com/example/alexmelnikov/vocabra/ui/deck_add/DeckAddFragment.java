@@ -23,6 +23,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.afollestad.materialdialogs.util.DialogUtils;
@@ -69,12 +70,27 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     @BindView(R.id.btn_change_color) ImageButton btnChangeColor;
     @BindView(R.id.rv_deck) RelativeLayout rvDeck;
     @BindView(R.id.input_layout_deck_name) TextInputLayout tilDeckName;
+    @BindView(R.id.tv_heading) TextView tvDeckName;
+
+
+    public static DeckAddFragment newInstance(boolean forDeckCreation, String deckName) {
+        Bundle args = new Bundle();
+        args.putSerializable("forDeckCreation", forDeckCreation);
+        args.putSerializable("deckName", deckName);
+        DeckAddFragment fragment = new DeckAddFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_deck_add, container, false);
         ButterKnife.bind(this, view);
+
+        String forDeckCreation = getArguments().getSerializable("forDeckCreation").toString();
+        if (forDeckCreation == "true")
+            mDeckAddPresenter.setupDeckEdit(getArguments().getSerializable("deckName").toString());
 
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
         etDeckName.requestFocus();
@@ -158,6 +174,13 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     public void changeLanguagesSelected(int from, int to) {
         mSpinFrom.setSelection(from);
         mSpinTo.setSelection(to);
+    }
+
+    @Override
+    public void fillTextFields(String deckName) {
+        tvDeckName.setText(deckName);
+        etDeckName.setText(deckName);
+        etDeckName.setSelection(etDeckName.getText().length());
     }
 
     @Override

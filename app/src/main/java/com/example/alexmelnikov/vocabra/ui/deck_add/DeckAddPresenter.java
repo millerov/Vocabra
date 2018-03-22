@@ -44,6 +44,9 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
 
     private boolean nameEtErrorEnabled;
 
+    private boolean editDeckMode;
+    private Deck editDeck;
+
     public DeckAddPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         mLangList = mLangRep.getLanguagesFromDB();
@@ -58,20 +61,37 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
 
     }
 
+
+    public void setupDeckEdit(String deckName) {
+        editDeckMode = true;
+        editDeck = mDecksRep.getDeckByName(deckName);
+        SelectedLanguages selectedLanguages = new SelectedLanguages(
+                mLangList.indexOf(LanguageUtils.findByKey(editDeck.getFirstLanguage().getId())),
+                mLangList.indexOf(LanguageUtils.findByKey(editDeck.getSecondLanguage().getId())));
+
+        mSelectedFrom = selectedLanguages.from();
+        mSelectedTo = selectedLanguages.to();
+    }
+
     @Override
     public void attachView(DeckAddView view) {
         super.attachView(view);
-        Log.d(TAG, "attachView: " + mSelectedFrom + "-" + mSelectedTo + "/" + mLangList.size());
-
-        getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
         getViewState().attachInputListeners();
-        getViewState().setupDefaultColor();
+        getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
+
+        if (!editDeckMode) {
+            getViewState().setupDefaultColor();
+        } else {
+            updateSelectedColor(editDeck.getColor());
+            getViewState().fillTextFields(editDeck.getName());
+        }
     }
 
     @Override
     public void detachView(DeckAddView view) {
         super.detachView(view);
         getViewState().detachInputListeners();
+        editDeckMode = false;
     }
 
     public void selectorFrom(int index) {
@@ -136,11 +156,13 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
             getViewState().showNameEditTextError("Введите название");
         }
     }
-
+    
+    
     @Override
-    public void onSnackbarEvent() {
-
-    }
+    public void onSnackbarEvent() {}
+    
+    
+    
 
     //==================Private logic=================
 

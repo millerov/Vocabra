@@ -73,6 +73,7 @@
         android:id="@+id/layout_deck_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/layout_toolbar"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -86,7 +87,9 @@
             android:layout_marginBottom="6dp"
             android:paddingHorizontal="14dp"
             android:paddingVertical="10dp"
-            android:visibility="invisible">
+            android:visibility="gone"
+            android:transitionName="deckLayout"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/tv_deck_name"
@@ -97,7 +100,8 @@
                 android:textSize="20sp"
                 android:textColor="@color/colorWhite"
                 android:maxLines="1"
-                android:ellipsize="end"/>
+                android:ellipsize="end"
+                android:transitionName="deckName"/>
 
             <ImageButton
                 android:id="@+id/btn_train"

@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
+import android.support.annotation.Nullable;
+
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndStrategy;
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
@@ -28,7 +30,7 @@ public interface CardBrowserView extends BaseView {
     void hideDecksListDialog();
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void openDeckCreationFragment();
+    void openDeckCreationFragment(boolean withEditDeckAction, @Nullable String deckName);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showDeckCardview(Deck deck);
