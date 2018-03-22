@@ -92,6 +92,23 @@ public class DecksRepository {
         return deck;
     }
 
+
+    public void updateDeckNameAndColor(Deck deck, String name, int color) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+             @Override
+             public void execute(Realm realm) {
+                 Deck updatedDeck = realm.where(Deck.class)
+                         .equalTo("id", deck.getId())
+                         .findFirst();
+                 updatedDeck.setName(name);
+                 updatedDeck.setColor(color);
+             }
+        });
+        realm.close();
+    }
+
+
     public void clearDecksDB() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -102,5 +119,6 @@ public class DecksRepository {
         });
         realm.close();
     }
+
 
 }

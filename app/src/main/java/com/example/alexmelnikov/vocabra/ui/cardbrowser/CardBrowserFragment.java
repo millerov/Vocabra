@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
@@ -28,6 +29,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -41,11 +43,15 @@ import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.thebluealliance.spectrum.SpectrumDialog;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 
@@ -62,6 +68,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     CardBrowserPresenter mCardBrowserPresenter;
 
     @BindView(R.id.btn_decks) ImageButton btnDecks;
+    @BindView(R.id.btn_back) ImageButton btnBack;
     @BindView(R.id.rv_cards) RecyclerView rvCards;
     @BindView(R.id.fab_add) FloatingActionButton btnAddCard;
     @BindView(R.id.layout_toolbar) LinearLayout layoutToolbar;
@@ -70,6 +77,12 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.rl_deck) RelativeLayout rlDeck;
     @BindView(R.id.tv_deck_name) TextView tvDeckName;
     @BindView(R.id.btn_edit_deck) ImageButton btnEditDeck;
+    @BindView(R.id.btn_train) ImageButton btnTrain;
+    @BindView(R.id.btn_edit_color) ImageButton btnEditColor;
+    @BindView(R.id.btn_confirm) ImageButton btnConfirm;
+
+    @BindView(R.id.et_deck_name)
+    EditText etDeckName;
 
 
     private CardsAdapter mCardsAdapter;
@@ -90,6 +103,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         mCardsAdapter = new CardsAdapter(getActivity(), new ArrayList<Card>(), mCardBrowserPresenter);
         mCardsAdapter.setHasStableIds(true);
 
+        etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
+
         rvCards.setLayoutManager(new CardsLinearLayoutManager(getActivity()));
         rvCards.setAdapter(mCardsAdapter);
 
@@ -100,10 +115,23 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable decksButton = RxView.clicks(btnDecks)
                 .subscribe(o -> mCardBrowserPresenter.decksButtonPressed());
 
+        Disposable backButton = RxView.clicks(btnBack)
+                .subscribe(o -> mCardBrowserPresenter.backButtonPressed());
+
+        Disposable deckNameText = RxView.clicks(tvDeckName)
+                .subscribe(o -> mCardBrowserPresenter.editDeckButtonPressed());
+
         Disposable editDeckButton = RxView.clicks(btnEditDeck)
                 .subscribe(o -> mCardBrowserPresenter.editDeckButtonPressed());
 
-        mDisposable.addAll(decksButton, editDeckButton);
+        Disposable confirmDeckEdit = RxView.clicks(btnConfirm)
+                .subscribe(o -> mCardBrowserPresenter.confirmEditDeckRequest(etDeckName.getText().toString()));
+
+        Disposable editColor = RxView.clicks(btnEditColor)
+                .subscribe(o -> mCardBrowserPresenter.editDeckColorRequest());
+
+        mDisposable.addAll(decksButton, editDeckButton, confirmDeckEdit, backButton,
+                editColor, deckNameText);
     }
 
     @Override
@@ -142,50 +170,26 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
 
     @Override
-    public void openDeckCreationFragment(boolean withEditDeckAction, @Nullable String deckName) {
-        DeckAddFragment fragment = DeckAddFragment.newInstance(withEditDeckAction, deckName);
+    public void openDeckCreationFragment() {
+        DeckAddFragment fragment = new DeckAddFragment();
 
-        if (!withEditDeckAction) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ChangeBounds changeBoundsTransition = new ChangeBounds();
-                changeBoundsTransition.setDuration(370);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(370);
 
-                setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
-                fragment.setEnterTransition(new Slide().setDuration(370));
-                //   fragment.setSharedElementEnterTransition(changeBoundsTransition);
-                fragment.setSharedElementReturnTransition(changeBoundsTransition);
-            }
-
-
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .addSharedElement(btnAddCard, "fabAdd")
-                    .commitAllowingStateLoss();
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ChangeBounds changeBoundsTransition = new ChangeBounds();
-                changeBoundsTransition.setDuration(370);
-
-                setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-                //setExitTransition(null);
-                //setEnterTransition(null);
-                fragment.setEnterTransition(new Slide().setDuration(370));
-                fragment.setExitTransition(new AutoTransition());
-             //   fragment.setSharedElementEnterTransition(changeBoundsTransition);
-                fragment.setSharedElementReturnTransition(changeBoundsTransition);
-            }
-
-
-            getActivity().getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .addSharedElement(rlDeck, "deckLayout")
-                    .addSharedElement(btnAddCard, "fabAdd")
-                    .addSharedElement(tvDeckName, "deckName")
-                    .commitAllowingStateLoss();
+            fragment.setEnterTransition(new Slide().setDuration(370));
+            //   fragment.setSharedElementEnterTransition(changeBoundsTransition);
+            fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
+
+
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .addToBackStack(null)
+                .addSharedElement(btnAddCard, "fabAdd")
+                .commitAllowingStateLoss();
     }
 
     @Override
@@ -200,15 +204,83 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
+    public void switchDeckDisplayMode(boolean editModeOn) {
+        if (editModeOn) {
+            String deckName = tvDeckName.getText().toString();
+            etDeckName.setVisibility(View.VISIBLE);
+            tvDeckName.setVisibility(View.INVISIBLE);
+            etDeckName.setText(deckName);
+
+            etDeckName.requestFocus();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etDeckName, 0);
+            etDeckName.setSelection(etDeckName.getText().length());
+
+            btnEditDeck.setVisibility(View.GONE);
+            btnTrain.setVisibility(View.GONE);
+            btnConfirm.setVisibility(View.VISIBLE);
+            btnEditColor.setVisibility(View.VISIBLE);
+        } else {
+            String deckName = etDeckName.getText().toString();
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+            etDeckName.setVisibility(View.INVISIBLE);
+            tvDeckName.setText(deckName);
+            tvDeckName.setVisibility(View.VISIBLE);
+            btnEditDeck.setVisibility(View.VISIBLE);
+            btnTrain.setVisibility(View.VISIBLE);
+            btnConfirm.setVisibility(View.GONE);
+            btnEditColor.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public void hideDeckCardview() {
         rlDeck.setVisibility(View.GONE);
     }
 
-    public void changeDeckButtonSrc(boolean showingDeckCards) {
-        if (showingDeckCards)
-            btnDecks.setImageResource(R.drawable.ic_arrow_back_white_24dp);
-        else
-            btnDecks.setImageResource(R.drawable.ic_filter_none_white_24dp);
+    @Override
+    public void switchCornerButtonState(boolean showingDeckCards) {
+        if (showingDeckCards) {
+            btnDecks.setVisibility(View.GONE);
+            btnBack.setVisibility(View.VISIBLE);
+        }
+        else {
+            btnBack.setVisibility(View.GONE);
+            btnDecks.setVisibility(View.VISIBLE);
+        }
     }
 
+    @Override
+    public void showSelectColorDialog(Deck currentDeck) {
+        TypedArray colors = getResources().obtainTypedArray(R.array.custom_colors);
+        int[] colorsInts = new int[colors.length()];
+        for (int i = 0; i < colors.length(); i++) {
+            colorsInts[i] = colors.getColor(i,0);
+        }
+
+        new SpectrumDialog.Builder((getContext()))
+                .setTitle("Цвет колоды")
+                .setColors(R.array.custom_colors)
+                .setDismissOnColorSelected(true)
+                .setSelectedColor(mCardBrowserPresenter.selectedColor)
+                .setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
+                    @Override
+                    public void onColorSelected(boolean positiveResult, int color) {
+                        mCardBrowserPresenter.editDeckColorResultPassed(color);
+                    }
+                }).build().show(getFragmentManager(), "color_dialog");
+    }
+
+    @Override
+    public void updateCardColor(int color) {
+        final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
+        drawable.setColorFilter(color, PorterDuff.Mode.SRC_ATOP);
+        rlDeck.setBackground(drawable);
+    }
+
+    @Override
+    public void showDeckNameEditTextMessage(String message) {
+        etDeckName.setError(message);
+    }
 }

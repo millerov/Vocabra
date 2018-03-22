@@ -18,26 +18,30 @@ import java.util.ArrayList;
  * Created by AlexMelnikov on 10.03.18.
  */
 
+@StateStrategyType(OneExecutionStateStrategy.class)
 public interface CardBrowserView extends BaseView {
 
     @StateStrategyType(SkipStrategy.class)
     void replaceCardsRecyclerData(ArrayList<Card> cards);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showDecksListDialog(ArrayList<Deck> decks);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void hideDecksListDialog();
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
-    void openDeckCreationFragment(boolean withEditDeckAction, @Nullable String deckName);
+    void openDeckCreationFragment();
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showDeckCardview(Deck deck);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void hideDeckCardview();
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
-    void changeDeckButtonSrc(boolean showingDeckCards);
+    void switchCornerButtonState(boolean showingDeckCards);
+
+    void switchDeckDisplayMode(boolean editModeOn);
+
+    void showSelectColorDialog(Deck currentDeck);
+
+    void updateCardColor(int color);
+
+    void showDeckNameEditTextMessage(String message);
+
 }

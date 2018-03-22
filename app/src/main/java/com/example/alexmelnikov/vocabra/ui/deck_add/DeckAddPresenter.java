@@ -44,9 +44,6 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
 
     private boolean nameEtErrorEnabled;
 
-    private boolean editDeckMode;
-    private Deck editDeck;
-
     public DeckAddPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         mLangList = mLangRep.getLanguagesFromDB();
@@ -62,36 +59,18 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
     }
 
 
-    public void setupDeckEdit(String deckName) {
-        editDeckMode = true;
-        editDeck = mDecksRep.getDeckByName(deckName);
-        SelectedLanguages selectedLanguages = new SelectedLanguages(
-                mLangList.indexOf(LanguageUtils.findByKey(editDeck.getFirstLanguage().getId())),
-                mLangList.indexOf(LanguageUtils.findByKey(editDeck.getSecondLanguage().getId())));
-
-        mSelectedFrom = selectedLanguages.from();
-        mSelectedTo = selectedLanguages.to();
-    }
-
     @Override
     public void attachView(DeckAddView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
         getViewState().setupSpinners(mLangList, mSelectedFrom, mSelectedTo);
-
-        if (!editDeckMode) {
-            getViewState().setupDefaultColor();
-        } else {
-            updateSelectedColor(editDeck.getColor());
-            getViewState().fillTextFields(editDeck.getName());
-        }
+        getViewState().setupDefaultColor();
     }
 
     @Override
     public void detachView(DeckAddView view) {
         super.detachView(view);
         getViewState().detachInputListeners();
-        editDeckMode = false;
     }
 
     public void selectorFrom(int index) {
@@ -133,13 +112,13 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
         getViewState().showSelectColorDialog();
     }
 
+
     public void updateSelectedColor(int color) {
         selectedColor = color;
         getViewState().updateCardColor(color);
     }
 
 
-    //
     public void addNewDeckRequest(String name) {
         if (!name.trim().isEmpty()) {
             Deck deck = new Deck(-1, name.trim(), selectedColor,

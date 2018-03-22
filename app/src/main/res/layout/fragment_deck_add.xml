@@ -19,8 +19,7 @@
         android:paddingTop="20dp"
         android:paddingRight="12dp"
         android:paddingBottom="12dp"
-        android:paddingLeft="12dp"
-        android:transitionName="deckLayout">
+        android:paddingLeft="12dp">
 
         <TextView
             android:id="@+id/tv_heading"
@@ -31,8 +30,7 @@
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="Новая колода"
-            android:transitionName="deckName"/>
+            android:text="Новая колода" />
 
         <ImageButton
             android:id="@+id/btn_change_color"
@@ -41,7 +39,7 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_color_lens_white_26dp" />
+            android:src="@drawable/ic_color_lens_white_24dp" />
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_deck_name"

@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
+import android.graphics.Color;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -33,13 +34,18 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     @Inject
     CardsRepository mCardsRep;
 
+    public static int selectedColor;
+
     private ArrayList<Card> mCardsList;
     private boolean showingDeckCards;
     private Deck currentDeckChoosen;
 
+    private boolean editDeckMode;
+
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         showingDeckCards = false;
+        editDeckMode = false;
     }
 
     @Override
@@ -53,7 +59,12 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
         } else {
             mCardsList = mCardsRep.getCardsFromDB();
         }
-        getViewState().changeDeckButtonSrc(showingDeckCards);
+
+        if (editDeckMode)
+            getViewState().updateCardColor(selectedColor);
+
+        getViewState().switchDeckDisplayMode(editDeckMode);
+        getViewState().switchCornerButtonState(showingDeckCards);
         loadCards();
     }
 
@@ -64,20 +75,25 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void decksButtonPressed() {
-        if (!showingDeckCards) {
-            getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
-        } else {
-            showingDeckCards = false;
-            currentDeckChoosen = null;
-            getViewState().changeDeckButtonSrc(showingDeckCards);
-            mCardsList = mCardsRep.getCardsFromDB();
-            getViewState().hideDeckCardview();
-            getViewState().replaceCardsRecyclerData(mCardsList);
+        getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
+    }
+
+    public void backButtonPressed() {
+        showingDeckCards = false;
+        currentDeckChoosen = null;
+        getViewState().switchCornerButtonState(showingDeckCards);
+        mCardsList = mCardsRep.getCardsFromDB();
+        getViewState().hideDeckCardview();
+        getViewState().replaceCardsRecyclerData(mCardsList);
+
+        if (editDeckMode) {
+            editDeckMode = false;
+            getViewState().switchDeckDisplayMode(editDeckMode);
         }
     }
 
     public void createNewDeckRequest() {
-        getViewState().openDeckCreationFragment(false, null);
+        getViewState().openDeckCreationFragment();
     }
 
 
@@ -90,7 +106,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
         getViewState().hideDecksListDialog();
         getViewState().showDeckCardview(currentDeckChoosen);
         showingDeckCards = true;
-        getViewState().changeDeckButtonSrc(showingDeckCards);
+        getViewState().switchCornerButtonState(showingDeckCards);
 
         mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
         getViewState().replaceCardsRecyclerData(mCardsList);
@@ -98,7 +114,32 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
 
 
     public void editDeckButtonPressed() {
-        getViewState().openDeckCreationFragment(true, currentDeckChoosen.getName());
+        editDeckMode = true;
+        selectedColor = currentDeckChoosen.getColor();
+        getViewState().switchDeckDisplayMode(editDeckMode);
+    }
+
+    public void confirmEditDeckRequest(String updatedDeckName) {
+        editDeckMode = false;
+        if (!updatedDeckName.isEmpty()) {
+            if (!updatedDeckName.equals(currentDeckChoosen.getName()) || selectedColor != currentDeckChoosen.getColor()) {
+                mDecksRep.updateDeckNameAndColor(currentDeckChoosen, updatedDeckName, selectedColor);
+                mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
+                loadCards();
+            }
+            getViewState().switchDeckDisplayMode(editDeckMode);
+        } else {
+            getViewState().showDeckNameEditTextMessage("Введите название");
+        }
+    }
+
+    public void editDeckColorRequest() {
+        getViewState().showSelectColorDialog(currentDeckChoosen);
+    }
+
+    public void editDeckColorResultPassed(int color) {
+        selectedColor = color;
+        getViewState().updateCardColor(selectedColor);
     }
 
     //=============Private logic===============
