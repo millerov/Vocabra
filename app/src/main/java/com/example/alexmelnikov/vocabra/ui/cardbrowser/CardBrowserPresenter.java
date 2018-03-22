@@ -79,16 +79,16 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> {
     }
 
     public void backButtonPressed() {
-        showingDeckCards = false;
-        currentDeckChoosen = null;
-        getViewState().switchCornerButtonState(showingDeckCards);
-        mCardsList = mCardsRep.getCardsFromDB();
-        getViewState().hideDeckCardview();
-        getViewState().replaceCardsRecyclerData(mCardsList);
-
         if (editDeckMode) {
             editDeckMode = false;
             getViewState().switchDeckDisplayMode(editDeckMode);
+        } else {
+            showingDeckCards = false;
+            currentDeckChoosen = null;
+            getViewState().switchCornerButtonState(showingDeckCards);
+            mCardsList = mCardsRep.getCardsFromDB();
+            getViewState().hideDeckCardview();
+            getViewState().replaceCardsRecyclerData(mCardsList);
         }
     }
 

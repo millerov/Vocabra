@@ -75,12 +75,13 @@ public class DecksSpinnerAdapter extends BaseAdapter implements SpinnerAdapter {
 
             ivColor.setVisibility(View.VISIBLE);
 
-            if (getItem(i).toString().length() < 22) {
+            /*if (getItem(i).toString().length() < 22) {
                 textView.setText(getItem(i).toString());
             } else {
                 String text = getItem(i).toString().substring(0, 21) + "...      ";
                 textView.setText(text);
-            }
+            }*/
+            textView.setText(getItem(i).toString());
             textView.setGravity(Gravity.LEFT);
             textView.setMaxLines(1);
 

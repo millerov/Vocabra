@@ -229,7 +229,6 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void updateHistoryDataElement(int pos, Translation translation) {
         mHistoryAdapter.updateElement(pos, translation);
-//        mHistoryAdapter.notifyItemChanged(pos, translation);
     }
 
     @Override

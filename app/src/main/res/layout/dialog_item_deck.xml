@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,10 +29,12 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_color"
             android:layout_marginLeft="10dp"
+            android:paddingEnd="55dp"
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:maxLines="1"
-            android:text="Колода 1"/>
+            android:ellipsize="end"
+            tools:text="123456789123456789123456789"/>
 
         <TextView
             android:id="@+id/tv_langs"
@@ -41,7 +44,7 @@
             android:layout_marginRight="6dp"
             android:textSize="20sp"
             android:textColor="@color/grey_md700"
-            android:text="EN-RU"/>
+            tools:text="en-ru"/>
 
 
     </RelativeLayout>

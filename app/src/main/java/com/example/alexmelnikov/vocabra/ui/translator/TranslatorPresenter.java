@@ -135,6 +135,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         mOutput = nextTranslation.getToText();
         getViewState().showTranslationResult(mOutput);
         getViewState().showTranslationCard();
+        updateDatabase();
+        loadHistoryData();
     }
 
     public void translationResultError() {
@@ -194,7 +196,9 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
         updateSelectedLangsIndexes();
         updateSelectedLanguages();
-        getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+        //getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
+        if (!mInput.isEmpty())
+            translationRequested(mInput);
     }
 
     public void inputRequested() {
@@ -291,7 +295,6 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private void loadHistoryData() {
         getViewState().replaceHistoryData(mTransRep.getTranslationsFromDB());
     }
-
 
     private void updateSelectedLangsIndexes() {
         SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);

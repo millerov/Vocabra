@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:contentPadding="8dp"
@@ -28,6 +29,7 @@
             android:orientation="vertical"
             android:layout_toRightOf="@id/iv_color"
             android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:paddingLeft="10dp">
 
             <TextView
@@ -36,7 +38,8 @@
                 android:layout_height="wrap_content"
                 android:textColor="@android:color/black"
                 android:textSize="16sp"
-                android:text="добрый вечер"/>
+                android:ellipsize="end"
+                android:maxLines="1" />
 
             <TextView
                 android:id="@+id/tv_back"
@@ -45,7 +48,8 @@
                 android:textSize="16sp"
                 android:layout_marginTop="2dp"
                 android:textColor="@color/grey_md700"
-                android:text="good evening"/>
+                android:ellipsize="end"
+                android:maxLines="1"/>
 
         </LinearLayout>
 

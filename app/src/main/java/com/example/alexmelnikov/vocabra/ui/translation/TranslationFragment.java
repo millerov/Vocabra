@@ -141,7 +141,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
             }
         });
 
-        mDisposable.addAll(translateButton, clearButton, translateText);
+        mDisposable.addAll(translateButton, clearButton, translateText, inputChanges);
     }
 
     @Override

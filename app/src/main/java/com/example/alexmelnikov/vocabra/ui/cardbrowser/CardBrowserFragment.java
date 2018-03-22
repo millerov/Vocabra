@@ -221,16 +221,18 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             btnConfirm.setVisibility(View.VISIBLE);
             btnEditColor.setVisibility(View.VISIBLE);
         } else {
-            String deckName = etDeckName.getText().toString();
-            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
-            etDeckName.setVisibility(View.INVISIBLE);
-            tvDeckName.setText(deckName);
-            tvDeckName.setVisibility(View.VISIBLE);
-            btnEditDeck.setVisibility(View.VISIBLE);
-            btnTrain.setVisibility(View.VISIBLE);
-            btnConfirm.setVisibility(View.GONE);
-            btnEditColor.setVisibility(View.GONE);
+            if (etDeckName.getVisibility() == View.VISIBLE) {
+                String deckName = etDeckName.getText().toString();
+                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                etDeckName.setVisibility(View.INVISIBLE);
+                tvDeckName.setText(deckName);
+                tvDeckName.setVisibility(View.VISIBLE);
+                btnEditDeck.setVisibility(View.VISIBLE);
+                btnTrain.setVisibility(View.VISIBLE);
+                btnConfirm.setVisibility(View.GONE);
+                btnEditColor.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -282,5 +284,18 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void showDeckNameEditTextMessage(String message) {
         etDeckName.setError(message);
+    }
+
+
+    @Override
+    public boolean onBackPressed() {
+        if (etDeckName.getVisibility() == View.VISIBLE ||
+                rlDeck.getVisibility() == View.VISIBLE) {
+            mCardBrowserPresenter.backButtonPressed();
+            return true;
+        } else {
+            return super.onBackPressed();
+        }
+
     }
 }
