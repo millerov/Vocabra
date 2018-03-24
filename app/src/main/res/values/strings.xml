@@ -13,4 +13,8 @@
     <string name="select_deck_color">Цвет колоды</string>
     <string name="colors">Цвета</string>
 
+    <string name="card_sort_method_1">По дате добавления</string>
+    <string name="card_sort_method_2">По количеству слов для тренеровки</string>
+
+
 </resources>

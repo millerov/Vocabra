@@ -43,14 +43,7 @@ public class LanguagesRepository {
 
       ArrayList<Language> langList;
 
-      //Autistic Realm Migration setup
-        //===========================
-        /*RealmConfiguration config2 = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm realm = Realm.getInstance(config2);*/
         Realm realm = Realm.getDefaultInstance();
-        //realm.deleteAll();
 
         langList = new ArrayList(realm.where(Language.class).findAll());
         return langList;

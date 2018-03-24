@@ -1,6 +1,5 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
-import android.graphics.Color;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -9,11 +8,12 @@ import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
-import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +36,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     LanguagesRepository mLangRep;
     @Inject
     CardsRepository mCardsRep;
+    @Inject
+    UserDataRepository mUserData;
 
     public static int selectedColor;
 
@@ -44,6 +46,10 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     private Deck currentDeckChoosen;
 
     private boolean editDeckMode;
+
+    private int mCardSortSelectionIndex;
+    private ArrayList<CardSortMethod> mCardSortMethods;
+    private CardSortMethod mSelectedSortMethod;
 
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -55,6 +61,12 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     public void attachView(CardBrowserView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
+
+        mSelectedSortMethod = (CardSortMethod) mUserData.getValue(mUserData.SELECTED_CARD_SORT_METHOD,
+                mCardSortMethods.get(0));
+
+
+        mCardSortSelectionIndex = mSelectedSortMethod.getId();
 
         if (showingDeckCards) {
             mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
@@ -75,6 +87,19 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     public void detachView(CardBrowserView view) {
         super.detachView(view);
         getViewState().detachInputListeners();
+    }
+
+
+    public void initSortingMethods(String[] names) {
+        mCardSortMethods = new ArrayList<CardSortMethod>(names.length);
+        for (int i = 0; i < names.length; i++) {
+            CardSortMethod sortMethod = new CardSortMethod(i, names[i], true);
+            mCardSortMethods.add(sortMethod);
+        }
+    }
+
+    public void sortButtonPressed() {
+        getViewState().showSortOptionsDialog(mCardSortMethods, mSelectedSortMethod, mCardSortSelectionIndex);
     }
 
     public void addCardButtonPressed() {

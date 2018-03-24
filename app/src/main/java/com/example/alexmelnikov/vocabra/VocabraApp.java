@@ -10,6 +10,7 @@ import com.example.alexmelnikov.vocabra.dagger.PresenterComponent;
 import com.orhanobut.hawk.Hawk;
 
 import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Created by AlexMelnikov on 28.02.18.
@@ -30,6 +31,11 @@ public class VocabraApp extends Application {
 
         Hawk.init(this).build();
         Realm.init(this);
+
+        /*RealmConfiguration config2 = new RealmConfiguration.Builder()
+                .deleteRealmIfMigrationNeeded()
+                .build();
+        Realm realm = Realm.getInstance(config2);*/
     }
 
 

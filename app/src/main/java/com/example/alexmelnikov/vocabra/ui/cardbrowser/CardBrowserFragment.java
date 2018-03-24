@@ -1,7 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -11,11 +10,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
-import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
-import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.Slide;
 import android.transition.TransitionInflater;
@@ -25,14 +22,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -41,26 +36,23 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.CardsAdapter;
 import com.example.alexmelnikov.vocabra.adapter.DecksDialogAdapter;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
+import com.example.alexmelnikov.vocabra.adapter.SortMethodsDialogAdapter;
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
-import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
-import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.view.RxView;
-import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.thebluealliance.spectrum.SpectrumDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 
@@ -78,9 +70,10 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @BindView(R.id.btn_decks) ImageButton btnDecks;
     @BindView(R.id.btn_back) ImageButton btnBack;
+    @BindView(R.id.btn_sort) ImageButton btnSort;
     @BindView(R.id.rv_cards) RecyclerView rvCards;
     @BindView(R.id.fab_add) FloatingActionButton btnAddCard;
-    @BindView(R.id.layout_toolbar) LinearLayout layoutToolbar;
+    @BindView(R.id.layout_decks_btn) LinearLayout layoutDecksBtn;
 
     @BindView(R.id.layout_deck_cards) LinearLayout layoutDeckCards;
     @BindView(R.id.rl_deck) RelativeLayout rlDeck;
@@ -102,10 +95,16 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     TextInputLayout mDialogTilBack;
     TextInputLayout mDialogTilContext;
 
-
     private CardsAdapter mCardsAdapter;
-    private RecyclerView rvDecks;
+
     private MaterialDialog decksDialog;
+    //RecyclerView used in decks dialog
+    private RecyclerView rvDecks;
+
+
+    private MaterialDialog sortMethodsDialog;
+    //RecyclerView used in sort methods dialog
+    private RecyclerView rvSortMethods;
 
     @Nullable
     @Override
@@ -121,6 +120,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         mCardsAdapter = new CardsAdapter(getActivity(), new ArrayList<Card>(), mCardBrowserPresenter);
         mCardsAdapter.setHasStableIds(true);
 
+        mCardBrowserPresenter.initSortingMethods(new String[]{getActivity().getResources().getString(R.string.card_sort_method_1),
+                getActivity().getResources().getString(R.string.card_sort_method_2)});
+
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
 
         rvCards.setLayoutManager(new CardsLinearLayoutManager(getActivity()));
@@ -134,6 +136,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 .subscribe(o -> mCardBrowserPresenter.addCardButtonPressed());
 
         Disposable decksButton = RxView.clicks(btnDecks)
+                .subscribe(o -> mCardBrowserPresenter.decksButtonPressed());
+
+        Disposable decksLayout = RxView.clicks(layoutDecksBtn)
                 .subscribe(o -> mCardBrowserPresenter.decksButtonPressed());
 
         Disposable backButton = RxView.clicks(btnBack)
@@ -151,8 +156,11 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable editColor = RxView.clicks(btnEditColor)
                 .subscribe(o -> mCardBrowserPresenter.editDeckColorRequest());
 
+        Disposable sortButton = RxView.clicks(btnSort)
+                .subscribe(o -> mCardBrowserPresenter.sortButtonPressed());
+
         mDisposable.addAll(addCardButton, decksButton, editDeckButton, confirmDeckEdit, backButton,
-                editColor, deckNameText);
+                editColor, deckNameText, decksLayout, sortButton);
     }
 
     @Override
@@ -164,7 +172,6 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void replaceCardsRecyclerData(ArrayList<Card> cards) {
         mCardsAdapter.replaceData(cards);
     }
-
 
     @Override
     public void showDecksListDialog(ArrayList<Deck> decks) {
@@ -188,6 +195,24 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void hideDecksListDialog() {
         decksDialog.hide();
     }
+
+    @Override
+    public void showSortOptionsDialog(ArrayList<CardSortMethod> methods,
+                                      CardSortMethod currentMethod, int currentMethodIndex) {
+        sortMethodsDialog = new MaterialDialog.Builder(getActivity())
+                .title("Сортировка")
+                .customView(R.layout.dialog_sort_methods, false)
+                //.onPositive(((dialog1, which) -> mCardBrowserPresenter.createNewDeckRequest()))
+                .build();
+
+        rvSortMethods = sortMethodsDialog.getView().findViewById(R.id.rv_methods);
+        rvSortMethods.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvSortMethods.setAdapter(new SortMethodsDialogAdapter(getActivity(), methods,
+                currentMethod, currentMethodIndex));
+
+        sortMethodsDialog.show();
+    }
+
 
 
     @Override
@@ -269,9 +294,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                         .autoDismiss(false)
                         .onNegative(((dialog1, which) -> dialog1.dismiss()))
                         .onPositive((dialog1, which) -> {
-                            if (etDialogFront.getText().toString().isEmpty())
+                            if (etDialogFront.getText().toString().trim().isEmpty())
                                 mDialogTilFront.setError("Введите слово или фразу");
-                            if (etDialogBack.getText().toString().isEmpty())
+                            if (etDialogBack.getText().toString().trim().isEmpty())
                                 mDialogTilBack.setError("Введите слово или фразу");
                             if (!etDialogFront.getText().toString().isEmpty() &&
                                     !etDialogBack.getText().toString().isEmpty()) {
@@ -322,7 +347,16 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks) {
-
+        MaterialDialog dialog =
+                new MaterialDialog.Builder(getActivity())
+                        .title("Добавление карточки")
+                        .customView(R.layout.dialog_add_card, true)
+                        .positiveText("Добавить")
+                        .negativeText(android.R.string.cancel)
+                        .autoDismiss(false)
+                        .onNegative(((dialog1, which) -> dialog1.dismiss()))
+                        .onPositive((dialog1, which) -> dialog1.dismiss())
+                        .build();
     }
 
 
@@ -334,12 +368,12 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void switchCornerButtonState(boolean showingDeckCards) {
         if (showingDeckCards) {
-            btnDecks.setVisibility(View.GONE);
+            layoutDecksBtn.setVisibility(View.GONE);
             btnBack.setVisibility(View.VISIBLE);
         }
         else {
             btnBack.setVisibility(View.GONE);
-            btnDecks.setVisibility(View.VISIBLE);
+            layoutDecksBtn.setVisibility(View.VISIBLE);
         }
     }
 

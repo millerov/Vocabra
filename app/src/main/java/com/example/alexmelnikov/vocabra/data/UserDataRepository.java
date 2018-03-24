@@ -13,6 +13,7 @@ import com.orhanobut.hawk.Hawk;
 public class UserDataRepository {
 
     public static final String SELECTED_LANGUAGES = "SELECTED_LANGUAGES";
+    public static final String SELECTED_CARD_SORT_METHOD = "SELECTED_CARD_SORT_METHOD";
 
     public void putValue(String key, @NonNull Object value) {
         Hawk.put(key, value);
