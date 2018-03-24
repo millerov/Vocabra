@@ -44,4 +44,12 @@ public interface CardBrowserView extends BaseView {
 
     void showDeckNameEditTextMessage(String message);
 
+    void showAddCardDialog(ArrayList<Deck> decks);
+
+    void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks);
+
+    void showCardAlreadyExistsSnackbarMessage(String deckName);
+
+    void showCardSuccessfulyAddedSnackbarMessage(String deckName);
+
 }

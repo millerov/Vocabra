@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.TextInputLayout;
 import android.support.transition.Fade;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,11 +24,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
@@ -37,16 +40,22 @@ import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.CardsAdapter;
 import com.example.alexmelnikov.vocabra.adapter.DecksDialogAdapter;
+import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
+import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
+import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 import com.thebluealliance.spectrum.SpectrumDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
@@ -84,6 +93,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.et_deck_name)
     EditText etDeckName;
 
+    //addCardDialog views
+    EditText etDialogFront;
+    EditText etDialogBack;
+    EditText etDialogContext;
+    Spinner mDialogSpinDecks;
+    TextInputLayout mDialogTilFront;
+    TextInputLayout mDialogTilBack;
+    TextInputLayout mDialogTilContext;
+
 
     private CardsAdapter mCardsAdapter;
     private RecyclerView rvDecks;
@@ -112,6 +130,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void attachInputListeners() {
+        Disposable addCardButton = RxView.clicks(btnAddCard)
+                .subscribe(o -> mCardBrowserPresenter.addCardButtonPressed());
+
         Disposable decksButton = RxView.clicks(btnDecks)
                 .subscribe(o -> mCardBrowserPresenter.decksButtonPressed());
 
@@ -130,7 +151,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable editColor = RxView.clicks(btnEditColor)
                 .subscribe(o -> mCardBrowserPresenter.editDeckColorRequest());
 
-        mDisposable.addAll(decksButton, editDeckButton, confirmDeckEdit, backButton,
+        mDisposable.addAll(addCardButton, decksButton, editDeckButton, confirmDeckEdit, backButton,
                 editColor, deckNameText);
     }
 
@@ -236,6 +257,75 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         }
     }
 
+
+    @Override
+    public void showAddCardDialog(ArrayList<Deck> decks) {
+        MaterialDialog dialog =
+                new MaterialDialog.Builder(getActivity())
+                        .title("Добавление карточки")
+                        .customView(R.layout.dialog_add_card, true)
+                        .positiveText("Добавить")
+                        .negativeText(android.R.string.cancel)
+                        .autoDismiss(false)
+                        .onNegative(((dialog1, which) -> dialog1.dismiss()))
+                        .onPositive((dialog1, which) -> {
+                            if (etDialogFront.getText().toString().isEmpty())
+                                mDialogTilFront.setError("Введите слово или фразу");
+                            if (etDialogBack.getText().toString().isEmpty())
+                                mDialogTilBack.setError("Введите слово или фразу");
+                            if (!etDialogFront.getText().toString().isEmpty() &&
+                                    !etDialogBack.getText().toString().isEmpty()) {
+                                mCardBrowserPresenter.addNewCardRequest(etDialogFront.getText().toString(),
+                                        etDialogBack.getText().toString(),
+                                        LanguageUtils.findByKey(mDialogTilFront.getHint().toString().split(":")[1].trim()),
+                                        LanguageUtils.findByKey(mDialogTilBack.getHint().toString().split(":")[1].trim()),
+                                        etDialogContext.getText().toString(),
+                                        (String) mDialogSpinDecks.getSelectedItem(),
+                                        getResources().getColor(R.color.colorPrimary));
+                                dialog1.dismiss();
+                            }
+                        })
+                        .build();
+
+        etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
+        etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
+        etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
+        mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        mDialogTilFront = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_front);
+        mDialogTilBack = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_back);
+        mDialogTilContext = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_context);
+
+        mDialogSpinDecks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                List<Language> langs = mCardBrowserPresenter.getLanguagesByDeckName(((TextView)view.findViewById(R.id.line_one)).getText().toString());
+                mDialogTilFront.setHint("Передняя сторона : " + langs.get(0).getId());
+                mDialogTilBack.setHint("Задняя сторона : " + langs.get(1).getId());
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        etDialogFront.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogBack.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogContext.setInputType(InputType.TYPE_CLASS_TEXT);
+        mDialogTilFront.setHint("Передняя сторона");
+        mDialogTilBack.setHint("Задняя сторона");
+        mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
+        etDialogFront.requestFocus();
+        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
+        dialog.show();
+    }
+
+
+    @Override
+    public void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks) {
+
+    }
+
+
     @Override
     public void hideDeckCardview() {
         rlDeck.setVisibility(View.GONE);
@@ -286,6 +376,16 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         etDeckName.setError(message);
     }
 
+    @Override
+    public void showCardAlreadyExistsSnackbarMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName,
+                true, mCardBrowserPresenter, "Еще раз");
+    }
+
+    @Override
+    public void showCardSuccessfulyAddedSnackbarMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage("Карточка успешно добавлена в " + deckName, false, null, null);
+    }
 
     @Override
     public boolean onBackPressed() {
@@ -296,6 +396,5 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         } else {
             return super.onBackPressed();
         }
-
     }
 }

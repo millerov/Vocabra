@@ -79,6 +79,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.toolbar_layout) RelativeLayout rlToolbar;
     @BindView(R.id.sv_mainscroll) ScrollView svTranslationAndHistory;
 
+
+    //addCardDialog views
     EditText etDialogFront;
     EditText etDialogBack;
     EditText etDialogContext;
@@ -115,7 +117,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         String translationNotNull = getArguments().getSerializable("translationNotNull").toString();
 
         if (fromTranslationFragment == "false") {
-            adapterAnimDelay = 70;
+            adapterAnimDelay = 0;
         } else {
             if (translationNotNull == "false") {
                 adapterAnimDelay = 410;
@@ -285,7 +287,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
         clipboard.setPrimaryClip(clip);
-        ((MainActivity)getActivity()).showMessage("Перевод скопирован", false, mTranslatorPresenter);
+        ((MainActivity)getActivity()).showMessage("Перевод скопирован", false, null, null);
 
     }
 
@@ -293,7 +295,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @Override
     public void showFavoriteDropMessage() {
         ((MainActivity)getActivity()).showMessage("Перевод удален из вашей коллекции",
-                true, mTranslatorPresenter);
+                true, mTranslatorPresenter, "Отменить");
     }
 
     @Override
@@ -304,10 +306,22 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         .customView(R.layout.dialog_add_card, true)
                         .positiveText("Добавить")
                         .negativeText(android.R.string.cancel)
-                        .onPositive((dialog1, which) -> mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos,
-                                translation, etDialogFront.getText().toString(), etDialogBack.getText().toString(),
-                                etDialogContext.getText().toString(), (String) mDialogSpinDecks.getSelectedItem(),
-                                getResources().getColor(R.color.colorPrimary)))
+                        .autoDismiss(false)
+                        .onNegative(((dialog1, which) -> dialog1.dismiss()))
+                        .onPositive((dialog1, which) -> {
+                            if (etDialogFront.getText().toString().isEmpty())
+                                mDialogTilFront.setError("Введите слово или фразу");
+                            if (etDialogBack.getText().toString().isEmpty())
+                                mDialogTilBack.setError("Введите слово или фразу");
+                            if (!etDialogFront.getText().toString().isEmpty() &&
+                                    !etDialogBack.getText().toString().isEmpty()) {
+                                mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos,
+                                        translation, etDialogFront.getText().toString(), etDialogBack.getText().toString(),
+                                        etDialogContext.getText().toString(), (String) mDialogSpinDecks.getSelectedItem(),
+                                        getResources().getColor(R.color.colorPrimary));
+                                dialog1.dismiss();
+                            }
+                        })
                         .build();
 
         etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
@@ -327,8 +341,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         mDialogTilBack.setHint("Задняя сторона " + TextUtils.getSecondLanguageIndexFromDir(translation.getLangs()));
         mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
         etDialogContext.requestFocus();
-        etDialogFront.setSelection(etDialogFront.getText().length());
-        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks));
+        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, true));
         dialog.show();
     }
 

@@ -217,7 +217,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     public void addNewCardFromHistoryResultPassed(int pos, Translation initialTranslation, String front,
-                                                  String back, String cardContext, String chosenDeck, int defaultColor) {
+                                                  String back, String cardContext, String chosenDeckName, int defaultColor) {
 
         String firstLanguageName = LanguageUtils.findNameByKey(TextUtils.getFirstLanguageIndexFromDir(initialTranslation.getLangs()));
         String secondLanguageName = LanguageUtils.findNameByKey(TextUtils.getSecondLanguageIndexFromDir(initialTranslation.getLangs()));
@@ -226,8 +226,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         Deck deck;
 
         //Check which deck option has been chosen
-        if (!chosenDeck.equals("По умолчанию")) {
-            deck = mDecksRep.getDeckByName(chosenDeck);
+        if (!chosenDeckName.equals("По умолчанию")) {
+            deck = mDecksRep.getDeckByName(chosenDeckName);
         } else {
             String defaultDeckName = firstLanguageName + "-" + secondLanguageName;
             //if there hasn't yet default deck for this language direction been created then create one

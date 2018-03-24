@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
+import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 
 import com.arellomobile.mvp.MvpView;
@@ -22,5 +23,5 @@ public interface MainView  extends MvpView {
     void replaceFragment(int prevIndex, int currentIndex);
 
     @StateStrategyType(OneExecutionStateStrategy.class)
-    void showMessage(String message, boolean withAction, SnackBarActionHandler presenter);
+    void showMessage(String message, boolean withAction, @Nullable SnackBarActionHandler presenter, @Nullable String actionText);
 }

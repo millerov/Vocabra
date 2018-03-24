@@ -112,7 +112,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     @Override
-    public void showMessage(String message, boolean withAction, SnackBarActionHandler presenter) {
+    public void showMessage(String message, boolean withAction, SnackBarActionHandler presenter, String actionText) {
         Snackbar snack;
         if (withAction) {
             snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_LONG);
@@ -127,7 +127,7 @@ public class MainActivity extends BaseActivity implements MainView {
         snack.getView().setLayoutParams(params);
 
         if (withAction) {
-            snack.setAction("Отменить", new View.OnClickListener() {
+            snack.setAction(actionText, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     presenter.onSnackbarEvent();

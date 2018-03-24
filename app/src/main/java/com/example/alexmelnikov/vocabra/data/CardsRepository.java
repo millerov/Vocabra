@@ -61,15 +61,18 @@ public class CardsRepository {
         return cards;
     }
 
-    public Card getSimilarElementInDB(Card card) {
-        Card similarCard;
+    public boolean containsSimilarCardInDeckDB(Card card, Deck deck) {
         Realm realm = Realm.getDefaultInstance();
-        similarCard = realm.where(Card.class)
+        RealmResults<Card> similarCards = realm.where(Card.class)
                 .equalTo("front", card.getFront())
                 .equalTo("back", card.getBack())
                 .equalTo("translationDirection", card.getTranslationDirection())
-                .findFirst();
-        return similarCard;
+                .findAll();
+        for (int i = 0; i < similarCards.size(); i++) {
+            if (similarCards.get(i).getDeck().getName().equals(deck.getName()))
+                return true;
+        }
+        return false;
     }
 
     public void deleteCardFromDB(Card card) {

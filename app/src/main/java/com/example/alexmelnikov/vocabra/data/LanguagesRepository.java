@@ -2,6 +2,8 @@ package com.example.alexmelnikov.vocabra.data;
 
 import android.util.Log;
 
+import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 
 import java.util.ArrayList;
@@ -35,7 +37,6 @@ public class LanguagesRepository {
                 realm.close();
             }
         }
-
     }
 
     public ArrayList<Language> getLanguagesFromDB() {

@@ -35,8 +35,9 @@ public class DecksSpinnerAdapter extends BaseAdapter implements SpinnerAdapter {
     private Context mContext;
     private ArrayList<Deck> mData;
 
-    public DecksSpinnerAdapter(Context context, ArrayList<Deck> data){
-        data.add(null);
+    public DecksSpinnerAdapter(Context context, ArrayList<Deck> data, boolean defaultElementNeeded){
+        if (defaultElementNeeded)
+            data.add(null);
         this.mContext = context;
         this.mData = data;
     }
