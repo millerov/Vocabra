@@ -167,4 +167,22 @@ public class CardsRepository {
         } else cards = null;
         return cards;
     }
+
+    public void updateCardInDB(Card card, String front, String back, String cardContext,
+                           Deck deck) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Card updatedCard = realm.where(Card.class)
+                        .equalTo("id", card.getId())
+                        .findFirst();
+                updatedCard.setFront(front);
+                updatedCard.setBack(back);
+                updatedCard.setCardContext(cardContext);
+                updatedCard.setDeck(deck);
+            }
+        });
+        realm.close();
+    }
 }

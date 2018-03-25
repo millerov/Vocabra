@@ -77,7 +77,7 @@ public class DecksRepository {
     public ArrayList<Deck> findDecksByTranslationDirection(String translationDir) {
         ArrayList<Deck> decks;
         Realm realm = Realm.getDefaultInstance();
-        decks = new ArrayList(realm.where(Deck.class)
+        decks = new ArrayList<Deck>(realm.where(Deck.class)
                 .equalTo("translationDirection", translationDir)
                 .findAll());
         return decks;

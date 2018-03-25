@@ -277,6 +277,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         getViewState().showFavoriteDropMessage();
     }
 
+
     @Override
     public void onSnackbarEvent() {
         Card card = new Card(-1, mTemporaryCard);

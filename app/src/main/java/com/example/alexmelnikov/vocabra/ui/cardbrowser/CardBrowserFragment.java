@@ -51,6 +51,8 @@ import com.thebluealliance.spectrum.SpectrumDialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
@@ -87,7 +89,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.et_deck_name)
     EditText etDeckName;
 
-    //addCardDialog views
+    //addCardDialog/editCardDialog views
     EditText etDialogFront;
     EditText etDialogBack;
     EditText etDialogContext;
@@ -96,12 +98,13 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     TextInputLayout mDialogTilBack;
     TextInputLayout mDialogTilContext;
 
+
     private CardsAdapter mCardsAdapter;
+    private LinearLayoutManager mCardsRvManager;
 
     private MaterialDialog decksDialog;
     //RecyclerView used in decks dialog
     private RecyclerView rvDecks;
-
 
     private MaterialDialog sortMethodsDialog;
     //RecyclerView used in sort methods dialog
@@ -126,7 +129,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
 
-        rvCards.setLayoutManager(new CardsLinearLayoutManager(getActivity()));
+        mCardsRvManager = new CardsLinearLayoutManager(getActivity());
+        rvCards.setLayoutManager(mCardsRvManager);
         rvCards.setAdapter(mCardsAdapter);
 
     }
@@ -306,8 +310,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                                 mDialogTilFront.setError("Введите слово или фразу");
                             if (etDialogBack.getText().toString().trim().isEmpty())
                                 mDialogTilBack.setError("Введите слово или фразу");
-                            if (!etDialogFront.getText().toString().isEmpty() &&
-                                    !etDialogBack.getText().toString().isEmpty()) {
+                            if (!etDialogFront.getText().toString().trim().isEmpty() &&
+                                    !etDialogBack.getText().toString().trim().isEmpty()) {
                                 mCardBrowserPresenter.addNewCardRequest(etDialogFront.getText().toString(),
                                         etDialogBack.getText().toString(),
                                         LanguageUtils.findByKey(mDialogTilFront.getHint().toString().split(":")[1].trim()),
@@ -350,6 +354,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         etDialogFront.requestFocus();
         mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
 
+        //Display only chosen deck if dialog called on current deck cards
         if (currentDeck != null) {
             int index = 0;
             for (int i = 0; i < mDialogSpinDecks.getCount(); i++) {
@@ -370,14 +375,81 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks) {
         MaterialDialog dialog =
                 new MaterialDialog.Builder(getActivity())
-                        .title("Добавление карточки")
+                        .title("Изменение карточки")
                         .customView(R.layout.dialog_add_card, true)
-                        .positiveText("Добавить")
+                        .positiveText("Сохранить")
                         .negativeText(android.R.string.cancel)
                         .autoDismiss(false)
-                        .onNegative(((dialog1, which) -> dialog1.dismiss()))
-                        .onPositive((dialog1, which) -> dialog1.dismiss())
+                        .onNegative(((dialog1, which) -> {
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                            dialog1.dismiss();
+                        }))
+                        .onPositive((dialog1, which) -> {
+                            if (etDialogFront.getText().toString().trim().isEmpty())
+                                mDialogTilFront.setError("Введите слово или фразу");
+                            if (etDialogBack.getText().toString().trim().isEmpty())
+                                mDialogTilBack.setError("Введите слово или фразу");
+
+                            if (!etDialogFront.getText().toString().trim().isEmpty() && !etDialogBack.getText().toString().trim().isEmpty()) {
+                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+
+                                mCardBrowserPresenter.editCardRequest(card, etDialogFront.getText().toString(), etDialogBack.getText().toString(),
+                                        etDialogContext.getText().toString(), mDialogSpinDecks.getSelectedItem().toString());
+                                dialog1.dismiss();
+                            }
+                        })
                         .build();
+
+        etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
+        etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
+        etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
+        mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        mDialogTilFront = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_front);
+        mDialogTilBack = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_back);
+        mDialogTilContext = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_context);
+
+        mDialogSpinDecks.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                List<Language> langs = mCardBrowserPresenter.getLanguagesByDeckName(((TextView)view.findViewById(R.id.line_one)).getText().toString());
+                mDialogTilFront.setHint("Передняя сторона : " + langs.get(0).getId());
+                mDialogTilBack.setHint("Задняя сторона : " + langs.get(1).getId());
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {}
+        });
+
+        etDialogFront.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogBack.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogContext.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogFront.setText(card.getFront());
+        etDialogBack.setText(card.getBack());
+        if (!card.getCardContext().isEmpty())
+            etDialogContext.setText(card.getCardContext());
+        mDialogTilFront.setHint("Передняя сторона");
+        mDialogTilBack.setHint("Задняя сторона");
+        if (card.getCardContext().isEmpty())
+            mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
+        etDialogFront.requestFocus();
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(etDialogFront, 0);
+        etDialogFront.setSelection(etDialogFront.getText().length());
+        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
+
+        int index = 0;
+        for (int i = 0; i < mDialogSpinDecks.getCount(); i++) {
+            if (mDialogSpinDecks.getItemAtPosition(i).toString().equals(card.getDeck().getName())) {
+                index = i;
+                break;
+            }
+        }
+        mDialogSpinDecks.setSelection(index);
+
+        dialog.show();
     }
 
 
@@ -426,15 +498,22 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         rlDeck.setBackground(drawable);
     }
 
+
     @Override
     public void showDeckNameEditTextMessage(String message) {
         etDeckName.setError(message);
     }
 
     @Override
-    public void showCardAlreadyExistsSnackbarMessage(String deckName) {
+    public void showCardAlreadyExistsSnackbarMessageAction(String deckName) {
         ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName,
                 true, mCardBrowserPresenter, "Еще раз");
+    }
+
+    @Override
+    public void showCardAlreadyExistsSnackbarMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName,
+                false, null, null);
     }
 
     @Override

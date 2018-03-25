@@ -13,8 +13,10 @@ import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
+import android.transition.Slide;
 import android.transition.TransitionInflater;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,10 +36,12 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
@@ -309,12 +313,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         .autoDismiss(false)
                         .onNegative(((dialog1, which) -> dialog1.dismiss()))
                         .onPositive((dialog1, which) -> {
-                            if (etDialogFront.getText().toString().isEmpty())
+                            if (etDialogFront.getText().toString().trim().isEmpty())
                                 mDialogTilFront.setError("Введите слово или фразу");
-                            if (etDialogBack.getText().toString().isEmpty())
+                            if (etDialogBack.getText().toString().trim().isEmpty())
                                 mDialogTilBack.setError("Введите слово или фразу");
-                            if (!etDialogFront.getText().toString().isEmpty() &&
-                                    !etDialogBack.getText().toString().isEmpty()) {
+                            if (!etDialogFront.getText().toString().trim().isEmpty() &&
+                                    !etDialogBack.getText().toString().trim().isEmpty()) {
                                 mTranslatorPresenter.addNewCardFromHistoryResultPassed(pos,
                                         translation, etDialogFront.getText().toString(), etDialogBack.getText().toString(),
                                         etDialogContext.getText().toString(), (String) mDialogSpinDecks.getSelectedItem(),

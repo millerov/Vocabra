@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 
 /**
  * Created by AlexMelnikov on 25.02.18.
@@ -18,9 +19,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
 
     public void bottomNavigationClick(int itemPos) {
         mPreviousFragmentIndex = mCurrentFragmentIndex;
-        Log.d("MyTag", "prev fragment index = " + mPreviousFragmentIndex);
         mCurrentFragmentIndex = itemPos;
-        Log.d("MyTag", "current fragment index = " + mCurrentFragmentIndex);
         getViewState().replaceFragment(mCurrentFragmentIndex, mPreviousFragmentIndex);
     }
 

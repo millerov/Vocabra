@@ -109,8 +109,8 @@
             android:layout_marginHorizontal="4dp"
             android:layout_marginTop="6dp"
             android:layout_marginBottom="6dp"
-            android:paddingHorizontal="14dp"
             android:paddingVertical="14dp"
+            android:paddingHorizontal="14dp"
             android:visibility="gone"
             tools:visibility="visible">
 
@@ -120,7 +120,6 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/tv_deck_name"
                 android:layout_alignStart="@id/tv_deck_name"
-                android:paddingTop="14dp"
                 android:layout_marginLeft="6dp"
                 android:textSize="14sp"
                 android:textColor="@color/colorAccent" />
@@ -131,7 +130,6 @@
                 android:layout_height="wrap_content"
                 android:paddingRight="64dp"
                 android:paddingLeft="4dp"
-                android:layout_centerVertical="true"
                 android:textSize="22sp"
                 android:textColor="@color/colorWhite"
                 android:maxLines="1"
