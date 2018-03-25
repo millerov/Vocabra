@@ -45,7 +45,7 @@ public interface CardBrowserView extends BaseView {
 
     void showDeckNameEditTextMessage(String message);
 
-    void showAddCardDialog(ArrayList<Deck> decks);
+    void showAddCardDialog(ArrayList<Deck> decks, @Nullable Deck currentDeck);
 
     void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks);
 
@@ -55,5 +55,7 @@ public interface CardBrowserView extends BaseView {
 
     void showSortOptionsDialog(ArrayList<CardSortMethod> methods,
                                CardSortMethod currentMethod, int currentMethodIndex);
+
+    void hideSortOptionstDialog();
 
 }

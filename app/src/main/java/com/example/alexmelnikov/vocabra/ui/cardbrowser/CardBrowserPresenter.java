@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -43,7 +44,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     private ArrayList<Card> mCardsList;
     private boolean showingDeckCards;
-    private Deck currentDeckChoosen;
+    @Nullable private Deck currentDeckChoosen;
 
     private boolean editDeckMode;
 
@@ -80,7 +81,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
         getViewState().switchDeckDisplayMode(editDeckMode);
         getViewState().switchCornerButtonState(showingDeckCards);
-        loadCards();
+        sortCards();
     }
 
     @Override
@@ -103,7 +104,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
     public void addCardButtonPressed() {
-        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB());
+        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
     }
 
     public void addNewCardRequest(String front, String back, Language firstLanguage, Language secondLanguage, String cardContext, String chosenDeckName, int defaultColor) {
@@ -121,7 +122,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     @Override
     public void onSnackbarEvent() {
-        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB());
+        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
     }
 
     public void decksButtonPressed() {
@@ -138,7 +139,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             getViewState().switchCornerButtonState(showingDeckCards);
             mCardsList = mCardsRep.getCardsFromDB();
             getViewState().hideDeckCardview();
-            getViewState().replaceCardsRecyclerData(mCardsList);
+            sortCards();
         }
     }
 
@@ -159,7 +160,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         getViewState().switchCornerButtonState(showingDeckCards);
 
         mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
-        getViewState().replaceCardsRecyclerData(mCardsList);
+        sortCards();
     }
 
 
@@ -199,11 +200,36 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         return Arrays.asList(firstLang, secondLang);
     }
 
+    public void sortDialogRecyclerItemPressed(int pos) {
+        getViewState().hideSortOptionstDialog();
+        if (mCardSortSelectionIndex != pos) {
+            mSelectedSortMethod = mCardSortMethods.get(pos);
+            mCardSortSelectionIndex = pos;
+            mUserData.putValue(mUserData.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
+            sortCards();
+        } else {
+            if (mSelectedSortMethod.isAscending())
+                mSelectedSortMethod.setAscending(false);
+            else
+                mSelectedSortMethod.setAscending(true);
+            mUserData.putValue(mUserData.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
+            sortCards();
+        }
+    }
 
     //=============Private logic===============
+
+    private void sortCards() {
+        if (!showingDeckCards)
+            mCardsList = mCardsRep.getSortedCardsDB(mSelectedSortMethod);
+        else
+            mCardsList = mCardsRep.getSortedCardsByDeckDB(currentDeckChoosen, mSelectedSortMethod);
+        loadCards();
+    }
 
     private void loadCards() {
         getViewState().replaceCardsRecyclerData(mCardsList);
     }
+
 
 }

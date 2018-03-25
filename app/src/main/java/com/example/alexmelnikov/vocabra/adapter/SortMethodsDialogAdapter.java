@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.CardSortMethod;
+import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 
 import java.util.ArrayList;
 
@@ -30,13 +31,15 @@ public class SortMethodsDialogAdapter extends RecyclerView.Adapter<SortMethodsDi
     ArrayList<CardSortMethod> mData;
     CardSortMethod selectedMethod;
     int selectedIndex;
+    CardBrowserPresenter presenter;
 
     public SortMethodsDialogAdapter(Context mContext, ArrayList<CardSortMethod> mData,
-                                    CardSortMethod selectedMethod, int selectedIndex) {
+                                    CardSortMethod selectedMethod, int selectedIndex, CardBrowserPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
         this.selectedMethod = selectedMethod;
         this.selectedIndex = selectedIndex;
+        this.presenter = presenter;
     }
 
     class SortMethodsViewHolder extends RecyclerView.ViewHolder {
@@ -65,8 +68,6 @@ public class SortMethodsDialogAdapter extends RecyclerView.Adapter<SortMethodsDi
         CardSortMethod method = mData.get(position);
         holder.tvMethodName.setText(method.getName());
         if (position == selectedIndex) {
-            Log.d(TAG, "onBindViewHolder: " + method.getName());
-            Log.d(TAG, "onBindViewHolder: " + selectedMethod.getName());
             holder.rbStatus.toggle();
             if (selectedMethod.isAscending()) {
                 holder.ivVector.setBackground(mContext.getResources().getDrawable(R.drawable.ic_arrow_upward_black_24dp));
@@ -76,6 +77,8 @@ public class SortMethodsDialogAdapter extends RecyclerView.Adapter<SortMethodsDi
         } else {
             holder.ivVector.setBackground(mContext.getResources().getDrawable(R.drawable.ic_arrow_downward_black_24dp));
         }
+
+        holder.itemView.setOnClickListener(view -> presenter.sortDialogRecyclerItemPressed(position));
 
     }
 

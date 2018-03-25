@@ -29,23 +29,11 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/iv_color"
             android:layout_marginLeft="10dp"
-            android:paddingEnd="55dp"
+
             android:textColor="@android:color/black"
             android:textSize="20sp"
             android:maxLines="1"
-            android:ellipsize="end"
-            tools:text="123456789123456789123456789"/>
-
-        <TextView
-            android:id="@+id/tv_langs"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="6dp"
-            android:textSize="20sp"
-            android:textColor="@color/grey_md700"
-            tools:text="en-ru"/>
-
+            android:ellipsize="end" />
 
     </RelativeLayout>
 

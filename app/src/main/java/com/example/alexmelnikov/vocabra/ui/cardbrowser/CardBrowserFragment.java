@@ -78,6 +78,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.layout_deck_cards) LinearLayout layoutDeckCards;
     @BindView(R.id.rl_deck) RelativeLayout rlDeck;
     @BindView(R.id.tv_deck_name) TextView tvDeckName;
+    @BindView(R.id.tv_deck_langs) TextView tvDeckLangs;
     @BindView(R.id.btn_edit_deck) ImageButton btnEditDeck;
     @BindView(R.id.btn_train) ImageButton btnTrain;
     @BindView(R.id.btn_edit_color) ImageButton btnEditColor;
@@ -121,7 +122,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         mCardsAdapter.setHasStableIds(true);
 
         mCardBrowserPresenter.initSortingMethods(new String[]{getActivity().getResources().getString(R.string.card_sort_method_1),
-                getActivity().getResources().getString(R.string.card_sort_method_2)});
+                getActivity().getResources().getString(R.string.card_sort_method_2), getActivity().getResources().getString(R.string.card_sort_method_3)});
 
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
 
@@ -208,11 +209,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         rvSortMethods = sortMethodsDialog.getView().findViewById(R.id.rv_methods);
         rvSortMethods.setLayoutManager(new LinearLayoutManager(getActivity()));
         rvSortMethods.setAdapter(new SortMethodsDialogAdapter(getActivity(), methods,
-                currentMethod, currentMethodIndex));
+                currentMethod, currentMethodIndex, mCardBrowserPresenter));
 
         sortMethodsDialog.show();
     }
 
+    @Override
+    public void hideSortOptionstDialog() {
+        sortMethodsDialog.hide();
+    }
 
 
     @Override
@@ -241,6 +246,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void showDeckCardview(Deck deck) {
         tvDeckName.setText(deck.getName());
+        tvDeckLangs.setText(deck.getFirstLanguage().getLang() + "-" + deck.getSecondLanguage().getLang());
         final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
         rlDeck.setBackground(drawable);
@@ -255,6 +261,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             String deckName = tvDeckName.getText().toString();
             etDeckName.setVisibility(View.VISIBLE);
             tvDeckName.setVisibility(View.INVISIBLE);
+            tvDeckLangs.setVisibility(View.INVISIBLE);
             etDeckName.setText(deckName);
 
             etDeckName.requestFocus();
@@ -274,6 +281,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 etDeckName.setVisibility(View.INVISIBLE);
                 tvDeckName.setText(deckName);
                 tvDeckName.setVisibility(View.VISIBLE);
+                tvDeckLangs.setVisibility(View.VISIBLE);
                 btnEditDeck.setVisibility(View.VISIBLE);
                 btnTrain.setVisibility(View.VISIBLE);
                 btnConfirm.setVisibility(View.GONE);
@@ -284,7 +292,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
 
     @Override
-    public void showAddCardDialog(ArrayList<Deck> decks) {
+    public void showAddCardDialog(ArrayList<Deck> decks, @Nullable Deck currentDeck) {
         MaterialDialog dialog =
                 new MaterialDialog.Builder(getActivity())
                         .title("Добавление карточки")
@@ -341,6 +349,19 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
         etDialogFront.requestFocus();
         mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
+
+        if (currentDeck != null) {
+            int index = 0;
+            for (int i = 0; i < mDialogSpinDecks.getCount(); i++) {
+                if (mDialogSpinDecks.getItemAtPosition(i).toString().equals(currentDeck.getName())) {
+                    index = i;
+                    break;
+                }
+            }
+            mDialogSpinDecks.setSelection(index);
+            mDialogSpinDecks.setEnabled(false);
+        }
+
         dialog.show();
     }
 

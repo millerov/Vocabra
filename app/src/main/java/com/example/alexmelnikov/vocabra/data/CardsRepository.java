@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.data;
 import android.util.Log;
 
 import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Translation;
 
@@ -10,12 +11,15 @@ import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Created by AlexMelnikov on 10.03.18.
  */
 
 public class CardsRepository {
+
+    private static final String TAG = "MyTag";
 
     public void insertCardToDB(Card card) {
         Realm realm = null;
@@ -55,7 +59,7 @@ public class CardsRepository {
     public ArrayList<Card> getCardsByDeckDB(Deck deck) {
         ArrayList<Card> cards;
         Realm realm = Realm.getDefaultInstance();
-        cards = new ArrayList(realm.where(Card.class)
+        cards = new ArrayList<Card>(realm.where(Card.class)
                 .equalTo("deck.name", deck.getName())
                 .findAll());
         return cards;
@@ -105,5 +109,62 @@ public class CardsRepository {
             }
         });
         realm.close();
+    }
+
+    public ArrayList<Card> getSortedCardsDB(CardSortMethod method) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+
+        if (method.getId() == 0) {
+            if (method.isAscending()) {
+                /*Log.d(TAG, "getSortedCardsDB: sorting ascending");
+                result.sort("id", Sort.ASCENDING);*/
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("creationDate", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                /*Log.d(TAG, "getSortedCardsDB: sorting descending");
+                result.sort("id", Sort.DESCENDING);*/
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("creationDate", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else cards = null; /*else if (method.getId() == 1) {
+            if (method.isAscending())
+                result.sort("timesTrained", Sort.ASCENDING);
+            else
+                result.sort("timesTrained", Sort.DESCENDING);
+        } else if (method.getId() ==2 ) {
+            if (method.isAscending())
+                result.sort("lastTimeTrained", Sort.ASCENDING);
+            else
+                result.sort("lastTimeTrained", Sort.DESCENDING);
+        }*/
+
+//        cards = new ArrayList<Card>(result);
+        return cards;
+    }
+
+    public ArrayList<Card> getSortedCardsByDeckDB(Deck deck, CardSortMethod method) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        if (method.getId() == 0) {
+            if (method.isAscending()) {
+                /*Log.d(TAG, "getSortedCardsDB: sorting ascending");
+                result.sort("id", Sort.ASCENDING);*/
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("creationDate", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                /*Log.d(TAG, "getSortedCardsDB: sorting descending");
+                result.sort("id", Sort.DESCENDING);*/
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("creationDate", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else cards = null;
+        return cards;
     }
 }

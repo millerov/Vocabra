@@ -46,7 +46,7 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
 
         @BindView(R.id.iv_color) ImageView ivColor;
         @BindView(R.id.tv_deck_name) TextView tvDeckName;
-        @BindView(R.id.tv_langs) TextView tvLanguages;
+
 
         public DecksViewHolder(View itemView) {
             super(itemView);
@@ -69,12 +69,8 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_color);
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
         holder.ivColor.setBackground(drawable);
-        if (deck.getName().length() < 14)
-            holder.tvDeckName.setText(deck.getName());
-        else
-            holder.tvDeckName.setText(deck.getName().substring(0, 14) + "...");
+        holder.tvDeckName.setText(deck.getName());
 
-        holder.tvLanguages.setText(deck.getFirstLanguage().getId() + "-" + deck.getSecondLanguage().getId());
 
         holder.itemView.setOnClickListener(view -> presenter.decksDialogRecyclerItemPressed(mData.size() - position - 1));
     }
