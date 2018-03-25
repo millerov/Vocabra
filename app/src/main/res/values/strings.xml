@@ -10,12 +10,18 @@
     <string name="inf_yandex_translate_api"><![CDATA[Приложение использует <a href="https://tech.yandex.ru/translate">Yandex Translate API</a>]]></string>
     <string name="title_activity_test">testActivity</string>
 
-    <string name="select_deck_color">Цвет колоды</string>
-    <string name="colors">Цвета</string>
-
+    <!-- CardBrowser fragment-->
     <string name="card_sort_method_1">По дате добавления</string>
     <string name="card_sort_method_2">По кол-ву тренеровок</string>
     <string name="card_sort_method_3">По дате последней тренеровки</string>
+    <string name="text_my_decks">Мои Колоды</string>
+    <string name="text_sort_method">Выберите способ сортировки</string>
+    <string name="text_deck">Колода</string>
+    <string name="hint_card_context">Контекст</string>
+
+    <!-- DeckAdd fragment-->
+    <string name="text_new_deck_header">Новая колода</string>
+    <string name="hint_deck_name">Название колоды</string>
 
 
 

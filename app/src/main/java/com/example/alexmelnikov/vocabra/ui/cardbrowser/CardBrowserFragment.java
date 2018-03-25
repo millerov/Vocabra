@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -70,6 +72,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @InjectPresenter(type = PresenterType.GLOBAL, tag = "cardbrowser")
     CardBrowserPresenter mCardBrowserPresenter;
 
+    @BindView(R.id.layout_toolbar) RelativeLayout rlToolbar;
+
     @BindView(R.id.btn_decks) ImageButton btnDecks;
     @BindView(R.id.btn_back) ImageButton btnBack;
     @BindView(R.id.btn_sort) ImageButton btnSort;
@@ -86,8 +90,11 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.btn_edit_color) ImageButton btnEditColor;
     @BindView(R.id.btn_confirm) ImageButton btnConfirm;
 
-    @BindView(R.id.et_deck_name)
-    EditText etDeckName;
+    @BindView(R.id.et_deck_name) EditText etDeckName;
+
+    @BindView(R.id.layout_toolbar_edit_mode) RelativeLayout rlToolbarEditMode;
+    @BindView(R.id.btn_back_edit) ImageButton btnDeleteItems;
+    @BindView(R.id.cb_select_all) CheckBox cbSelectAll;
 
     //addCardDialog/editCardDialog views
     EditText etDialogFront;
@@ -164,8 +171,21 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable sortButton = RxView.clicks(btnSort)
                 .subscribe(o -> mCardBrowserPresenter.sortButtonPressed());
 
+        Disposable deleteButton = RxView.clicks(btnDeleteItems)
+                .subscribe(o -> mCardBrowserPresenter.deleteItemsRequest(mCardsAdapter.getSelectedItemsIndexes()));
+
+        cbSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b)
+                    mCardsAdapter.selectAllItems();
+                else
+                    mCardsAdapter.unselectAllItems();
+            }
+        });
+
         mDisposable.addAll(addCardButton, decksButton, editDeckButton, confirmDeckEdit, backButton,
-                editColor, deckNameText, decksLayout, sortButton);
+                editColor, deckNameText, decksLayout, sortButton, deleteButton);
     }
 
     @Override
@@ -498,6 +518,33 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         rlDeck.setBackground(drawable);
     }
 
+    @Override
+    public void enableEditModeToolbar() {
+        rlToolbarEditMode.setVisibility(View.VISIBLE);
+        rlToolbar.setVisibility(View.GONE);
+        btnAddCard.animate().yBy(300).setDuration(350)
+                .withEndAction(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        btnAddCard.setVisibility(View.GONE);
+                    }
+                }
+        );
+        btnAddCard.setVisibility(View.GONE);
+        mCardsAdapter.enableSelectMode();
+    }
+
+    @Override
+    public void disableEditModeToolbar() {
+        rlToolbar.setVisibility(View.VISIBLE);
+        btnAddCard.setVisibility(View.VISIBLE);
+        btnAddCard.animate().yBy(-300).setDuration(350);
+        rlToolbarEditMode.setVisibility(View.GONE);
+        cbSelectAll.setChecked(false);
+        mCardsAdapter.unselectAllItems();
+        mCardsAdapter.disableSelectMode();
+    }
 
     @Override
     public void showDeckNameEditTextMessage(String message) {
@@ -524,7 +571,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public boolean onBackPressed() {
         if (etDeckName.getVisibility() == View.VISIBLE ||
-                rlDeck.getVisibility() == View.VISIBLE) {
+                rlDeck.getVisibility() == View.VISIBLE ||
+                rlToolbarEditMode.getVisibility() == View.VISIBLE) {
             mCardBrowserPresenter.backButtonPressed();
             return true;
         } else {

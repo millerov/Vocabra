@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
@@ -50,6 +51,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     private int mCardSortSelectionIndex;
     private ArrayList<CardSortMethod> mCardSortMethods;
     private CardSortMethod mSelectedSortMethod;
+
+    private boolean selectItemsForDeletionMode;
 
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
@@ -130,16 +133,21 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
     public void backButtonPressed() {
-        if (editDeckMode) {
-            editDeckMode = false;
-            getViewState().switchDeckDisplayMode(editDeckMode);
+        if (selectItemsForDeletionMode) {
+            selectItemsForDeletionMode = false;
+            getViewState().disableEditModeToolbar();
         } else {
-            showingDeckCards = false;
-            currentDeckChoosen = null;
-            getViewState().switchCornerButtonState(showingDeckCards);
-            //mCardsList = mCardsRep.getCardsFromDB();
-            getViewState().hideDeckCardview();
-            loadSortedCards();
+            if (editDeckMode) {
+                editDeckMode = false;
+                getViewState().switchDeckDisplayMode(editDeckMode);
+            } else {
+                showingDeckCards = false;
+                currentDeckChoosen = null;
+                getViewState().switchCornerButtonState(showingDeckCards);
+                //mCardsList = mCardsRep.getCardsFromDB();
+                getViewState().hideDeckCardview();
+                loadSortedCards();
+            }
         }
     }
 
@@ -152,6 +160,13 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         Card card = mCardsList.get(pos);
         getViewState().showEditCardDialog(pos, mCardsList.get(pos),
                 mDecksRep.findDecksByTranslationDirection(card.getTranslationDirection()));
+    }
+
+    public void cardsRecyclerItemLongPressed(int pos) {
+        if (!editDeckMode) {
+            selectItemsForDeletionMode = true;
+            getViewState().enableEditModeToolbar();
+        }
     }
 
     public void editCardRequest(Card card, String front,
@@ -232,6 +247,10 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             mUserData.putValue(mUserData.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
             loadSortedCards();
         }
+    }
+
+    public void deleteItemsRequest(boolean[] selectedItemsIndexes) {
+
     }
 
     //=============Private logic===============

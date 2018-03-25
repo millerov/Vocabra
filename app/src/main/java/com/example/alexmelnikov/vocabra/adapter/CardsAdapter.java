@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -16,6 +18,7 @@ import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,11 +35,15 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
     ArrayList<Card> mData;
     CardBrowserPresenter presenter;
 
+    boolean selectMode;
+    boolean[] selectedItems;
+
 
     public CardsAdapter(Context mContext, ArrayList<Card> mData, CardBrowserPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
         this.presenter = presenter;
+        this.selectMode = false;
     }
 
     class CardsViewHolder extends RecyclerView.ViewHolder {
@@ -47,6 +54,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         TextView tvFront;
         @BindView(R.id.tv_back)
         TextView tvBack;
+        @BindView(R.id.cb_select)
+        CheckBox cbSelect;
 
         public CardsViewHolder(View itemView) {
             super(itemView);
@@ -72,7 +81,36 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         drawable.setColorFilter(card.getDeck().getColor(), PorterDuff.Mode.SRC_ATOP);
         holder.ivColor.setBackground(drawable);
 
-        holder.itemView.setOnClickListener(view -> presenter.cardsRecyclerItemPressed(mData.size() - position - 1));
+        if (selectMode) {
+            holder.cbSelect.setVisibility(View.VISIBLE);
+
+            if (selectedItems[position])
+                holder.cbSelect.setChecked(true);
+            else
+                holder.cbSelect.setChecked(false);
+
+            holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                    if (b)
+                        selectedItems[position] = true;
+                    else
+                        selectedItems[position] = false;
+                }
+            });
+        } else {
+            holder.cbSelect.setVisibility(View.GONE);
+        }
+
+        holder.itemView.setOnClickListener(view -> {
+            if (!selectMode)
+                presenter.cardsRecyclerItemPressed(mData.size() - position - 1);
+        });
+        holder.itemView.setOnLongClickListener(view -> {
+            if (!selectMode)
+                presenter.cardsRecyclerItemLongPressed(mData.size() - position - 1);
+            return true;
+        });
     }
 
     @Override
@@ -88,6 +126,32 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
     public void replaceData(ArrayList<Card> cards) {
         mData.clear();
         mData.addAll(cards);
+        selectedItems = new boolean[mData.size()];
+        Arrays.fill(selectedItems, false);
         notifyDataSetChanged();
+    }
+
+    public void enableSelectMode() {
+        selectMode = true;
+        notifyDataSetChanged();
+    }
+
+    public void disableSelectMode() {
+        selectMode = false;
+        notifyDataSetChanged();
+    }
+
+    public void selectAllItems() {
+        Arrays.fill(selectedItems, true);
+        notifyDataSetChanged();
+    }
+
+    public void unselectAllItems() {
+        Arrays.fill(selectedItems, false);
+        notifyDataSetChanged();
+    }
+
+    public boolean[] getSelectedItemsIndexes() {
+        return selectedItems;
     }
 }

@@ -30,7 +30,7 @@
             android:textColor="@color/colorWhite"
             android:textSize="20dp"
             android:textStyle="bold"
-            android:text="Новая колода" />
+            android:text="@string/text_new_deck_header" />
 
         <ImageButton
             android:id="@+id/btn_change_color"
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorWhite"
                 android:textSize="20sp"
-                android:hint="Название колоды"
+                android:hint="@string/hint_deck_name"
                 android:maxLines="1" />
 
         </android.support.design.widget.TextInputLayout>
@@ -99,6 +99,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:clickable="true"
+        android:focusable="true"
         android:src="@drawable/ic_add_white_30dp"
         app:layout_anchor="@+id/rv_deck"
         app:layout_anchorGravity="bottom|center"

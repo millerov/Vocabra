@@ -26,18 +26,19 @@
                 android:layout_height="24dp"
                 android:layout_gravity="center_vertical"
                 android:background="?selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_filter_none_white_24dp"/>
+                android:src="@drawable/ic_filter_none_white_24dp"
+                tools:ignore="ContentDescription"/>
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/btn_decks"
-                android:layout_marginLeft="8dp"
-                android:text="Мои Колоды"
+                android:layout_marginStart="8dp"
+                android:text="@string/text_my_decks"
                 android:textSize="20sp"
                 android:textColor="@color/white"/>
 
         </LinearLayout>
+
 
         <ImageButton
             android:id="@+id/btn_back"
@@ -46,7 +47,8 @@
             android:layout_gravity="center_vertical"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back_white_24dp"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:ignore="ContentDescription"/>
 
         <LinearLayout
             android:id="@+id/layout_counters"
@@ -86,9 +88,56 @@
             android:id="@+id/btn_sort"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_sort_white_28dp" />
+
+    </RelativeLayout>
+
+
+    <!--Edit Mode Toolbar-->
+
+    <RelativeLayout
+        android:id="@+id/layout_toolbar_edit_mode"
+        style="@style/CustomToolbar"
+        android:gravity="center_vertical"
+        android:paddingLeft="14dp"
+        android:paddingRight="16dp"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:orientation="vertical"
+            android:layout_centerVertical="true">
+
+            <CheckBox
+                android:id="@+id/cb_select_all"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:buttonTint="@color/white" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/cb_select_all"
+                android:layout_marginLeft="6dp"
+                android:text="Все"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/btn_back_edit"
+            android:layout_width="24dp"
+            android:layout_height="32dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="6dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_delete_white_28dp"
+            tools:ignore="ContentDescription" />
 
     </RelativeLayout>
 
@@ -97,7 +146,7 @@
         android:id="@+id/layout_deck_cards"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/layout_toolbar"
+        android:layout_marginTop="?attr/actionBarSize"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -201,9 +250,8 @@
                 android:id="@+id/rv_cards"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:paddingLeft="6dp"
-                android:paddingRight="6dp"
-                android:paddingBottom="45dp"
+                android:paddingHorizontal="6dp"
+                android:paddingBottom="38dp"
                 android:overScrollMode="never"
                 android:layoutAnimation="@anim/layout_animation_fall_down"
                 tools:listitem="@layout/item_card_list">
