@@ -95,6 +95,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.layout_toolbar_edit_mode) RelativeLayout rlToolbarEditMode;
     @BindView(R.id.btn_back_edit) ImageButton btnDeleteItems;
     @BindView(R.id.cb_select_all) CheckBox cbSelectAll;
+    @BindView(R.id.tv_selected_counter) TextView tvSelectedCounter;
 
     //addCardDialog/editCardDialog views
     EditText etDialogFront;
@@ -519,7 +520,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
-    public void enableEditModeToolbar() {
+    public void enableEditModeToolbar(int firstSelectedItemIndex) {
         rlToolbarEditMode.setVisibility(View.VISIBLE);
         rlToolbar.setVisibility(View.GONE);
         btnAddCard.animate().yBy(300).setDuration(350)
@@ -532,7 +533,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 }
         );
         btnAddCard.setVisibility(View.GONE);
-        mCardsAdapter.enableSelectMode();
+        mCardsAdapter.enableSelectMode(firstSelectedItemIndex);
     }
 
     @Override
@@ -544,6 +545,11 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         cbSelectAll.setChecked(false);
         mCardsAdapter.unselectAllItems();
         mCardsAdapter.disableSelectMode();
+    }
+
+    @Override
+    public void updateSelectedCounter(int count) {
+            tvSelectedCounter.setText(Integer.toString(count));
     }
 
     @Override

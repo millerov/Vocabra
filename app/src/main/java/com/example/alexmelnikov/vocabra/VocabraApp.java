@@ -32,10 +32,10 @@ public class VocabraApp extends Application {
         Hawk.init(this).build();
         Realm.init(this);
 
-        /*RealmConfiguration config2 = new RealmConfiguration.Builder()
+        /* RealmConfiguration config2 = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();
-        Realm realm = Realm.getInstance(config2);*/
+        Realm realm = Realm.getInstance(config2); */
     }
 
 

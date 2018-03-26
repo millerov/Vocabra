@@ -37,6 +37,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
     boolean selectMode;
     boolean[] selectedItems;
+    int selectedItemsCounter;
 
 
     public CardsAdapter(Context mContext, ArrayList<Card> mData, CardBrowserPresenter presenter) {
@@ -84,7 +85,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         if (selectMode) {
             holder.cbSelect.setVisibility(View.VISIBLE);
 
-            if (selectedItems[position])
+            if (selectedItems[mData.size() - position - 1])
                 holder.cbSelect.setChecked(true);
             else
                 holder.cbSelect.setChecked(false);
@@ -92,10 +93,14 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
             holder.cbSelect.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                 @Override
                 public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                    if (b)
-                        selectedItems[position] = true;
-                    else
-                        selectedItems[position] = false;
+                    if (b) {
+                        selectedItems[mData.size() - position - 1] = true;
+                        selectedItemsCounter++;
+                    } else {
+                        selectedItems[mData.size() - position - 1] = false;
+                        selectedItemsCounter--;
+                    }
+                    presenter.updateSelectedItemsCount(selectedItemsCounter);
                 }
             });
         } else {
@@ -105,7 +110,14 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         holder.itemView.setOnClickListener(view -> {
             if (!selectMode)
                 presenter.cardsRecyclerItemPressed(mData.size() - position - 1);
+            else {
+                if (!holder.cbSelect.isChecked())
+                    holder.cbSelect.setChecked(true);
+                else
+                    holder.cbSelect.setChecked(false);
+            }
         });
+
         holder.itemView.setOnLongClickListener(view -> {
             if (!selectMode)
                 presenter.cardsRecyclerItemLongPressed(mData.size() - position - 1);
@@ -131,13 +143,17 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         notifyDataSetChanged();
     }
 
-    public void enableSelectMode() {
+    public void enableSelectMode(int firstSelectedIndex) {
         selectMode = true;
+        selectedItems[firstSelectedIndex] = true;
+        selectedItemsCounter = 1;
+        presenter.updateSelectedItemsCount(selectedItemsCounter);
         notifyDataSetChanged();
     }
 
     public void disableSelectMode() {
         selectMode = false;
+        selectedItemsCounter = 0;
         notifyDataSetChanged();
     }
 

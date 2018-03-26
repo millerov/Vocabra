@@ -9,11 +9,13 @@ import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
+import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 
 import java.util.ArrayList;
@@ -39,6 +41,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     CardsRepository mCardsRep;
     @Inject
     UserDataRepository mUserData;
+    @Inject
+    TranslationsRepository mTransRep;
 
     public static int selectedColor;
 
@@ -165,8 +169,12 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     public void cardsRecyclerItemLongPressed(int pos) {
         if (!editDeckMode) {
             selectItemsForDeletionMode = true;
-            getViewState().enableEditModeToolbar();
+            getViewState().enableEditModeToolbar(pos);
         }
+    }
+
+    public void updateSelectedItemsCount(int count) {
+        getViewState().updateSelectedCounter(count);
     }
 
     public void editCardRequest(Card card, String front,
@@ -250,7 +258,22 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
     public void deleteItemsRequest(boolean[] selectedItemsIndexes) {
+        ArrayList<Card> cardsForDeletion = new ArrayList<Card>();
+        ArrayList<Translation> cardTranlationsInHistory = new ArrayList<Translation>();
+        for (int i = 0; i < selectedItemsIndexes.length; i++)
+            if (selectedItemsIndexes[i]) {
+                cardsForDeletion.add(mCardsList.get(i));
+                cardTranlationsInHistory.add(mTransRep.findTranslationByCardInDB(mCardsList.get(i)));
+            }
 
+        for (Translation t : cardTranlationsInHistory)
+            if (t != null)
+                mTransRep.updateTranslationFavoriteStateDB(t, t.getFromText(), t.getToText(), false, null);
+        for (Card c : cardsForDeletion)
+            mCardsRep.deleteCardFromDB(c);
+
+        getViewState().disableEditModeToolbar();
+        loadSortedCards();
     }
 
     //=============Private logic===============

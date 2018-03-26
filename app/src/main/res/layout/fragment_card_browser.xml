@@ -106,6 +106,7 @@
         android:visibility="gone">
 
         <LinearLayout
+            android:id="@+id/layout_select_all"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
@@ -128,6 +129,17 @@
                 android:textSize="12sp" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_selected_counter"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@id/layout_select_all"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="8dp"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+            tools:text="12"/>
 
         <ImageButton
             android:id="@+id/btn_back_edit"

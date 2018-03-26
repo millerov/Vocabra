@@ -134,4 +134,27 @@ public class TranslationsRepository {
         realm.close();
     }
 
+
+    public Translation findTranslationByCardInDB(Card card) {
+        RealmResults<Translation> similarTranslations;
+        Realm realm = Realm.getDefaultInstance();
+        Card translationCard;
+        similarTranslations = realm.where(Translation.class)
+                .equalTo("fromText", card.getFront())
+                .equalTo("toText", card.getBack())
+                .equalTo("langs", card.getTranslationDirection())
+                .findAll();
+        for (Translation t : similarTranslations) {
+            try {
+                translationCard = t.getCard();
+            } catch (Exception e) {
+                translationCard = null;
+            }
+
+            if (translationCard != null && translationCard.equals(card)) {
+                return t;
+            }
+        }
+        return null;
+    }
 }

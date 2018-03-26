@@ -60,8 +60,10 @@ public interface CardBrowserView extends BaseView {
 
     void hideSortOptionstDialog();
 
-    void enableEditModeToolbar();
+    void enableEditModeToolbar(int firstSelectedItemIndex);
 
     void disableEditModeToolbar();
+
+    void updateSelectedCounter(int count);
 
 }
