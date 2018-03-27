@@ -522,6 +522,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void enableEditModeToolbar(int firstSelectedItemIndex) {
         rlToolbarEditMode.setVisibility(View.VISIBLE);
+        mCardsAdapter.enableSelectMode(firstSelectedItemIndex);
         rlToolbar.setVisibility(View.GONE);
         btnAddCard.animate().yBy(300).setDuration(350)
                 .withEndAction(
@@ -533,18 +534,17 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 }
         );
         btnAddCard.setVisibility(View.GONE);
-        mCardsAdapter.enableSelectMode(firstSelectedItemIndex);
     }
 
     @Override
     public void disableEditModeToolbar() {
+        mCardsAdapter.unselectAllItems();
+        mCardsAdapter.disableSelectMode();
+        cbSelectAll.setChecked(false);
         rlToolbar.setVisibility(View.VISIBLE);
         btnAddCard.setVisibility(View.VISIBLE);
         btnAddCard.animate().yBy(-300).setDuration(350);
         rlToolbarEditMode.setVisibility(View.GONE);
-        cbSelectAll.setChecked(false);
-        mCardsAdapter.unselectAllItems();
-        mCardsAdapter.disableSelectMode();
     }
 
     @Override
