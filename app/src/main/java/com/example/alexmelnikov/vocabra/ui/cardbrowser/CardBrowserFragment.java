@@ -548,8 +548,13 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
-    public void updateSelectedCounter(int count) {
+    public void updateSelectedCounter(int count, int max) {
             tvSelectedCounter.setText(Integer.toString(count));
+            if (count == max && !cbSelectAll.isChecked()) {
+                cbSelectAll.setChecked(true);
+            } else if (count == 0 && cbSelectAll.isChecked()) {
+                cbSelectAll.setChecked(false);
+            }
     }
 
     @Override

@@ -173,8 +173,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         }
     }
 
-    public void updateSelectedItemsCount(int count) {
-        getViewState().updateSelectedCounter(count);
+    public void updateSelectedItemsCount(int count, int max) {
+        getViewState().updateSelectedCounter(count, max);
     }
 
     public void editCardRequest(Card card, String front,

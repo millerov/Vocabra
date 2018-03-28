@@ -64,6 +64,6 @@ public interface CardBrowserView extends BaseView {
 
     void disableEditModeToolbar();
 
-    void updateSelectedCounter(int count);
+    void updateSelectedCounter(int count, int max);
 
 }

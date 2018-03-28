@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.dagger;
 import com.example.alexmelnikov.vocabra.dagger.module.RepositoryModule;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddPresenter;
+import com.example.alexmelnikov.vocabra.ui.decks_for_train.DecksForTrainingPresenter;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationPresenter;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorPresenter;
 
@@ -29,4 +30,6 @@ public interface PresenterComponent {
     void inject(CardBrowserPresenter presenter);
 
     void inject(DeckAddPresenter presenter);
+
+    void inject(DecksForTrainingPresenter presenter);
 }

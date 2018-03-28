@@ -103,7 +103,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
                         selectedItems[mData.size() - position - 1] = false;
                         selectedItemsCounter--;
                     }
-                    presenter.updateSelectedItemsCount(selectedItemsCounter);
+                    presenter.updateSelectedItemsCount(selectedItemsCounter, selectedItems.length);
                 }
             });
 
@@ -124,7 +124,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
                     selectedItems[mData.size() - position - 1] = false;
                     selectedItemsCounter--;
                 }
-                presenter.updateSelectedItemsCount(selectedItemsCounter);
+                presenter.updateSelectedItemsCount(selectedItemsCounter, selectedItems.length);
             }
         });
 
@@ -159,7 +159,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         selectedItems[firstSelectedIndex] = true;
         selectedItemsCounter = 1;
         Log.d(TAG, "enableSelectMode: " + selectedItemsCounter);
-        presenter.updateSelectedItemsCount(selectedItemsCounter);
+        presenter.updateSelectedItemsCount(selectedItemsCounter, selectedItems.length);
         notifyDataSetChanged();
     }
 
@@ -173,14 +173,14 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
     public void selectAllItems() {
         Arrays.fill(selectedItems, true);
         selectedItemsCounter = selectedItems.length;
-        presenter.updateSelectedItemsCount(selectedItemsCounter);
+        presenter.updateSelectedItemsCount(selectedItemsCounter, selectedItems.length);
         notifyDataSetChanged();
     }
 
     public void unselectAllItems() {
         Arrays.fill(selectedItems, false);
         selectedItemsCounter = 0;
-        presenter.updateSelectedItemsCount(selectedItemsCounter);
+        presenter.updateSelectedItemsCount(selectedItemsCounter, selectedItems.length);
         notifyDataSetChanged();
     }
 
