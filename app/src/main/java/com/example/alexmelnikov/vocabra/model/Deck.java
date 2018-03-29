@@ -14,7 +14,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by AlexMelnikov on 10.03.18.
  */
 
-public class Deck extends RealmObject implements Serializable{
+public class Deck extends RealmObject {
 
     @PrimaryKey
     private int id;

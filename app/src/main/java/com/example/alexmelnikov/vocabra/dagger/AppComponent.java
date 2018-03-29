@@ -2,6 +2,8 @@ package com.example.alexmelnikov.vocabra.dagger;
 
 import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.module.ApiHelperModule;
+import com.example.alexmelnikov.vocabra.dagger.module.RepositoryModule;
+import com.example.alexmelnikov.vocabra.ui.training.TrainingFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 
 import javax.inject.Singleton;
@@ -14,12 +16,14 @@ import dagger.Component;
 
 
 @Singleton
-@Component(modules = {
+@Component(modules = {RepositoryModule.class
 })
 public interface AppComponent {
 
     void inject(TranslatorFragment fragment);
 
     void inject(ApiHelper apiHelper);
+
+    void inject(TrainingFragment fragment);
 
 }

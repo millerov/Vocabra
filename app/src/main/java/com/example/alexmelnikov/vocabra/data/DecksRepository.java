@@ -92,6 +92,15 @@ public class DecksRepository {
         return deck;
     }
 
+    public Deck getDeckById(int id) {
+        Deck deck;
+        Realm realm = Realm.getDefaultInstance();
+        deck = realm.where(Deck.class)
+                .equalTo("id", id)
+                .findFirst();
+        return deck;
+    }
+
 
     public void updateDeckNameAndColor(Deck deck, String name, int color) {
         Realm realm = Realm.getDefaultInstance();

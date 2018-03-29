@@ -88,19 +88,20 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
 
-            ChangeBounds changeBoundsTransition = new ChangeBounds();
-            changeBoundsTransition.setDuration(370);
+            /*ChangeBounds changeBoundsTransition = new ChangeBounds();
+            changeBoundsTransition.setDuration(370);*/
 
-            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+            //setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+            //setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.no_transition));
+            //fragment.setEnterTransition(new AutoTransition().setDuration(370));
+            fragment.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.default_transition));
+            fragment.setSharedElementReturnTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.default_transition));
 
-            fragment.setEnterTransition(new AutoTransition().setDuration(370));
-            fragment.setSharedElementEnterTransition(changeBoundsTransition);
-            fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
 
         Bundle bundle = new Bundle();
         bundle.putString("transitionName", transitionName);
-        bundle.putSerializable("deck", deck);
+        bundle.putInt("deckId", deck.getId());
         fragment.setArguments(bundle);
 
 
@@ -109,8 +110,5 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
                 .addSharedElement(item, transitionName)
                 .addToBackStack(null)
                 .commit();
-
-                //.addSharedElement(btnAddCard, "fabAdd")
-                //.commitAllowingStateLoss();
     }
 }

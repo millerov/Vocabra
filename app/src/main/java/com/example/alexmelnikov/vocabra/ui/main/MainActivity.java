@@ -144,19 +144,26 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void hideBottomNavigationBar() {
-        bottomNavBar.animate().yBy(100).setDuration(200).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                bottomNavBar.setVisibility(View.GONE);
-            }
-        });
+            bottomNavBar.animate().yBy(100).setDuration(200).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    bottomNavBar.setVisibility(View.GONE);
+                }
+            });
+        Log.d(TAG, "hideBottomNavigationBar: " + bottomNavBar.getY());
     }
 
     @Override
     public void showBottomNavigationBar() {
-        bottomNavBar.setVisibility(View.VISIBLE);
-        bottomNavBar.animate().yBy(-100).setDuration(200);
+        bottomNavBar.animate().y(2405.0f).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                bottomNavBar.setVisibility(View.VISIBLE);
+                bottomNavBar.animate().yBy(-100).setDuration(200);
+            }
+        });
     }
+
 
     public void exportDatabase() {
 

@@ -16,11 +16,16 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private int mCurrentFragmentIndex = 0;
     private int mPreviousFragmentIndex = 0;
 
+    @Override
+    public void attachView(MainView view) {
+        super.attachView(view);
+    }
 
     public void bottomNavigationClick(int itemPos) {
         mPreviousFragmentIndex = mCurrentFragmentIndex;
         mCurrentFragmentIndex = itemPos;
         getViewState().replaceFragment(mCurrentFragmentIndex, mPreviousFragmentIndex);
     }
+
 
 }

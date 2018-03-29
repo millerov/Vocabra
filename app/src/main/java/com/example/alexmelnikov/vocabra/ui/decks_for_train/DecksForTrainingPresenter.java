@@ -8,6 +8,8 @@ import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.model.Deck;
 
+import java.util.ArrayList;
+
 import javax.inject.Inject;
 
 /**
@@ -21,6 +23,8 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
 
     @Inject
     DecksRepository mDecksRep;
+
+    private ArrayList<Deck> mDecksList;
 
 
     public DecksForTrainingPresenter() {
@@ -47,8 +51,8 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
 
 
 
-
     private void loadDecks() {
-        getViewState().replaceCardsRecyclerData(mDecksRep.getDecksFromDB());
+        mDecksList = mDecksRep.getDecksFromDB();
+        getViewState().replaceCardsRecyclerData(mDecksList);
     }
 }
