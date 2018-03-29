@@ -59,18 +59,20 @@
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:text="228"
-                android:textSize="20sp"
-                android:textColor="@color/colorAccent"/>
-
-            <TextView
+                android:id="@+id/tv_new_counter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:text="11"
+                android:textSize="20sp"
+                android:textColor="@color/colorAccent"/>
+
+            <TextView
+                android:id="@+id/tv_ready_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:text="228"
                 android:textSize="20sp"
                 android:textColor="@color/white"/>
 

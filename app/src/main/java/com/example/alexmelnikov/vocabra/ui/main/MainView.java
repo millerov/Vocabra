@@ -17,6 +17,7 @@ import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
  * Created by AlexMelnikov on 25.02.18.
  */
 
+@StateStrategyType(OneExecutionStateStrategy.class)
 public interface MainView  extends MvpView {
     int WORD_BROWSER_TAB_POS = R.id.word_browser_menu_item;
     int TRANSLATOR_TAB_POS = R.id.translator_menu_item;
@@ -26,4 +27,8 @@ public interface MainView  extends MvpView {
 
     @StateStrategyType(OneExecutionStateStrategy.class)
     void showMessage(String message, boolean withAction, @Nullable SnackBarActionHandler presenter, @Nullable String actionText);
+
+    void hideBottomNavigationBar();
+
+    void showBottomNavigationBar();
 }

@@ -78,7 +78,6 @@ public class MainActivity extends BaseActivity implements MainView {
             public boolean onNavigationItemSelected(MenuItem item) {
                 presenter.bottomNavigationClick(bottomNavBar.getMenuItemPosition(item));
 
-
                 //Starting intent to send realm db via mail
                 if (bottomNavBar.getMenuItemPosition(item) == 3) {
                     exportDatabase();
@@ -142,6 +141,22 @@ public class MainActivity extends BaseActivity implements MainView {
 
     }
 
+
+    @Override
+    public void hideBottomNavigationBar() {
+        bottomNavBar.animate().yBy(100).setDuration(200).withEndAction(new Runnable() {
+            @Override
+            public void run() {
+                bottomNavBar.setVisibility(View.GONE);
+            }
+        });
+    }
+
+    @Override
+    public void showBottomNavigationBar() {
+        bottomNavBar.setVisibility(View.VISIBLE);
+        bottomNavBar.animate().yBy(-100).setDuration(200);
+    }
 
     public void exportDatabase() {
 

@@ -1,9 +1,12 @@
 package com.example.alexmelnikov.vocabra.ui.decks_for_train;
 
+import android.view.View;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
+import com.example.alexmelnikov.vocabra.model.Deck;
 
 import javax.inject.Inject;
 
@@ -36,6 +39,13 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
         super.detachView(view);
         getViewState().detachInputListeners();
     }
+
+    public void deckSelectRequestFromRecycler(Deck deck, View item, String transitionName) {
+        getViewState().openTrainingActivity(deck, item, transitionName);
+    }
+
+
+
 
 
     private void loadDecks() {

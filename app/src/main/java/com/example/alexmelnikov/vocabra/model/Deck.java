@@ -2,6 +2,7 @@ package com.example.alexmelnikov.vocabra.model;
 
 import android.support.annotation.Nullable;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import io.realm.RealmObject;
@@ -13,7 +14,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by AlexMelnikov on 10.03.18.
  */
 
-public class Deck extends RealmObject {
+public class Deck extends RealmObject implements Serializable{
 
     @PrimaryKey
     private int id;

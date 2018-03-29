@@ -3,8 +3,6 @@ package com.example.alexmelnikov.vocabra.adapter;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.ui.decks_for_train.DecksForTrainingPresenter;
 
 import java.util.ArrayList;
 
@@ -32,16 +31,18 @@ public class DecksForTrainingAdapter extends RecyclerView.Adapter<DecksForTraini
 
     Context mContext;
     ArrayList<Deck> mData;
+    DecksForTrainingPresenter presenter;
 
-    public DecksForTrainingAdapter(Context mContext, ArrayList<Deck> mData) {
+    public DecksForTrainingAdapter(Context mContext, ArrayList<Deck> mData, DecksForTrainingPresenter presenter) {
         this.mContext = mContext;
         this.mData = mData;
+        this.presenter = presenter;
     }
 
     class DecksViewHolder extends RecyclerView.ViewHolder {
 
         @BindView(R.id.card_deck)
-        RelativeLayout cvDeck;
+        RelativeLayout rlDeck;
         @BindView(R.id.tv_deck_name)
         TextView tvDeckName;
         @BindView(R.id.btn_train)
@@ -50,6 +51,8 @@ public class DecksForTrainingAdapter extends RecyclerView.Adapter<DecksForTraini
         public DecksViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
+
+            rlDeck.setOnClickListener(view -> presenter.deckSelectRequestFromRecycler(mData.get(mData.size() - getAdapterPosition() - 1), rlDeck, rlDeck.getTransitionName()));
         }
     }
 
@@ -63,10 +66,13 @@ public class DecksForTrainingAdapter extends RecyclerView.Adapter<DecksForTraini
     public void onBindViewHolder(DecksViewHolder holder, int position) {
         Deck deck = mData.get(mData.size() - position - 1);
         holder.tvDeckName.setText(deck.getName());
+        holder.rlDeck.setTransitionName("transition" + position);
 
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_card);
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
-        holder.cvDeck.setBackground(drawable);
+        holder.rlDeck.setBackground(drawable);
+
+
     }
 
     @Override

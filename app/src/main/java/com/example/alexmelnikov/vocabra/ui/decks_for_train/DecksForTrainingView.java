@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.decks_for_train;
 
+import android.view.View;
+
 import com.arellomobile.mvp.viewstate.strategy.OneExecutionStateStrategy;
 import com.arellomobile.mvp.viewstate.strategy.StateStrategyType;
 import com.example.alexmelnikov.vocabra.model.Card;
@@ -16,5 +18,7 @@ import java.util.ArrayList;
 public interface DecksForTrainingView extends BaseView {
 
     void replaceCardsRecyclerData(ArrayList<Deck> decks);
+
+    void openTrainingActivity(Deck deck, View item, String transitionName);
 
 }
