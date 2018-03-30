@@ -8,7 +8,8 @@
         android:id="@+id/layout_toolbar"
         style="@style/CustomToolbar"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp">
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <ImageButton
             android:id="@+id/btn_back"
@@ -19,16 +20,16 @@
             android:src="@drawable/ic_arrow_back_white_24dp" />
 
 
-        <!--<TextView
+        <TextView
             android:id="@+id/tv_app_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_marginLeft="8dp"
             android:layout_toEndOf="@id/btn_back"
-            android:text="9999 карточек осталось"
+            android:text="LANDSCAPE"
             android:textColor="@color/white"
-            android:textSize="19sp" />-->
+            android:textSize="19sp" />
 
         <ImageButton
             android:id="@+id/btn_to_previous"
@@ -68,7 +69,7 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
-            android:paddingRight="86dp"
+            android:paddingRight="50dp"
             android:textColor="@color/white"
             android:textSize="20sp"
             tools:text="Дека 1234567891234567891234567"/>
@@ -169,7 +170,7 @@
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Показать ответ"
-            android:background="@color/colorPrimary" />
+            android:background="@color/colorPrimaryDark" />
 
         <Button
             android:id="@+id/btn_easy"
@@ -181,7 +182,7 @@
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Легко"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:visibility="gone"/>
 
         <Button
@@ -194,7 +195,7 @@
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Хорошо"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:visibility="gone"/>
 
         <Button
@@ -207,7 +208,7 @@
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Не знаю"
-            android:background="@color/colorPrimary"
+            android:background="@color/colorPrimaryDark"
             android:visibility="gone" />
 
     </RelativeLayout>

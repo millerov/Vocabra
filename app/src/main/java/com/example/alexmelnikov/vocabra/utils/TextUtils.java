@@ -22,4 +22,21 @@ public class TextUtils {
     public static String getSecondLanguageIndexFromDir(String langs) {
         return langs.substring(langs.indexOf("-")+1, langs.length());
     }
+
+    public static String getRightWordEnding(int number, String[] words) {
+        int i = number % 100;
+        if (i > 19)
+            i %= 10;
+        switch (i) {
+            case 1: {
+                return words[0];
+            }
+            case 2:case 3:case 4: {
+                return words[1];
+            }
+            default: {
+                return words[2];
+            }
+        }
+    }
 }

@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.transition.Fade;
@@ -91,7 +92,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
 
     @Override
-    public void replaceFragment(int index, int previousIndex) {
+    public void replaceFragmentNavigationBar(int index, int previousIndex) {
         Fragment fragment;
         FragmentTransaction fts = getSupportFragmentManager().beginTransaction();
 
@@ -144,13 +145,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void hideBottomNavigationBar() {
-            bottomNavBar.animate().yBy(100).setDuration(200).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    bottomNavBar.setVisibility(View.GONE);
-                }
-            });
-        Log.d(TAG, "hideBottomNavigationBar: " + bottomNavBar.getY());
+        bottomNavBar.setVisibility(View.GONE);
     }
 
     @Override

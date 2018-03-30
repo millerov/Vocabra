@@ -14,17 +14,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.example.alexmelnikov.vocabra.R;
+import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.adapter.DecksForTrainingAdapter;
+import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.training.TrainingFragment;
+import com.example.alexmelnikov.vocabra.utils.TextUtils;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+
+import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -40,8 +48,13 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
     @InjectPresenter
     DecksForTrainingPresenter mDecksForTrainPresenter;
 
+    @Inject
+    CardsRepository mCardsRep;
+
     @BindView(R.id.layout_toolbar) RelativeLayout rlToolBar;
     @BindView(R.id.rv_decks) RecyclerView rvDecks;
+    @BindView(R.id.tv_cards_ready_counter)
+    TextView tvCardsReadyCounter;
 
     private DecksForTrainingAdapter mDecksAdapter;
     private DecksLinearLayoutManager mDecksRvManager;
@@ -49,6 +62,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        VocabraApp.getAppComponent().inject(this);
         View view = inflater.inflate(R.layout.fragment_decks_for_training, container, false);
         ButterKnife.bind(this, view);
         return view;
@@ -75,6 +89,10 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     }
 
+    public void setupTextView(int counter) {
+        tvCardsReadyCounter.setText("На сегодня " + counter + " " + TextUtils.getRightWordEnding(counter, new String[]{"карточка", "карточки", "карточек"}));
+    }
+
     @Override
     public void replaceCardsRecyclerData(ArrayList<Deck> decks) {
         mDecksAdapter.replaceData(decks);
@@ -85,25 +103,17 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
         ((MainActivity)getActivity()).hideBottomNavigationBar();
 
         TrainingFragment fragment = new TrainingFragment();
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-
-            /*ChangeBounds changeBoundsTransition = new ChangeBounds();
-            changeBoundsTransition.setDuration(370);*/
-
-            //setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
-            //setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.no_transition));
-            //fragment.setEnterTransition(new AutoTransition().setDuration(370));
             fragment.setSharedElementEnterTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.default_transition));
             fragment.setSharedElementReturnTransition(TransitionInflater.from(getActivity()).inflateTransition(R.transition.default_transition));
-
         }
 
         Bundle bundle = new Bundle();
         bundle.putString("transitionName", transitionName);
         bundle.putInt("deckId", deck.getId());
+        bundle.putInt("newCount", mCardsRep.getNewCardsByDeckDB(deck).size());
+        bundle.putInt("oldReadyCount", mCardsRep.getOldReadyForTrainCardsByDeckDB(deck).size());
         fragment.setArguments(bundle);
-
 
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)

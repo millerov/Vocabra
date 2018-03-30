@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.training;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
@@ -14,24 +16,34 @@ import javax.inject.Inject;
 @InjectViewState
 public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
+    private static final String TAG = "MyTag";
+
     @Inject
     DecksRepository mDecksRep;
 
     private Deck currentDeck;
+    private boolean firstAttach;
+
+    private boolean buttonsLayoutIsExpanded;
 
     public TrainingPresenter() {
+        firstAttach = true;
+        buttonsLayoutIsExpanded = false;
     }
 
     @Override
     public void attachView(TrainingView view) {
         super.attachView(view);
+        getViewState().attachInputListeners();
         showFront();
+        firstAttach = false;
 
     }
 
     @Override
     public void detachView(TrainingView view) {
         super.detachView(view);
+        getViewState().detachInputListeners();
     }
 
     public void setupDeck(Deck deck) {
@@ -39,7 +51,19 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     }
 
     public void showFront() {
-        getViewState().showFrontView();
+        getViewState().showFrontView(firstAttach);
+    }
+
+
+
+    public void showBackRequest() {
+        getViewState().showBackView();
+        buttonsLayoutIsExpanded = true;
+        getViewState().expandButtonsLayout();
+    }
+
+    public void moreButtonPressed() {
+
     }
 
 }

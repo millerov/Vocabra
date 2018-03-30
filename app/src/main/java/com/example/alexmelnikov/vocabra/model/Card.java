@@ -35,6 +35,9 @@ public class Card extends RealmObject {
 
     private boolean isReadyForTraining;
 
+    private boolean isNew;
+
+    @Nullable
     private Date lastTimeTrained;
 
     private Date creationDate;
@@ -58,7 +61,9 @@ public class Card extends RealmObject {
         this.isReadyForTraining = true;
         this.timesTrained = 0;
         this.translationDirection = frontLanguage.getId() + "-" + backLanguage.getId();
-        this.creationDate = new Date();
+        creationDate = new Date();
+        isReadyForTraining = isNew = true;
+        timesTrained = 0;
     }
 
     public Card(int id, TemporaryCard tempCard) {
@@ -132,6 +137,14 @@ public class Card extends RealmObject {
 
     public boolean isReadyForTraining() {
         return isReadyForTraining;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
     }
 
     public void setReadyForTraining(boolean readyForTraining) {

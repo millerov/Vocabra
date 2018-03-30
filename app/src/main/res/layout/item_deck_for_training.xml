@@ -9,7 +9,8 @@
     android:elevation="3dp"
     android:layout_marginTop="12dp"
     android:id="@+id/card_deck"
-    android:transitionName="deck">
+    android:transitionName="deck"
+    android:background="@drawable/bg_card">
 
     <RelativeLayout
         android:layout_width="match_parent"

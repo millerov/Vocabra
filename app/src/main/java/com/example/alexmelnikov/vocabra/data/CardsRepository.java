@@ -65,6 +65,27 @@ public class CardsRepository {
         return cards;
     }
 
+    public ArrayList<Card> getNewCardsByDeckDB(Deck deck) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList<Card>(realm.where(Card.class)
+                .equalTo("deck.name", deck.getName())
+                .equalTo("isNew", true)
+                .findAll());
+        return cards;
+    }
+
+    public ArrayList<Card> getOldReadyForTrainCardsByDeckDB(Deck deck) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList<Card>(realm.where(Card.class)
+                .equalTo("deck.name", deck.getName())
+                .equalTo("isNew", false)
+                .equalTo("isReadyForTraining", true)
+                .findAll());
+        return cards;
+    }
+
     public boolean containsSimilarCardInDeckDB(Card card, Deck deck) {
         Realm realm = Realm.getDefaultInstance();
         RealmResults<Card> similarCards = realm.where(Card.class)

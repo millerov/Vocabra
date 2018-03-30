@@ -48,7 +48,9 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
         getViewState().openTrainingActivity(deck, item, transitionName);
     }
 
-
+    public void setupCounterRequest(int counter) {
+        getViewState().setupTextView(counter);
+    }
 
 
     private void loadDecks() {

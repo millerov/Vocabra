@@ -21,4 +21,6 @@ public interface DecksForTrainingView extends BaseView {
 
     void openTrainingActivity(Deck deck, View item, String transitionName);
 
+    void setupTextView(int counter);
+
 }

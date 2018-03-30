@@ -47,6 +47,7 @@ public class Deck extends RealmObject {
         this.firstLanguage = firstLanguage;
         this.secondLanguage = secondLanguage;
         this.translationDirection = firstLanguage.getId() + "-" + secondLanguage.getId();
+        numberOfCards = numberOfNewCards = numberOfCardsToTrain = 0;
     }
 
     public void setId(int id) {

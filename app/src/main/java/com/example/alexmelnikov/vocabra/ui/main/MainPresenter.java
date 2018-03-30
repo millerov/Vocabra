@@ -1,10 +1,10 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
-import android.util.Log;
+import android.support.v4.app.Fragment;
+import android.view.View;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
-import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 
 /**
  * Created by AlexMelnikov on 25.02.18.
@@ -16,6 +16,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     private int mCurrentFragmentIndex = 0;
     private int mPreviousFragmentIndex = 0;
 
+
     @Override
     public void attachView(MainView view) {
         super.attachView(view);
@@ -24,8 +25,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     public void bottomNavigationClick(int itemPos) {
         mPreviousFragmentIndex = mCurrentFragmentIndex;
         mCurrentFragmentIndex = itemPos;
-        getViewState().replaceFragment(mCurrentFragmentIndex, mPreviousFragmentIndex);
+        getViewState().replaceFragmentNavigationBar(mCurrentFragmentIndex, mPreviousFragmentIndex);
     }
-
 
 }

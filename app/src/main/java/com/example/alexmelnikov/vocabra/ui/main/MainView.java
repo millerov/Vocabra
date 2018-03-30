@@ -3,6 +3,7 @@ package com.example.alexmelnikov.vocabra.ui.main;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
+import android.view.View;
 
 import com.arellomobile.mvp.MvpView;
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;
@@ -22,10 +23,9 @@ public interface MainView  extends MvpView {
     int WORD_BROWSER_TAB_POS = R.id.word_browser_menu_item;
     int TRANSLATOR_TAB_POS = R.id.translator_menu_item;
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
-    void replaceFragment(int prevIndex, int currentIndex);
+    void replaceFragmentNavigationBar(int prevIndex, int currentIndex);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+
     void showMessage(String message, boolean withAction, @Nullable SnackBarActionHandler presenter, @Nullable String actionText);
 
     void hideBottomNavigationBar();

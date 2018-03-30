@@ -11,5 +11,12 @@ import com.example.alexmelnikov.vocabra.ui.BaseView;
 
 @StateStrategyType(OneExecutionStateStrategy.class)
 public interface TrainingView extends BaseView {
-    void showFrontView();
+    void showFrontView(boolean firstAttach);
+
+    void showBackView();
+
+    void expandButtonsLayout();
+
+    void narrowButtonLayout();
+
 }
