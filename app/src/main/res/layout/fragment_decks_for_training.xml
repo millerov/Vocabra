@@ -29,7 +29,7 @@
             android:layout_below="@id/tv_app_name"
             android:textColor="@color/white"
             android:textSize="14sp"
-            android:text="На сегодня 228 карточек"/>
+            tools:text="На сегодня 228 карточек"/>
 
         <ImageButton
             android:id="@+id/btn_more"

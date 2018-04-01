@@ -35,6 +35,7 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
     public void attachView(DecksForTrainingView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
+        setupCounterRequest(0);
         loadDecks();
     }
 

@@ -36,6 +36,8 @@ public class VocabraApp extends Application {
         Hawk.init(this).build();
         Realm.init(this);
 
+
+        //REALM MIGRATION
         /* RealmConfiguration config2 = new RealmConfiguration.Builder()
                 .deleteRealmIfMigrationNeeded()
                 .build();

@@ -5,27 +5,30 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 
 /**
- * Created by AlexMelnikov on 30.03.18.
+ * Created by AlexMelnikov on 01.04.18.
  */
 
-public class ResizeAnimation extends Animation {
-    final int targetHeight;
-    View view;
-    int startHeight;
+public class ResizeButtonsWidthWithAnimation extends Animation {
 
-    public ResizeAnimation(View view, int targetHeight, int startHeight) {
+    final int targetWidth;
+    View view;
+    View view2;
+    int startWidth;
+
+    public ResizeButtonsWidthWithAnimation(View view, View view2, int targetWidth, int startWidth) {
         this.view = view;
-        this.targetHeight = targetHeight;
-        this.startHeight = startHeight;
+        this.view2 = view2;
+        this.targetWidth = targetWidth;
+        this.startWidth = startWidth;
     }
 
     @Override
     protected void applyTransformation(float interpolatedTime, Transformation t) {
-        //int newHeight = (int) (startHeight + targetHeight * interpolatedTime);
-        //to support decent animation, change new heigt as Nico S. recommended in comments
-        int newHeight = (int) (startHeight+(targetHeight - startHeight) * interpolatedTime);
-        view.getLayoutParams().height = newHeight;
+        int newWidth = (int) (startWidth +(targetWidth - startWidth) * interpolatedTime);
+        view.getLayoutParams().width = newWidth;
         view.requestLayout();
+        view2.getLayoutParams().width = newWidth;
+        view2.requestLayout();
     }
 
     @Override
@@ -37,5 +40,4 @@ public class ResizeAnimation extends Animation {
     public boolean willChangeBounds() {
         return true;
     }
-
 }

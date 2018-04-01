@@ -4,8 +4,14 @@ import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
+import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.inject.Inject;
 
@@ -20,22 +26,30 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
     @Inject
     DecksRepository mDecksRep;
+    @Inject
+    CardsRepository mCardsRep;
 
     private Deck currentDeck;
+    private ArrayList<Card> currentDeckCards;
+    private Card currentCard;
+    private int currentCardIndex;
+
     private boolean firstAttach;
 
     private boolean buttonsLayoutIsExpanded;
 
     public TrainingPresenter() {
+        VocabraApp.getPresenterComponent().inject(this);
         firstAttach = true;
         buttonsLayoutIsExpanded = false;
+        currentCardIndex = -1;
     }
 
     @Override
     public void attachView(TrainingView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
-        showFront();
+        getNextCard();
         firstAttach = false;
 
     }
@@ -44,26 +58,68 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     public void detachView(TrainingView view) {
         super.detachView(view);
         getViewState().detachInputListeners();
+        currentCardIndex = -1;
     }
 
     public void setupDeck(Deck deck) {
         currentDeck = deck;
+        Log.d(TAG, "setupDeck: " + deck.getName());
+        currentDeckCards = mCardsRep.getCardsByDeckDB(deck);
+        Collections.shuffle(currentDeckCards);
     }
 
-    public void showFront() {
-        getViewState().showFrontView(firstAttach);
+    public void showFrontRequest() {
+        getViewState().showFront(currentCard.getFront(), firstAttach);
     }
-
 
 
     public void showBackRequest() {
-        getViewState().showBackView();
+        getViewState().showBack(currentCard.getBack());
         buttonsLayoutIsExpanded = true;
-        getViewState().expandButtonsLayout();
+        getViewState().showOptions(true);
     }
+
+
+
+    public void optionEasyPicked() {
+        getViewState().hideOptions(true);
+        getViewState().hideCurrentFrontAndBack();
+        getNextCard();
+    }
+
+    public void optionGoodPicked() {
+        getViewState().hideOptions(currentCard.isNew());
+        getViewState().hideCurrentFrontAndBack();
+        getNextCard();
+    }
+
+    public void optionForgotPicked() {
+        getViewState().hideOptions(currentCard.isNew());
+        getViewState().hideCurrentFrontAndBack();
+        getNextCard();
+    }
+
+
 
     public void moreButtonPressed() {
 
     }
 
+
+
+    private void getNextCard() {
+        currentCardIndex++;
+        if (currentCardIndex < currentDeckCards.size()) {
+            currentCard = currentDeckCards.get(currentCardIndex);
+            showFrontRequest();
+        } else {
+            currentCardIndex = 1;
+            currentCard = currentDeckCards.get(currentCardIndex);
+            showFrontRequest();
+        }
+    }
+
+    private void displayNewCardRequest() {
+
+    }
 }

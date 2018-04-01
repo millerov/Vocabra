@@ -40,9 +40,14 @@ public class Card extends RealmObject {
     @Nullable
     private Date lastTimeTrained;
 
+    @Nullable
+    private Date nextTimeForTraining;
+
     private Date creationDate;
 
     private int timesTrained;
+
+    private int level;
 
     public Card() {}
 
@@ -181,5 +186,22 @@ public class Card extends RealmObject {
 
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
+    }
+
+    @Nullable
+    public Date getNextTimeForTraining() {
+        return nextTimeForTraining;
+    }
+
+    public void setNextTimeForTraining(@Nullable Date nextTimeForTraining) {
+        this.nextTimeForTraining = nextTimeForTraining;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }

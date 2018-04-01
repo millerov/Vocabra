@@ -11,12 +11,14 @@ import com.example.alexmelnikov.vocabra.ui.BaseView;
 
 @StateStrategyType(OneExecutionStateStrategy.class)
 public interface TrainingView extends BaseView {
-    void showFrontView(boolean firstAttach);
+    void showFront(String front, boolean firstAttach);
 
-    void showBackView();
+    void showBack(String back);
 
-    void expandButtonsLayout();
+    void hideCurrentFrontAndBack();
 
-    void narrowButtonLayout();
+    void showOptions(boolean withHardBtn);
+
+    void hideOptions(boolean withHardBtn);
 
 }

@@ -69,5 +69,6 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-gson:2.3.0'
     //Hawk
     compile 'com.orhanobut:hawk:2.0.1'
-
+    //Joda Time
+    compile 'joda-time:joda-time:2.9.9'
 }
