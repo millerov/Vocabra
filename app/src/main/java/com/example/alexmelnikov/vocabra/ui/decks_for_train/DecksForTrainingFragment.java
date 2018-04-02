@@ -50,8 +50,6 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
     @InjectPresenter
     DecksForTrainingPresenter mDecksForTrainPresenter;
 
-    @Inject
-    CardsRepository mCardsRep;
 
     @BindView(R.id.layout_toolbar) RelativeLayout rlToolBar;
     @BindView(R.id.rv_decks) RecyclerView rvDecks;
@@ -109,7 +107,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
     }
 
     @Override
-    public void openTrainingActivity(Deck deck, View item, String transitionName) {
+    public void openTrainingFragment(Deck deck, View item, String transitionName) {
         ((MainActivity)getActivity()).hideBottomNavigationBar();
 
         TrainingFragment fragment = new TrainingFragment();
@@ -121,8 +119,6 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
         Bundle bundle = new Bundle();
         bundle.putString("transitionName", transitionName);
         bundle.putInt("deckId", deck.getId());
-        bundle.putInt("newCount", mCardsRep.getNewCardsByDeckDB(deck).size());
-        bundle.putInt("oldReadyCount", mCardsRep.getOldReadyForTrainCardsByDeckDB(deck).size());
         fragment.setArguments(bundle);
 
         getActivity().getSupportFragmentManager().beginTransaction()

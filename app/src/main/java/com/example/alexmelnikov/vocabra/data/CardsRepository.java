@@ -10,6 +10,8 @@ import com.example.alexmelnikov.vocabra.model.Translation;
 import java.util.ArrayList;
 import java.util.Date;
 
+import javax.annotation.Nonnull;
+
 import io.realm.Realm;
 import io.realm.RealmResults;
 import io.realm.Sort;
@@ -73,13 +75,15 @@ public class CardsRepository {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
-            public void execute(Realm realm) {
+            public void execute(@Nonnull Realm realm) {
                 ArrayList<Card> cards = new ArrayList<Card>(realm.where(Card.class).findAll());
                 Date currentDate = new Date();
                 for (Card c : cards)
                     if (c.getNextTimeForTraining() != null)
-                        if (c.getNextTimeForTraining().after(currentDate))
+                        if (c.getNextTimeForTraining().before(currentDate))
                             c.setReadyForTraining(true);
+                        else
+                            c.setReadyForTraining(false);
             }
         });
         realm.close();
@@ -99,6 +103,8 @@ public class CardsRepository {
                     if (c.getNextTimeForTraining() != null)
                         if (c.getNextTimeForTraining().before(currentDate))
                             c.setReadyForTraining(true);
+                        else
+                            c.setReadyForTraining(false);
             }
         });
         realm.close();
@@ -253,6 +259,44 @@ public class CardsRepository {
                 updatedCard.setBack(back);
                 updatedCard.setCardContext(cardContext);
                 updatedCard.setDeck(deck);
+            }
+        });
+        realm.close();
+    }
+
+    public void updateCardAfterTraining(Card card, Date nextTimeForTraining, int newLevel) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Card updatedCard = realm.where(Card.class)
+                        .equalTo("id", card.getId())
+                        .findFirst();
+                if (updatedCard.isNew())
+                    updatedCard.setNew(false);
+                updatedCard.setLastTimeTrained(new Date());
+                updatedCard.setNextTimeForTraining(nextTimeForTraining);
+                updatedCard.setLevel(newLevel);
+                updatedCard.setTimesTrained(updatedCard.getTimesTrained() + 1);
+            }
+        });
+        realm.close();
+    }
+
+    public void updateCardAfterReturnUsingOldVirsionOfCard(Card card) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Card updatedCard = realm.where(Card.class)
+                        .equalTo("id", card.getId())
+                        .findFirst();
+
+                updatedCard.setNew(card.isNew());
+                updatedCard.setLastTimeTrained(card.getLastTimeTrained());
+                updatedCard.setNextTimeForTraining(card.getNextTimeForTraining());
+                updatedCard.setLevel(card.getLevel());
+                updatedCard.setTimesTrained(card.getTimesTrained());
             }
         });
         realm.close();

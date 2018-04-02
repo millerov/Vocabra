@@ -19,7 +19,7 @@ public interface DecksForTrainingView extends BaseView {
 
     void replaceCardsRecyclerData(ArrayList<Deck> decks);
 
-    void openTrainingActivity(Deck deck, View item, String transitionName);
+    void openTrainingFragment(Deck deck, View item, String transitionName);
 
     void setupTextView(int counter);
 

@@ -65,6 +65,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     @BindView(R.id.layout_buttons) RelativeLayout rlButtons;
     @BindView(R.id.btn_back) ImageButton btnBack;
     @BindView(R.id.btn_edit) ImageButton btnEdit;
+    @BindView(R.id.btn_to_previous) ImageButton btnToPrev;
     @BindView(R.id.btn_show_back) Button btnShowBack;
     @BindView(R.id.btn_easy) RelativeLayout btnEasy;
     @BindView(R.id.btn_good) RelativeLayout btnGood;
@@ -86,14 +87,9 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
         if (args != null) {
             String transitionName = args.getString("transitionName");
             int deckId = args.getInt("deckId");
-            int newCount = args.getInt("newCount");
-            int oldReadyCount = args.getInt("oldReadyCount");
             Deck deck = mDecksRep.getDeckById(deckId);
 
             rlDeck.setTransitionName(transitionName);
-
-            tvNewCounter.setText(newCount + "");
-            tvReadyCounter.setText(oldReadyCount + "");
 
             if (deck != null) {
                 tvDeckName.setText(deck.getName());
@@ -121,6 +117,9 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     public void attachInputListeners() {
         Disposable backButton = RxView.clicks(btnBack)
                 .subscribe(o -> closeFragment());
+
+        Disposable prevButton = RxView.clicks(btnToPrev)
+                .subscribe(o -> mTrainingPresenter.returnToPreviousCardRequest());
 
         Disposable showBackButton = RxView.clicks(btnShowBack)
                 .subscribe(o -> {
@@ -155,7 +154,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 });
 
 
-        mDisposable.addAll(backButton, showBackButton, optionEasyButton, optionGoodButton,
+        mDisposable.addAll(backButton, prevButton, showBackButton, optionEasyButton, optionGoodButton,
                 optionForgotButton, optionHardButton);
     }
 
@@ -165,8 +164,13 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     }
 
     @Override
+    public void fillCounters(int newCardsCount, int oldReadyCardsCount) {
+        tvNewCounter.setText(newCardsCount + "");
+        tvReadyCounter.setText(oldReadyCardsCount + "");
+    }
+
+    @Override
     public void showFront(String front, boolean firstAttach) {
-        Log.d(TAG, "showFront: " + firstAttach);
         if (firstAttach) {
             rlFront.postDelayed(new Runnable() {
                 @Override
@@ -229,6 +233,11 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 .duration(500)
                 .playOn(rlBack);
         tvContext.setText("");
+    }
+
+    @Override
+    public void showFrontAndBackOfPrevCard(String front, String back, @Nullable String context) {
+
     }
 
     @Override
@@ -365,6 +374,8 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                     }
                 });
 
+        //btnHard.setLayoutParams(p);
+
     }
 
 
@@ -375,7 +386,8 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     }
 
     //Used on left upper corner back ImageButton click
-    private void closeFragment() {
+    @Override
+    public void closeFragment() {
         ((MainActivity) getActivity()).showBottomNavigationBar();
         getFragmentManager().popBackStack();
     }

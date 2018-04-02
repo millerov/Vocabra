@@ -581,7 +581,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void showSelectedItemsDeletedMessage() {
-        ((MainActivity)getActivity()).showMessage("Выделенные элементы были удалени",
+        ((MainActivity)getActivity()).showMessage("Выделенные элементы были удалены",
                 true, mCardBrowserPresenter, "Отменить");
     }
 

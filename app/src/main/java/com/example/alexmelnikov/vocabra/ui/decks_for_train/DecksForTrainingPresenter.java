@@ -51,7 +51,7 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
 
     public void deckSelectRequestFromRecycler(Deck deck, View item, String transitionName) {
         if (mCardsRep.getCardsByDeckDB(deck).size() != 0)
-            getViewState().openTrainingActivity(deck, item, transitionName);
+            getViewState().openTrainingFragment(deck, item, transitionName);
         else
             getViewState().showEmptyDeckSelectedMessage(item);
     }

@@ -11,8 +11,13 @@ import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.utils.CardUtils;
 
+import org.joda.time.DateTime;
+
+import java.util.ArrayDeque;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -32,12 +37,22 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     CardsRepository mCardsRep;
 
     private Deck currentDeck;
-    private ArrayList<Card> currentDeckCards;
+    private int newCardsCount;
+    private int oldReadyCardsCount;
+
+    private ArrayList<Card> currentCards;
+
     private Card currentCard;
     private int currentCardIndex;
     private int currentCardLevel;
     private int currentCardTimesTrained;
+
     private HashMap<String, Integer> currentCardOptionsIncrements;
+    private int easyIncrement;
+    private int goodIncrement;
+    private int hardIncrement;
+
+    private Deque<Card> prevCards;
 
 
     private boolean firstAttach;
@@ -49,6 +64,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         firstAttach = true;
         buttonsLayoutIsExpanded = false;
         currentCardIndex = -1;
+        prevCards = new ArrayDeque<Card>();
+        currentCards = new ArrayList<Card>();
     }
 
     @Override
@@ -67,12 +84,26 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         currentCardIndex = -1;
     }
 
+
     public void setupDeck(Deck deck) {
         currentDeck = deck;
-        Log.d(TAG, "setupDeck: " + deck.getName());
+        updateCounters();
         mCardsRep.updateReadyStatusForCardsInDeck(deck);
-        currentDeckCards = mCardsRep.getReadyCardsByDeckDB(deck);
-        Collections.shuffle(currentDeckCards);
+
+        /*Firstly we want to train only new cards
+        then after finished train all other ready for training cards*/
+        currentCards.addAll(mCardsRep.getNewCardsByDeckDB(deck));
+        currentCards.addAll(mCardsRep.getOldReadyForTrainCardsByDeckDB(deck));
+
+        Collections.shuffle(currentCards);
+    }
+
+
+    public void updateCounters() {
+        mCardsRep.updateReadyStatusForCardsInDeck(currentDeck);
+        this.newCardsCount = mCardsRep.getNewCardsByDeckDB(currentDeck).size();
+        this.oldReadyCardsCount = mCardsRep.getOldReadyForTrainCardsByDeckDB(currentDeck).size();
+        getViewState().fillCounters(newCardsCount, oldReadyCardsCount);
     }
 
     public void showFrontRequest() {
@@ -83,58 +114,124 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     public void showBackRequest() {
         getViewState().showBack(currentCard.getBack(), currentCard.getCardContext());
         buttonsLayoutIsExpanded = true;
-        getViewState().showOptions(!currentCard.isNew());
+        getViewState().showOptions(currentCard.getLevel() > 2);
     }
 
+
+    public void returnToPreviousCardRequest() {
+        getPreviousCard();
+    }
+
+
     public void optionEasyPicked() {
-        getViewState().hideOptions(!currentCard.isNew());
+        buttonsLayoutIsExpanded = false;
+        getViewState().hideOptions(currentCard.getLevel() > 2);
         getViewState().hideCurrentFrontAndBack();
+
+        Date currentDate = new Date();
+        DateTime currentDateTime = new DateTime(currentDate);
+        DateTime nextTrainingTime = currentDateTime.plusDays(easyIncrement);
+
+        int nextLevel = currentCardLevel + 2;
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+
+        updateCounters();
         getNextCard();
     }
 
     public void optionGoodPicked() {
-        getViewState().hideOptions(!currentCard.isNew());
+        buttonsLayoutIsExpanded = false;
+        getViewState().hideOptions(currentCard.getLevel() > 2);
         getViewState().hideCurrentFrontAndBack();
+
+        Date currentDate = new Date();
+        DateTime currentDateTime = new DateTime(currentDate);
+        DateTime nextTrainingTime;
+        /*if level == 1, do not set new training time, because we want to see the card
+          in the current training again*/
+        if (currentCardLevel == 1) {
+            nextTrainingTime = new DateTime(currentCard.getNextTimeForTraining());
+            currentCards.add(currentCard);
+        } else {
+            nextTrainingTime = currentDateTime.plusDays(goodIncrement);
+        }
+
+        int nextLevel = currentCardLevel + 1;
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+
+        updateCounters();
         getNextCard();
     }
 
     public void optionForgotPicked() {
-        getViewState().hideOptions(!currentCard.isNew());
+        buttonsLayoutIsExpanded = false;
+        getViewState().hideOptions(currentCard.getLevel() > 2);
         getViewState().hideCurrentFrontAndBack();
+
+        int nextLevel = 1;
+        currentCards.add(currentCard);
+        mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel);
+
+        updateCounters();
         getNextCard();
     }
 
     public void optionHardPicked() {
-        getViewState().hideOptions(!currentCard.isNew());
+        buttonsLayoutIsExpanded = false;
+        getViewState().hideOptions(currentCard.getLevel() > 2);
         getViewState().hideCurrentFrontAndBack();
+
+        Date currentDate = new Date();
+        DateTime currentDateTime = new DateTime(currentDate);
+        DateTime nextTrainingTime = currentDateTime.plusDays(hardIncrement);
+
+        int nextLevel = currentCardLevel - 1;
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+
+        updateCounters();
         getNextCard();
     }
 
 
 
-
-
     private void getNextCard() {
-        if (currentDeckCards.size() != 0) {
-            currentCardIndex++;
-            if (currentCardIndex == currentDeckCards.size())
-                currentCardIndex = 0;
-            currentCard = currentDeckCards.get(currentCardIndex);
+        currentCardIndex++;
+        if (currentCardIndex < currentCards.size()) {
+            currentCard = currentCards.get(currentCardIndex);
             currentCardLevel = currentCard.getLevel();
             currentCardTimesTrained = currentCard.getTimesTrained();
+
+            prevCards.push(currentCard);
+
             currentCardOptionsIncrements = CardUtils.getOptionsIncrementsToDateByLevel(currentCardLevel);
+            easyIncrement = currentCardOptionsIncrements.get("easy");
+            goodIncrement = currentCardOptionsIncrements.get("good");
+            hardIncrement = currentCardOptionsIncrements.get("hard");
             setupOptionsTextViewsRequest(currentCardOptionsIncrements);
 
             showFrontRequest();
+        } else {
+            getViewState().closeFragment();
         }
+    }
+
+
+    private void getPreviousCard() {
+       /* if (currentCardIndex > 0) {
+            *//*currentCardIndex--;
+            currentCard = prevCards.pop();
+            mCardsRep.updateCardAfterReturnUsingOldVirsionOfCard(currentCard);*//*
+            if (buttonsLayoutIsExpanded)
+                getViewState().hideOptions(currentCard.getLevel() > 2);
+        }*/
     }
 
 
     private void setupOptionsTextViewsRequest(HashMap<String, Integer> optionsIncrements) {
         String easy, good, hard, forgot;
-        easy = optionsIncrements.get("easy") + " д.";
-        good = optionsIncrements.get("good") + " д.";
-        hard = optionsIncrements.get("hard") + " д.";
+        easy = easyIncrement + " д.";
+        good = goodIncrement + " д.";
+        hard = hardIncrement + " д.";
 
         if (currentCardLevel < 3) {
             forgot = "< 1 мин";
@@ -144,8 +241,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
             forgot = "< 10 мин";
         }
 
-
-        getViewState().fillOptionsTextViews(!currentCard.isNew(), easy, good, forgot, hard);
+        getViewState().fillOptionsTextViews(currentCard.getLevel() > 2, easy, good, forgot, hard);
 
     }
 

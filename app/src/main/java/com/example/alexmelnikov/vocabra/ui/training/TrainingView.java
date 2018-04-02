@@ -20,11 +20,17 @@ public interface TrainingView extends BaseView {
 
     void hideCurrentFrontAndBack();
 
+    void showFrontAndBackOfPrevCard(String front, String back, @Nullable String context);
+
     void showOptions(boolean withHardBtn);
 
     void hideOptions(boolean withHardBtn);
 
     void fillOptionsTextViews(boolean withHardBtn, String easyTime, String goodTime,
                               String forgotTime, String hardTime);
+
+    void fillCounters(int newCardsCount, int oldReadyCardsCount);
+
+    void closeFragment();
 
 }
