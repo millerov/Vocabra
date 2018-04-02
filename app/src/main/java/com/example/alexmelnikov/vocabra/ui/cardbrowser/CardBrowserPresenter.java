@@ -16,6 +16,8 @@ import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
+import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
+import com.example.alexmelnikov.vocabra.model.temp.TemporaryTranslation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 
 import java.util.ArrayList;
@@ -57,11 +59,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     private CardSortMethod mSelectedSortMethod;
 
     private boolean selectItemsForDeletionMode;
+    private ArrayList<TemporaryCard> temporaryCards;
+    private ArrayList<Translation> temporaryCardTranslations;
 
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         showingDeckCards = false;
         editDeckMode = false;
+        temporaryCards = new ArrayList<TemporaryCard>();
+        temporaryCardTranslations = new ArrayList<Translation>();
     }
 
     @Override
@@ -120,16 +126,31 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             getViewState().showCardAlreadyExistsSnackbarMessageAction(deck.getName());
         else {
             mCardsRep.insertCardToDB(card);
-            /*mCardsList = mCardsRep.getCardsFromDB();
-            loadCards();*/
             loadSortedCards();
             getViewState().showCardSuccessfulyAddedSnackbarMessage(deck.getName());
         }
     }
 
     @Override
-    public void onSnackbarEvent() {
-        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
+    public void onSnackbarEvent(String actionText) {
+        if (actionText.equals("Еще раз"))
+            getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
+
+        else if (actionText.equals("Отменить")) {
+
+            for (int i = 0; i < temporaryCards.size(); i++) {
+                Card card = new Card(-1, temporaryCards.get(i));
+                Translation t = temporaryCardTranslations.get(i);
+                Log.d(TAG, "onSnackbarEvent: " + t.getFromText() + "/" + t.getToText());
+                Log.d(TAG, "onSnackbarEvent: " + card.getFront() + "/" + card.getBack());
+                mCardsRep.insertCardToDB(card);
+                if (t != null)
+                    mTransRep.updateTranslationFavoriteStateDB(t, t.getFromText(), t.getToText(), true, card);
+
+                loadSortedCards();
+            }
+        }
+
     }
 
     public void decksButtonPressed() {
@@ -260,10 +281,21 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     public void deleteItemsRequest(boolean[] selectedItemsIndexes) {
         ArrayList<Card> cardsForDeletion = new ArrayList<Card>();
         ArrayList<Translation> cardTranlationsInHistory = new ArrayList<Translation>();
+        Card card;
+        temporaryCards.clear();
+        temporaryCardTranslations.clear();
+
         for (int i = 0; i < selectedItemsIndexes.length; i++)
             if (selectedItemsIndexes[i]) {
-                cardsForDeletion.add(mCardsList.get(i));
-                cardTranlationsInHistory.add(mTransRep.findTranslationByCardInDB(mCardsList.get(i)));
+                card = mCardsList.get(i);
+                temporaryCards.add(new TemporaryCard(card.getFront(), card.getBack(), card.getCardContext(), card.getTranslationDirection(),
+                        card.getFrontLanguage(), card.getBackLanguage(), card.getDeck(), card.isReadyForTraining(), card.getLastTimeTrained(),
+                        card.getTimesTrained(), card.isNew(), card.getNextTimeForTraining(), card.getLevel()));
+                cardsForDeletion.add(card);
+
+                Translation t = mTransRep.findTranslationByCardInDB(mCardsList.get(i));
+                cardTranlationsInHistory.add(t);
+                temporaryCardTranslations.add(t);
             }
 
         for (Translation t : cardTranlationsInHistory)
@@ -273,6 +305,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             mCardsRep.deleteCardFromDB(c);
 
         getViewState().disableEditModeToolbar();
+        getViewState().showSelectedItemsDeletedMessage();
         loadSortedCards();
     }
 

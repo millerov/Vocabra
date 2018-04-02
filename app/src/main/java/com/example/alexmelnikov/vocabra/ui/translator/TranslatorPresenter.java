@@ -266,7 +266,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
         mTemporaryCard = new TemporaryCard(card.getFront(), card.getBack(), card.getCardContext(), card.getTranslationDirection(),
                 card.getFrontLanguage(), card.getBackLanguage(), card.getDeck(), card.isReadyForTraining(), card.getLastTimeTrained(),
-                card.getTimesTrained());
+                card.getTimesTrained(), card.isNew(), card.getNextTimeForTraining(), card.getLevel());
         mTemporaryCardTranslation = affectedTranslation;
         mTemporaryCardPositionInHistory = pos;
 
@@ -279,7 +279,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     @Override
-    public void onSnackbarEvent() {
+    public void onSnackbarEvent(String actionText) {
         Card card = new Card(-1, mTemporaryCard);
         mCardsRep.insertCardToDB(card);
 

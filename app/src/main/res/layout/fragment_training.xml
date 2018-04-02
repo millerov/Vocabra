@@ -18,36 +18,36 @@
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_arrow_back_white_24dp" />
 
-
-        <!--<TextView
-            android:id="@+id/tv_app_name"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toEndOf="@id/btn_back"
-            android:text="9999 карточек осталось"
-            android:textColor="@color/white"
-            android:textSize="19sp" />-->
-
         <ImageButton
             android:id="@+id/btn_to_previous"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@+id/btn_more"
+            android:layout_marginRight="12dp"
+            android:layout_toLeftOf="@+id/btn_edit"
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_undo_white_24dp" />
 
         <ImageButton
-            android:id="@+id/btn_more"
+            android:id="@+id/btn_edit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_more_vert_white_26dp" />
+            android:src="@drawable/ic_edit_white_24dp" />
+
+<!--
+        <ImageButton
+            android:id="@+id/btn_context"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/btn_to_previous"
+            android:layout_centerVertical="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_settings_backup_restore_white_24dp" />
+-->
 
     </RelativeLayout>
 
@@ -103,10 +103,11 @@
 
     </RelativeLayout>
 
+
     <RelativeLayout
         android:id="@+id/rl_front"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_below="@id/rl_deck"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
@@ -124,12 +125,30 @@
             android:textSize="22dp"
             tools:text="Hello" />
 
+        <TextView
+            android:id="@+id/tv_context"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_front"
+            android:paddingHorizontal="20dp"
+            android:layout_centerHorizontal="true"
+            android:textColor="@color/colorGreyHint"
+            android:textSize="14dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
+            android:marqueeRepeatLimit ="marquee_forever"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:scrollHorizontally="true"
+            />
+
     </RelativeLayout>
+
 
     <RelativeLayout
         android:id="@+id/rl_back"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="120dp"
         android:layout_below="@id/rl_front"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="20dp"
@@ -236,7 +255,7 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="14dp"
                 android:textColor="@color/colorAccent"
-                android:text="2 д"/>
+                tools:text="2 д"/>
 
         </RelativeLayout>
 

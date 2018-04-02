@@ -580,6 +580,12 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
+    public void showSelectedItemsDeletedMessage() {
+        ((MainActivity)getActivity()).showMessage("Выделенные элементы были удалени",
+                true, mCardBrowserPresenter, "Отменить");
+    }
+
+    @Override
     public boolean onBackPressed() {
         if (etDeckName.getVisibility() == View.VISIBLE ||
                 rlDeck.getVisibility() == View.VISIBLE ||

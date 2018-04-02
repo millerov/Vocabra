@@ -6,5 +6,5 @@ package com.example.alexmelnikov.vocabra.ui;
 
 public interface SnackBarActionHandler {
 
-    void onSnackbarEvent();
+    void onSnackbarEvent(String actionText);
 }

@@ -66,4 +66,6 @@ public interface CardBrowserView extends BaseView {
 
     void updateSelectedCounter(int count, int max);
 
+    void showSelectedItemsDeletedMessage();
+
 }

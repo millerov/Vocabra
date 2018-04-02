@@ -67,8 +67,10 @@ public class Card extends RealmObject {
         this.timesTrained = 0;
         this.translationDirection = frontLanguage.getId() + "-" + backLanguage.getId();
         creationDate = new Date();
+        nextTimeForTraining = new Date();
         isReadyForTraining = isNew = true;
         timesTrained = 0;
+        level = 1;
     }
 
     public Card(int id, TemporaryCard tempCard) {
@@ -83,6 +85,9 @@ public class Card extends RealmObject {
         this.timesTrained = tempCard.getTimesTrained();
         this.translationDirection = tempCard.getTranslationDirection();
         this.lastTimeTrained = tempCard.getLastTimeTrained();
+        this.isNew = tempCard.isNew();
+        this.nextTimeForTraining = tempCard.getNextTimeForTraining();
+        this.level = tempCard.getLevel();
     }
 
     public void setId(int id) {

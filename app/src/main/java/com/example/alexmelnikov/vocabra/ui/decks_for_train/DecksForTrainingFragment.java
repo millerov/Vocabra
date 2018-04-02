@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.adapter.DecksForTrainingAdapter;
@@ -91,6 +93,14 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     public void setupTextView(int counter) {
         tvCardsReadyCounter.setText("На сегодня " + counter + " " + TextUtils.getRightWordEnding(counter, new String[]{"карточка", "карточки", "карточек"}));
+    }
+
+    @Override
+    public void showEmptyDeckSelectedMessage(View item) {
+        ((MainActivity)getActivity()).showMessage("В колоде пока нет карточек для тренеровки", false, null, null);
+        YoYo.with(Techniques.Bounce)
+                .duration(600)
+                .playOn(item);
     }
 
     @Override

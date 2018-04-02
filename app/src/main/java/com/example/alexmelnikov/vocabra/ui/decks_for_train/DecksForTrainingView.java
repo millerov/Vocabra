@@ -23,4 +23,6 @@ public interface DecksForTrainingView extends BaseView {
 
     void setupTextView(int counter);
 
+    void showEmptyDeckSelectedMessage(View item);
+
 }

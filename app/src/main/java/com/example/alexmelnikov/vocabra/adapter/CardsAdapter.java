@@ -76,7 +76,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         Card card = mData.get(mData.size() - position - 1);
 
 
-        Log.d(TAG, "onBindViewHolder: " + selectedItemsCounter);
         holder.tvFront.setText(card.getFront());
         holder.tvBack.setText(card.getBack());
 

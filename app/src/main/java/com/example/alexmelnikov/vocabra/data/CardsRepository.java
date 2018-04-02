@@ -8,6 +8,7 @@ import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Translation;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -52,7 +53,7 @@ public class CardsRepository {
     public ArrayList<Card> getCardsFromDB() {
         ArrayList<Card> cards;
         Realm realm = Realm.getDefaultInstance();
-        cards = new ArrayList(realm.where(Card.class).findAll());
+        cards = new ArrayList<Card>(realm.where(Card.class).findAll());
         return cards;
     }
 
@@ -64,6 +65,55 @@ public class CardsRepository {
                 .findAll());
         return cards;
     }
+
+
+    //Методы обновляющие значение переменной isReadyForTraining для карт на основе текущей даты
+
+    public void updateReadyStatusForAllCards() {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ArrayList<Card> cards = new ArrayList<Card>(realm.where(Card.class).findAll());
+                Date currentDate = new Date();
+                for (Card c : cards)
+                    if (c.getNextTimeForTraining() != null)
+                        if (c.getNextTimeForTraining().after(currentDate))
+                            c.setReadyForTraining(true);
+            }
+        });
+        realm.close();
+    }
+
+
+    public void updateReadyStatusForCardsInDeck(Deck deck) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                ArrayList<Card> cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .findAll());
+                Date currentDate = new Date();
+                for (Card c : cards)
+                    if (c.getNextTimeForTraining() != null)
+                        if (c.getNextTimeForTraining().before(currentDate))
+                            c.setReadyForTraining(true);
+            }
+        });
+        realm.close();
+    }
+
+    public ArrayList<Card> getReadyCardsByDeckDB(Deck deck) {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList<Card>(realm.where(Card.class)
+                .equalTo("deck.name", deck.getName())
+                .equalTo("isReadyForTraining", true)
+                .findAll());
+        return cards;
+    }
+
 
     public ArrayList<Card> getNewCardsByDeckDB(Deck deck) {
         ArrayList<Card> cards;
@@ -92,6 +142,7 @@ public class CardsRepository {
                 .equalTo("front", card.getFront())
                 .equalTo("back", card.getBack())
                 .equalTo("translationDirection", card.getTranslationDirection())
+                .equalTo("cardContext", card.getCardContext())
                 .findAll();
         for (int i = 0; i < similarCards.size(); i++) {
             if (similarCards.get(i).getDeck().getName().equals(deck.getName()))

@@ -52,6 +52,8 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @BindView(R.id.bottom_nav_bar) BottomNavigationViewEx bottomNavBar;
 
+    private Snackbar snack;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +69,14 @@ public class MainActivity extends BaseActivity implements MainView {
             bottomNavBar.setSelectedItemId(R.id.word_browser_menu_item);
         }
     }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (bottomNavBar.getVisibility() == View.GONE)
+           showBottomNavigationBar();
+    }
+
 
     public void initViews() {
         bottomNavBar.enableAnimation(false);
@@ -116,7 +126,6 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showMessage(String message, boolean withAction, SnackBarActionHandler presenter, String actionText) {
-        Snackbar snack;
         if (withAction) {
             snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_LONG);
         } else {
@@ -133,7 +142,7 @@ public class MainActivity extends BaseActivity implements MainView {
             snack.setAction(actionText, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.onSnackbarEvent();
+                    presenter.onSnackbarEvent(actionText);
                 }
             });
         }
@@ -141,7 +150,6 @@ public class MainActivity extends BaseActivity implements MainView {
         snack.show();
 
     }
-
 
     @Override
     public void hideBottomNavigationBar() {

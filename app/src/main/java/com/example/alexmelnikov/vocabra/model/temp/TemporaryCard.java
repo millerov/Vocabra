@@ -25,8 +25,13 @@ public class TemporaryCard {
     private Date lastTimeTrained;
     private int timesTrained;
 
+    private boolean isNew;
+    private Date nextTimeForTraining;
+    private int level;
+
     public TemporaryCard(String front, String back, String cardContext, String translationDirection, Language frontLanguage, Language backLanguage,
-                         Deck deck, boolean isReadyForTraining, Date lastTimeTrained, int timesTrained) {
+                         Deck deck, boolean isReadyForTraining, Date lastTimeTrained, int timesTrained,
+                         boolean isNew, Date nextTimeForTraining, int level) {
         this.front = front;
         this.back = back;
         this.cardContext = cardContext;
@@ -37,6 +42,9 @@ public class TemporaryCard {
         this.isReadyForTraining = isReadyForTraining;
         this.lastTimeTrained = lastTimeTrained;
         this.timesTrained = timesTrained;
+        this.isNew = isNew;
+        this.nextTimeForTraining = nextTimeForTraining;
+        this.level = level;
     }
 
     public String getFront() {
@@ -119,5 +127,29 @@ public class TemporaryCard {
 
     public void setTimesTrained(int timesTrained) {
         this.timesTrained = timesTrained;
+    }
+
+    public boolean isNew() {
+        return isNew;
+    }
+
+    public void setNew(boolean aNew) {
+        isNew = aNew;
+    }
+
+    public Date getNextTimeForTraining() {
+        return nextTimeForTraining;
+    }
+
+    public void setNextTimeForTraining(Date nextTimeForTraining) {
+        this.nextTimeForTraining = nextTimeForTraining;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 }
