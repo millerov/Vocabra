@@ -46,7 +46,6 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     private Card currentCard;
     private int currentCardIndex;
     private int currentCardLevel;
-    private int currentCardTimesTrained;
 
     private HashMap<String, Integer> currentCardOptionsIncrements;
     private int easyIncrement;
@@ -74,8 +73,19 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     public void attachView(TrainingView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
-        getNextCard();
+
+        if (currentCard != null) {
+            setupOptionsTextViewsRequest(currentCardOptionsIncrements);
+            showFrontRequest();
+            getViewState().updatePreviousButton(currentCardIndex > 0);
+        } else {
+            getNextCard();
+        }
+
+//        getNextCard();
         firstAttach = false;
+
+
 
     }
 
@@ -83,7 +93,6 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     public void detachView(TrainingView view) {
         super.detachView(view);
         getViewState().detachInputListeners();
-        currentCardIndex = -1;
     }
 
 
@@ -127,7 +136,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
             if (buttonsLayoutIsExpanded) {
                 getViewState().disableButtonsWhileAnimating();
                 buttonsLayoutIsExpanded = false;
-                getViewState().hideOptions(currentCardLevel > 2);
+                getViewState().hideOptions(currentCard.getLevel() > 2);
 
             }
             if (currentCardIndex > 0) {
@@ -229,7 +238,6 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         if (currentCardIndex < currentCards.size()) {
             currentCard = currentCards.get(currentCardIndex);
             currentCardLevel = currentCard.getLevel();
-            currentCardTimesTrained = currentCard.getTimesTrained();
 
             currentCardOptionsIncrements = CardUtils.getOptionsIncrementsToDateByLevel(currentCardLevel);
             easyIncrement = currentCardOptionsIncrements.get("easy");
@@ -255,7 +263,6 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
                     lastCard.getLastTimeTrained(), lastCard.getNextTimeForTraining(), lastCard.getLevel());
 
             currentCardLevel = currentCard.getLevel();
-            currentCardTimesTrained = currentCard.getTimesTrained();
             updateCounters();
 
             currentCardOptionsIncrements = CardUtils.getOptionsIncrementsToDateByLevel(currentCardLevel);

@@ -69,6 +69,7 @@ public class DecksForTrainingAdapter extends RecyclerView.Adapter<DecksForTraini
             ButterKnife.bind(this, itemView);
 
             rlDeck.setOnClickListener(view -> presenter.deckSelectRequestFromRecycler(mData.get(mData.size() - getAdapterPosition() - 1), rlDeck, rlDeck.getTransitionName()));
+            btnTrain.setOnClickListener(view -> presenter.deckSelectRequestFromRecycler(mData.get(mData.size() - getAdapterPosition() - 1), rlDeck, rlDeck.getTransitionName()));
         }
     }
 

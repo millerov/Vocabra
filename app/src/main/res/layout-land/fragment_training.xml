@@ -26,7 +26,7 @@
             android:layout_marginRight="12dp"
             android:layout_toLeftOf="@+id/btn_edit"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_undo_white_24dp" />
+            android:src="@drawable/selector_btn_to_prev_card" />
 
         <ImageButton
             android:id="@+id/btn_edit"
@@ -37,17 +37,6 @@
             android:background="?selectableItemBackgroundBorderless"
             android:src="@drawable/ic_edit_white_24dp" />
 
-        <!--
-                <ImageButton
-                    android:id="@+id/btn_context"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/btn_to_previous"
-                    android:layout_centerVertical="true"
-                    android:background="?selectableItemBackgroundBorderless"
-                    android:src="@drawable/ic_settings_backup_restore_white_24dp" />
-        -->
 
     </RelativeLayout>
 
@@ -101,80 +90,104 @@
 
         </LinearLayout>
 
-    </RelativeLayout>
-
-
-    <RelativeLayout
-        android:id="@+id/rl_front"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_below="@id/rl_deck"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
-        android:elevation="2dp"
-        android:background="@color/white"
-        android:visibility="invisible"
-        tools:visibility="visible">
-
-        <TextView
-            android:id="@+id/tv_front"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@android:color/black"
-            android:textSize="22dp"
-            tools:text="Hello" />
 
         <TextView
             android:id="@+id/tv_context"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/tv_front"
-            android:paddingHorizontal="20dp"
+            android:layout_centerInParent="true"
+            android:paddingHorizontal="10dp"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/colorGreyHint"
-            android:textSize="14dp"
+            android:textColor="@color/white"
+            android:textSize="20dp"
             android:singleLine="true"
             android:ellipsize="marquee"
             android:marqueeRepeatLimit ="marquee_forever"
             android:focusable="true"
             android:focusableInTouchMode="true"
             android:scrollHorizontally="true"
+            android:visibility="gone"
             />
 
+
     </RelativeLayout>
 
 
-    <RelativeLayout
-        android:id="@+id/rl_back"
+    <ScrollView
+        android:id="@+id/sv_front_back"
         android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:layout_below="@id/rl_front"
-        android:layout_marginTop="20dp"
-        android:layout_marginHorizontal="20dp"
-        android:elevation="2dp"
-        android:background="@color/white"
-        android:visibility="invisible"
-        tools:visibility="visible">
+        android:layout_height="286dp"
+        android:layout_below="@id/rl_deck"
+        android:overScrollMode="never"
+        android:scrollbars="none">
 
-        <TextView
-            android:id="@+id/tv_back"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:textColor="@android:color/black"
-            android:textSize="22dp"
-            tools:text="Привет"/>
+            android:orientation="vertical">
 
-    </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rl_front"
+                android:layout_width="match_parent"
+                android:minHeight="110dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="20dp"
+                android:elevation="2dp"
+                android:background="@color/white"
+                android:visibility="invisible"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_front"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    tools:text="Hello" />
+
+            </RelativeLayout>
 
 
+            <RelativeLayout
+                android:id="@+id/rl_back"
+                android:layout_width="match_parent"
+                android:minHeight="110dp"
+                android:layout_height="wrap_content"
+                android:paddingVertical="10dp"
+                android:paddingHorizontal="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="80dp"
+                android:layout_marginHorizontal="20dp"
+                android:elevation="2dp"
+                android:background="@color/white"
+                android:visibility="invisible"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/tv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:textColor="@android:color/black"
+                    android:textSize="22dp"
+                    tools:text="Привет"/>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
 
     <RelativeLayout
         android:id="@+id/layout_buttons"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:gravity="center"
         android:layout_centerHorizontal="true"
         android:orientation="vertical"
         android:visibility="visible"
@@ -187,20 +200,21 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="12dp"
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Показать ответ"
-            android:background="@color/colorPrimary"/>
+            android:background="@color/colorPrimary"
+            tools:visibility="visible"/>
 
 
         <RelativeLayout
             android:id="@+id/btn_easy"
-            android:layout_width="match_parent"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentEnd="true"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="12dp"
             android:paddingVertical="6dp"
             android:background="@color/colorPrimary"
             android:visibility="gone">
@@ -229,11 +243,11 @@
 
         <RelativeLayout
             android:id="@+id/btn_good"
-            android:layout_width="match_parent"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_toLeftOf="@id/btn_easy"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="12dp"
             android:paddingVertical="6dp"
             android:background="@color/colorPrimary"
             android:visibility="gone">
@@ -261,11 +275,11 @@
 
         <RelativeLayout
             android:id="@+id/btn_forgot"
-            android:layout_width="match_parent"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_alignParentStart="true"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="12dp"
             android:paddingVertical="6dp"
             android:background="@color/colorPrimary"
             android:visibility="gone">
@@ -277,7 +291,7 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="14dp"
                 android:textColor="@color/white"
-                android:text="НЕ ЗНАЮ"/>
+                android:text="СНОВА"/>
 
             <TextView
                 android:id="@+id/tv_forgot_info"
@@ -291,13 +305,92 @@
 
         </RelativeLayout>
 
+        <!--<LinearLayout
+            android:id="@+id/layout_forgot_and_hard_btns"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/btn_good"
+            android:layout_alignParentStart="true"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/btn_forgot_for_hard"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginVertical="12dp"
+                android:layout_marginRight="16dp"
+                android:paddingVertical="6dp"
+                android:background="@color/colorPrimary"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_forgot_for_hard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/white"
+                    android:text="НЕ ЗНАЮ"/>
+
+                <TextView
+                    android:id="@+id/tv_forgot_info_for_hard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_forgot_for_hard"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="> 10 мин"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btn_hard"
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginVertical="12dp"
+                android:layout_marginLeft="16dp"
+                android:paddingVertical="6dp"
+                android:background="@color/colorPrimary"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_hard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/white"
+                    android:text="ТРУДНО"/>
+
+                <TextView
+                    android:id="@+id/tv_hard_info"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_hard"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/colorAccent"
+                    tools:text="1 д"/>
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+-->
+
         <RelativeLayout
             android:id="@+id/btn_hard"
-            android:layout_width="match_parent"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
+            android:layout_toRightOf="@id/btn_forgot"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
+            android:layout_marginVertical="12dp"
             android:paddingVertical="6dp"
             android:background="@color/colorPrimary"
             android:visibility="gone">
