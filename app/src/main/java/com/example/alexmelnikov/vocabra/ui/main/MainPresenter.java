@@ -20,7 +20,7 @@ public class MainPresenter extends MvpPresenter<MainView> {
     @Override
     public void attachView(MainView view) {
         super.attachView(view);
-        bottomNavigationClick(mCurrentFragmentIndex);
+       // bottomNavigationClick(mCurrentFragmentIndex);
     }
 
     public void bottomNavigationClick(int itemPos) {

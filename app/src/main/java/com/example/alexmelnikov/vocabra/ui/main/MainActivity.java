@@ -73,8 +73,8 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onStart() {
         super.onStart();
-        if (bottomNavBar.getVisibility() == View.GONE)
-           showBottomNavigationBar();
+        /*if (bottomNavBar.getVisibility() == View.GONE)
+           showBottomNavigationBar();*/
     }
 
 

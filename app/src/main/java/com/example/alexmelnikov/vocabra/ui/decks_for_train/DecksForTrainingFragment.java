@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.decks_for_train;
 
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -78,6 +79,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
         rvDecks.setLayoutManager(mDecksRvManager);
         rvDecks.setAdapter(mDecksAdapter);
     }
+
 
     @Override
     public void attachInputListeners() {

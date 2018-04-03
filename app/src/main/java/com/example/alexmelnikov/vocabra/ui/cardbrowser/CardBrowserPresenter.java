@@ -94,6 +94,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         getViewState().switchDeckDisplayMode(editDeckMode);
         getViewState().switchCornerButtonState(showingDeckCards);
         loadSortedCards();
+
     }
 
     @Override
@@ -203,10 +204,17 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         Deck chosenDeck = mDecksRep.getDeckByName(chosenDeckName);
         Card updatedCard = new Card(-1, front, back, card.getFrontLanguage(), card.getBackLanguage(),
                 chosenDeck, cardContext);
+        String initialCardFront = card.getFront();
+        String initialCardBack = card.getBack();
+        Translation t = mTransRep.findTranslationByCardInDB(card);
+
         if (mCardsRep.containsSimilarCardInDeckDB(updatedCard, chosenDeck)) {
             getViewState().showCardAlreadyExistsSnackbarMessage(chosenDeckName);
         } else {
             mCardsRep.updateCardInDB(card, front, back, cardContext, chosenDeck);
+            if (!initialCardFront.equals(front) || !initialCardBack.equals(back)) {
+                mTransRep.updateTranslationFavoriteStateDB(t, front, back, true, card);
+            }
             loadSortedCards();
         }
 

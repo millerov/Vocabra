@@ -30,7 +30,6 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
 
     private ArrayList<Deck> mDecksList;
 
-
     public DecksForTrainingPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
     }
@@ -54,6 +53,7 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
             getViewState().openTrainingFragment(deck, item, transitionName);
         else
             getViewState().showEmptyDeckSelectedMessage(item);
+
     }
 
     @Override

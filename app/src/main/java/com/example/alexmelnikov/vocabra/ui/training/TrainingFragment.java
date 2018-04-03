@@ -1,5 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.training;
 
+import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -13,7 +15,9 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
@@ -55,6 +59,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
 
     @BindView(R.id.rl_deck) RelativeLayout rlDeck;
     @BindView(R.id.tv_deck_name) TextView tvDeckName;
+    @BindView(R.id.layout_counters) LinearLayout layoutCounters;
     @BindView(R.id.tv_ready_counter) TextView tvReadyCounter;
     @BindView(R.id.tv_new_counter) TextView tvNewCounter;
     @BindView(R.id.rl_front) RelativeLayout rlFront;
@@ -75,6 +80,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     @BindView(R.id.tv_easy_info) TextView tvEasyInfo;
     @BindView(R.id.tv_forgot_info) TextView tvForgotInfo;
     @BindView(R.id.tv_hard_info) TextView tvHardInfo;
+    @BindView(R.id.sv_front_back) ScrollView svFrontBack;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -112,6 +118,8 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
         super.onCreate(savedInstanceState);
         VocabraApp.getAppComponent().inject(this);
     }
+
+
 
     @Override
     public void attachInputListeners() {
@@ -217,9 +225,20 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 .playOn(rlBack);
         rlBack.setVisibility(View.VISIBLE);
         tvBack.setText(back);
-       if (!context.isEmpty()) {
-           tvContext.setText(context);
-       }
+         if (!context.isEmpty()) {
+             layoutCounters.setVisibility(View.GONE);
+             tvDeckName.setVisibility(View.GONE);
+             tvContext.setVisibility(View.VISIBLE);
+             tvContext.setText(context);
+             tvContext.setSelected(true);
+         }
+        svFrontBack.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                svFrontBack.fullScroll(View.FOCUS_DOWN);
+            }
+        }, 100);
+
     }
 
     @Override
@@ -232,7 +251,18 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 .interpolate(new AccelerateDecelerateInterpolator())
                 .duration(500)
                 .playOn(rlBack);
-        tvContext.setText("");
+        if (tvContext.getVisibility() == View.VISIBLE) {
+            tvContext.setText("");
+            layoutCounters.setVisibility(View.VISIBLE);
+            tvDeckName.setVisibility(View.VISIBLE);
+            tvContext.setVisibility(View.GONE);
+        }
+        svFrontBack.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                svFrontBack.fullScroll(View.FOCUS_UP);
+            }
+        }, 100);
     }
 
     @Override
