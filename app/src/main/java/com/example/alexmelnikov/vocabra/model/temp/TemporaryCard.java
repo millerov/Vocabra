@@ -2,6 +2,7 @@ package com.example.alexmelnikov.vocabra.model.temp;
 
 import android.support.annotation.Nullable;
 
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 
@@ -13,6 +14,9 @@ import java.util.Date;
  */
 
 public class TemporaryCard {
+
+    @Nullable
+    private int id;
 
     private String front;
     private String back;
@@ -32,6 +36,7 @@ public class TemporaryCard {
     public TemporaryCard(String front, String back, String cardContext, String translationDirection, Language frontLanguage, Language backLanguage,
                          Deck deck, boolean isReadyForTraining, Date lastTimeTrained, int timesTrained,
                          boolean isNew, Date nextTimeForTraining, int level) {
+        id = -1;
         this.front = front;
         this.back = back;
         this.cardContext = cardContext;
@@ -45,6 +50,23 @@ public class TemporaryCard {
         this.isNew = isNew;
         this.nextTimeForTraining = nextTimeForTraining;
         this.level = level;
+    }
+
+    public TemporaryCard(Card card) {
+        this.id = card.getId();
+        this.front = card.getFront();
+        this.back = card.getBack();
+        this.cardContext = card.getCardContext();
+        this.translationDirection = card.getTranslationDirection();
+        this.frontLanguage = card.getFrontLanguage();
+        this.backLanguage = card.getBackLanguage();
+        this.deck = card.getDeck();
+        this.isReadyForTraining = card.isReadyForTraining();
+        this.lastTimeTrained = card.getLastTimeTrained();
+        this.timesTrained = card.getTimesTrained();
+        this.isNew = card.isNew();
+        this.nextTimeForTraining = card.getNextTimeForTraining();
+        this.level = card.getLevel();
     }
 
     public String getFront() {
@@ -151,5 +173,14 @@ public class TemporaryCard {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    @Nullable
+    public int getId() {
+        return id;
+    }
+
+    public void setId(@Nullable int id) {
+        this.id = id;
     }
 }

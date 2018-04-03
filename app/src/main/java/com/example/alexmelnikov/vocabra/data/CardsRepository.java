@@ -68,6 +68,15 @@ public class CardsRepository {
         return cards;
     }
 
+    public Card getCardByIdDB(int id) {
+        Card card;
+        Realm realm = Realm.getDefaultInstance();
+        card = realm.where(Card.class)
+                .equalTo("id", id)
+                .findFirst();
+        return card;
+    }
+
 
     //Методы обновляющие значение переменной isReadyForTraining для карт на основе текущей даты
 
@@ -283,7 +292,8 @@ public class CardsRepository {
         realm.close();
     }
 
-    public void updateCardAfterReturnUsingOldVirsionOfCard(Card card) {
+    public void updateCardAfterReturnUsingOldVirsionOfCard(Card card, boolean isNew, Date lastTimeTrained,
+                                                           Date nextTimeForTraining, int level) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -292,11 +302,11 @@ public class CardsRepository {
                         .equalTo("id", card.getId())
                         .findFirst();
 
-                updatedCard.setNew(card.isNew());
-                updatedCard.setLastTimeTrained(card.getLastTimeTrained());
-                updatedCard.setNextTimeForTraining(card.getNextTimeForTraining());
-                updatedCard.setLevel(card.getLevel());
-                updatedCard.setTimesTrained(card.getTimesTrained());
+                updatedCard.setNew(isNew);
+                updatedCard.setLastTimeTrained(lastTimeTrained);
+                updatedCard.setNextTimeForTraining(nextTimeForTraining);
+                updatedCard.setLevel(level);
+                updatedCard.setTimesTrained(card.getTimesTrained() - 1);
             }
         });
         realm.close();

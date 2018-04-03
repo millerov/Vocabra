@@ -93,7 +93,7 @@
         android:ellipsize="end"
         android:gravity="center"
         android:maxLines="3"
-        android:textColor="@color/grey_md700"
+        android:textColor="@color/gray_md700"
         android:visibility="visible" />
 
     <RelativeLayout

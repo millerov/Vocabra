@@ -18,9 +18,13 @@ public interface TrainingView extends BaseView {
 
     void showBack(String back, @Nullable String context);
 
-    void hideCurrentFrontAndBack();
+    void hideCurrentFrontAndBack(boolean animateUp, boolean onlyFront);
 
     void showFrontAndBackOfPrevCard(String front, String back, @Nullable String context);
+
+    void disableButtonsWhileAnimating();
+
+    void enableButtonsAfterAnimation();
 
     void showOptions(boolean withHardBtn);
 
@@ -30,6 +34,8 @@ public interface TrainingView extends BaseView {
                               String forgotTime, String hardTime);
 
     void fillCounters(int newCardsCount, int oldReadyCardsCount);
+
+    void updatePreviousButton(boolean isEnabled);
 
     void closeFragment();
 

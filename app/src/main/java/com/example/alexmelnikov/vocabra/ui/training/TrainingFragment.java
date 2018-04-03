@@ -1,19 +1,26 @@
 package com.example.alexmelnikov.vocabra.ui.training;
 
+import android.animation.Animator;
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.renderscript.RenderScript;
 import android.support.annotation.Nullable;
+import android.transition.ChangeBounds;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,6 +32,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidanimations.library.sliders.SlideInDownAnimator;
 import com.daimajia.androidanimations.library.sliders.SlideOutLeftAnimator;
 import com.daimajia.androidanimations.library.sliders.SlideOutRightAnimator;
+import com.daimajia.androidanimations.library.sliders.SlideOutUpAnimator;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
@@ -75,6 +83,9 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     @BindView(R.id.btn_easy) RelativeLayout btnEasy;
     @BindView(R.id.btn_good) RelativeLayout btnGood;
     @BindView(R.id.btn_forgot) RelativeLayout btnForgot;
+
+    @BindView(R.id.layout_forgot_and_hard_btns) LinearLayout layout_hard_mode_btns;
+    @BindView(R.id.btn_forgot_for_hard) RelativeLayout btnForgotForHard;
     @BindView(R.id.btn_hard) RelativeLayout btnHard;
     @BindView(R.id.tv_good_info) TextView tvGoodInfo;
     @BindView(R.id.tv_easy_info) TextView tvEasyInfo;
@@ -127,43 +138,44 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 .subscribe(o -> closeFragment());
 
         Disposable prevButton = RxView.clicks(btnToPrev)
-                .subscribe(o -> mTrainingPresenter.returnToPreviousCardRequest());
+                .subscribe(o -> {
+                    mTrainingPresenter.returnToPreviousCardRequest();
+                });
 
         Disposable showBackButton = RxView.clicks(btnShowBack)
                 .subscribe(o -> {
-                    btnShowBack.setClickable(false);
-                    disableButtonsWhileAnimating();
                     mTrainingPresenter.showBackRequest();
                 }
                     );
 
         Disposable optionEasyButton = RxView.clicks(btnEasy)
                 .subscribe(o -> {
-                    disableButtonsWhileAnimating();
                     mTrainingPresenter.optionEasyPicked();
                 });
 
         Disposable optionGoodButton = RxView.clicks(btnGood)
                 .subscribe(o -> {
-                    disableButtonsWhileAnimating();
                     mTrainingPresenter.optionGoodPicked();
                 });
 
         Disposable optionForgotButton = RxView.clicks(btnForgot)
                 .subscribe(o -> {
-                    disableButtonsWhileAnimating();
+                    mTrainingPresenter.optionForgotPicked();
+                });
+
+        Disposable optionForgotForHardButton = RxView.clicks(btnForgotForHard)
+                .subscribe(o -> {
                     mTrainingPresenter.optionForgotPicked();
                 });
 
         Disposable optionHardButton = RxView.clicks(btnHard)
                 .subscribe(o -> {
-                    disableButtonsWhileAnimating();
                     mTrainingPresenter.optionHardPicked();
                 });
 
 
         mDisposable.addAll(backButton, prevButton, showBackButton, optionEasyButton, optionGoodButton,
-                optionForgotButton, optionHardButton);
+                optionForgotButton, optionForgotForHardButton, optionHardButton);
     }
 
     @Override
@@ -218,6 +230,11 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     }
 
     @Override
+    public void updatePreviousButton(boolean isEnabled) {
+        btnToPrev.setEnabled(isEnabled);
+    }
+
+    @Override
     public void showBack(String back, @Nullable String context) {
         YoYo.with(new SlideInDownAnimator())
                 .interpolate(new AccelerateDecelerateInterpolator())
@@ -241,16 +258,32 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
 
     }
 
+    //animateUp is true when method called after getPreviousCard request
     @Override
-    public void hideCurrentFrontAndBack() {
-        YoYo.with(new SlideOutLeftAnimator())
-                .interpolate(new AccelerateDecelerateInterpolator())
-                .duration(500)
-                .playOn(rlFront);
-        YoYo.with(new SlideOutRightAnimator())
-                .interpolate(new AccelerateDecelerateInterpolator())
-                .duration(500)
-                .playOn(rlBack);
+    public void hideCurrentFrontAndBack(boolean animateUp, boolean onlyFront) {
+        if (!animateUp) {
+            YoYo.with(new SlideOutLeftAnimator())
+                    .interpolate(new AccelerateDecelerateInterpolator())
+                    .duration(500)
+                    .playOn(rlFront);
+            if (!onlyFront) {
+                YoYo.with(new SlideOutRightAnimator())
+                        .interpolate(new AccelerateDecelerateInterpolator())
+                        .duration(500)
+                        .playOn(rlBack);
+            }
+        } else {
+            YoYo.with(new SlideOutUpAnimator())
+                    .interpolate(new AccelerateDecelerateInterpolator())
+                    .duration(500)
+                    .playOn(rlFront);
+            if (!onlyFront) {
+                YoYo.with(new SlideOutUpAnimator())
+                        .interpolate(new AccelerateDecelerateInterpolator())
+                        .duration(500)
+                        .playOn(rlBack);
+            }
+        }
         if (tvContext.getVisibility() == View.VISIBLE) {
             tvContext.setText("");
             layoutCounters.setVisibility(View.VISIBLE);
@@ -280,11 +313,28 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
         hideOptionButtonsWithAnimation(withHardBtn);
     }
 
-    private void disableButtonsWhileAnimating() {
+
+    //Disable buttons to avoid animation errors
+    @Override
+    public void disableButtonsWhileAnimating() {
+        btnShowBack.setClickable(false);
         btnEasy.setClickable(false);
         btnGood.setClickable(false);
         btnForgot.setClickable(false);
         btnHard.setClickable(false);
+        btnToPrev.setClickable(false);
+        btnForgotForHard.setClickable(false);
+    }
+
+    @Override
+    public void enableButtonsAfterAnimation() {
+        btnShowBack.setClickable(true);
+        btnEasy.setClickable(true);
+        btnGood.setClickable(true);
+        btnForgot.setClickable(true);
+        btnHard.setClickable(true);
+        btnToPrev.setClickable(true);
+        btnForgotForHard.setClickable(true);
     }
 
 
@@ -299,9 +349,12 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 btnShowBack.setVisibility(View.GONE);
                 btnEasy.setVisibility(View.VISIBLE);
                 btnGood.setVisibility(View.VISIBLE);
-                btnForgot.setVisibility(View.VISIBLE);
-                if (withHardBtn)
-                    btnHard.setVisibility(View.VISIBLE);
+                if (withHardBtn) {
+                    layout_hard_mode_btns.setVisibility(View.VISIBLE);
+                    btnForgot.setVisibility(View.GONE);
+                } else {
+                    btnForgot.setVisibility(View.VISIBLE);
+                }
                 showOptionButtonsWithAnimation(withHardBtn);
             }
 
@@ -328,37 +381,12 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
             public void run() {
                 btnEasy.animate().yBy((btnEasy.getHeight() * -1) - ((ViewGroup.MarginLayoutParams) btnEasy.getLayoutParams()).topMargin).setDuration(200);
                 if (withHardBtn)
-                    btnHard.animate().yBy((btnHard.getHeight()) + ((ViewGroup.MarginLayoutParams) btnHard.getLayoutParams()).topMargin).setDuration(200);
+                    layout_hard_mode_btns.animate().yBy((btnHard.getHeight()) + ((ViewGroup.MarginLayoutParams) btnHard.getLayoutParams()).topMargin).setDuration(200);
                 btnForgot.animate().yBy((btnForgot.getHeight()) + ((ViewGroup.MarginLayoutParams) btnForgot.getLayoutParams()).topMargin).setDuration(200)
                         .withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        if (withHardBtn) {
-                            ResizeButtonsWidthWithAnimation animation = new ResizeButtonsWidthWithAnimation(btnForgot, btnHard, (btnEasy.getWidth() / 2) - 20, btnForgot.getWidth());
-                            animation.setDuration(200);
-                            btnForgot.startAnimation(animation);
-                            btnForgot.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnForgot.animate().xBy((btnEasy.getWidth() / -4) - 10).setDuration(150);
-                                    btnHard.animate().xBy((btnEasy.getWidth() / 4) + 10).setDuration(150);
-                                    btnShowBack.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            btnEasy.setClickable(true);
-                                            btnGood.setClickable(true);
-                                            btnForgot.setClickable(true);
-                                            btnHard.setClickable(true);
-                                        }
-                                    }, 200);
-
-                                }
-                            }, 320);
-                        } else {
-                            btnEasy.setClickable(true);
-                            btnGood.setClickable(true);
-                            btnForgot.setClickable(true);
-                        }
+                        enableButtonsAfterAnimation();
                     }
                 });
             }
@@ -368,44 +396,22 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     private void hideOptionButtonsWithAnimation(boolean withHardBtn) {
         btnEasy.animate().yBy((btnEasy.getHeight()) + ((ViewGroup.MarginLayoutParams) btnEasy.getLayoutParams()).topMargin).setDuration(200);
         if (withHardBtn)
-            btnHard.animate().yBy((btnForgot.getHeight() * -1) - ((ViewGroup.MarginLayoutParams) btnHard.getLayoutParams()).topMargin).setDuration(200);
+            layout_hard_mode_btns.animate().yBy((btnHard.getHeight() * -1) - ((ViewGroup.MarginLayoutParams) btnHard.getLayoutParams()).topMargin).setDuration(200);
         btnForgot.animate().yBy((btnForgot.getHeight() * -1) - ((ViewGroup.MarginLayoutParams) btnForgot.getLayoutParams()).topMargin).setDuration(200)
                 .withEndAction(new Runnable() {
                     @Override
                     public void run() {
-                        if (withHardBtn) {
-                            ResizeButtonsWidthWithAnimation animation = new ResizeButtonsWidthWithAnimation(btnForgot, btnHard, (btnEasy.getWidth() * 2) + 20, btnForgot.getWidth());
-                            animation.setDuration(1);
-                            btnForgot.startAnimation(animation);
-                            btnForgot.postDelayed(new Runnable() {
-                                @Override
-                                public void run() {
-                                    btnForgot.animate().xBy((btnEasy.getWidth() / 4) + 10).setDuration(10);
-                                    btnHard.animate().xBy((btnEasy.getWidth() / -4) - 10).setDuration(10);
-                                    btnShowBack.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            btnShowBack.setClickable(true);
-                                        }
-                                    }, 30);
-                                }
-                            }, 30);
-                        } else {
-                            btnShowBack.setClickable(true);
-                        }
-
+                        enableButtonsAfterAnimation();
                         btnEasy.setVisibility(View.GONE);
                         btnGood.setVisibility(View.GONE);
-                        btnForgot.setVisibility(View.GONE);
                         if (withHardBtn)
-                            btnHard.setVisibility(View.GONE);
+                            layout_hard_mode_btns.setVisibility(View.GONE);
+                        else
+                            btnForgot.setVisibility(View.GONE);
                         btnShowBack.setVisibility(View.VISIBLE);
                         narrowButtonsLayout(withHardBtn);
                     }
                 });
-
-        //btnHard.setLayoutParams(p);
-
     }
 
 

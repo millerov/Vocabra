@@ -9,6 +9,7 @@ import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
 import com.example.alexmelnikov.vocabra.utils.CardUtils;
 
 import org.joda.time.DateTime;
@@ -52,19 +53,20 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     private int goodIncrement;
     private int hardIncrement;
 
-    private Deque<Card> prevCards;
-
+    private Deque<TemporaryCard> prevCards;
 
     private boolean firstAttach;
 
+    private boolean cardBackViewOnScreen;
     private boolean buttonsLayoutIsExpanded;
 
     public TrainingPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         firstAttach = true;
         buttonsLayoutIsExpanded = false;
+        cardBackViewOnScreen = false;
         currentCardIndex = -1;
-        prevCards = new ArrayDeque<Card>();
+        prevCards = new ArrayDeque<TemporaryCard>();
         currentCards = new ArrayList<Card>();
     }
 
@@ -114,26 +116,44 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     public void showBackRequest() {
         getViewState().showBack(currentCard.getBack(), currentCard.getCardContext());
         buttonsLayoutIsExpanded = true;
+        cardBackViewOnScreen = true;
+        getViewState().disableButtonsWhileAnimating();
         getViewState().showOptions(currentCard.getLevel() > 2);
     }
 
 
     public void returnToPreviousCardRequest() {
-        getPreviousCard();
+        if (currentCardIndex > 0) {
+            if (buttonsLayoutIsExpanded) {
+                getViewState().disableButtonsWhileAnimating();
+                buttonsLayoutIsExpanded = false;
+                getViewState().hideOptions(currentCardLevel > 2);
+
+            }
+            if (currentCardIndex > 0) {
+                getViewState().hideCurrentFrontAndBack(true, !cardBackViewOnScreen);
+                cardBackViewOnScreen = false;
+            }
+            getPreviousCard();
+        }
     }
 
 
     public void optionEasyPicked() {
         buttonsLayoutIsExpanded = false;
+        cardBackViewOnScreen = false;
+        getViewState().disableButtonsWhileAnimating();
         getViewState().hideOptions(currentCard.getLevel() > 2);
-        getViewState().hideCurrentFrontAndBack();
+        getViewState().hideCurrentFrontAndBack(false, false);
 
         Date currentDate = new Date();
         DateTime currentDateTime = new DateTime(currentDate);
         DateTime nextTrainingTime = currentDateTime.plusDays(easyIncrement);
 
         int nextLevel = currentCardLevel + 2;
+        prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+
 
         updateCounters();
         getNextCard();
@@ -141,8 +161,10 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
     public void optionGoodPicked() {
         buttonsLayoutIsExpanded = false;
+        cardBackViewOnScreen = false;
+        getViewState().disableButtonsWhileAnimating();
         getViewState().hideOptions(currentCard.getLevel() > 2);
-        getViewState().hideCurrentFrontAndBack();
+        getViewState().hideCurrentFrontAndBack(false, false);
 
         Date currentDate = new Date();
         DateTime currentDateTime = new DateTime(currentDate);
@@ -157,7 +179,9 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         }
 
         int nextLevel = currentCardLevel + 1;
+        prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+
 
         updateCounters();
         getNextCard();
@@ -165,11 +189,14 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
     public void optionForgotPicked() {
         buttonsLayoutIsExpanded = false;
+        cardBackViewOnScreen = false;
+        getViewState().disableButtonsWhileAnimating();
         getViewState().hideOptions(currentCard.getLevel() > 2);
-        getViewState().hideCurrentFrontAndBack();
+        getViewState().hideCurrentFrontAndBack(false, false);
 
         int nextLevel = 1;
         currentCards.add(currentCard);
+        prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel);
 
         updateCounters();
@@ -178,14 +205,17 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
     public void optionHardPicked() {
         buttonsLayoutIsExpanded = false;
+        cardBackViewOnScreen = false;
+        getViewState().disableButtonsWhileAnimating();
         getViewState().hideOptions(currentCard.getLevel() > 2);
-        getViewState().hideCurrentFrontAndBack();
+        getViewState().hideCurrentFrontAndBack(false, false);
 
         Date currentDate = new Date();
         DateTime currentDateTime = new DateTime(currentDate);
         DateTime nextTrainingTime = currentDateTime.plusDays(hardIncrement);
 
         int nextLevel = currentCardLevel - 1;
+        prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
 
         updateCounters();
@@ -201,7 +231,32 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
             currentCardLevel = currentCard.getLevel();
             currentCardTimesTrained = currentCard.getTimesTrained();
 
-            prevCards.push(currentCard);
+            currentCardOptionsIncrements = CardUtils.getOptionsIncrementsToDateByLevel(currentCardLevel);
+            easyIncrement = currentCardOptionsIncrements.get("easy");
+            goodIncrement = currentCardOptionsIncrements.get("good");
+            hardIncrement = currentCardOptionsIncrements.get("hard");
+            setupOptionsTextViewsRequest(currentCardOptionsIncrements);
+
+            showFrontRequest();
+            updatePreviousButtonEnabledStatus();
+        } else {
+            getViewState().closeFragment();
+        }
+    }
+
+
+    private void getPreviousCard() {
+        if (currentCardIndex > 0) {
+            currentCardIndex--;
+            TemporaryCard lastCard = prevCards.pop();
+            currentCard = mCardsRep.getCardByIdDB(lastCard.getId());
+
+            mCardsRep.updateCardAfterReturnUsingOldVirsionOfCard(currentCard, lastCard.isNew(),
+                    lastCard.getLastTimeTrained(), lastCard.getNextTimeForTraining(), lastCard.getLevel());
+
+            currentCardLevel = currentCard.getLevel();
+            currentCardTimesTrained = currentCard.getTimesTrained();
+            updateCounters();
 
             currentCardOptionsIncrements = CardUtils.getOptionsIncrementsToDateByLevel(currentCardLevel);
             easyIncrement = currentCardOptionsIncrements.get("easy");
@@ -210,20 +265,13 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
             setupOptionsTextViewsRequest(currentCardOptionsIncrements);
 
             showFrontRequest();
-        } else {
-            getViewState().closeFragment();
+            updatePreviousButtonEnabledStatus();
         }
     }
 
 
-    private void getPreviousCard() {
-       /* if (currentCardIndex > 0) {
-            *//*currentCardIndex--;
-            currentCard = prevCards.pop();
-            mCardsRep.updateCardAfterReturnUsingOldVirsionOfCard(currentCard);*//*
-            if (buttonsLayoutIsExpanded)
-                getViewState().hideOptions(currentCard.getLevel() > 2);
-        }*/
+    private void updatePreviousButtonEnabledStatus() {
+        getViewState().updatePreviousButton(currentCardIndex > 0);
     }
 
 

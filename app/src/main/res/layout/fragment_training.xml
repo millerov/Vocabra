@@ -26,7 +26,7 @@
             android:layout_marginRight="12dp"
             android:layout_toLeftOf="@+id/btn_edit"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_undo_white_24dp" />
+            android:src="@drawable/selector_btn_to_prev_card" />
 
         <ImageButton
             android:id="@+id/btn_edit"
@@ -203,7 +203,8 @@
             android:textSize="14dp"
             android:textColor="@color/white"
             android:text="Показать ответ"
-            android:background="@color/colorPrimary"/>
+            android:background="@color/colorPrimary"
+            tools:visibility="visible"/>
 
 
         <RelativeLayout
@@ -303,16 +304,58 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/btn_hard"
+        <LinearLayout
+            android:id="@+id/layout_forgot_and_hard_btns"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:layout_marginHorizontal="16dp"
-            android:layout_marginVertical="16dp"
-            android:paddingVertical="6dp"
-            android:background="@color/colorPrimary"
-            android:visibility="gone">
+            android:orientation="horizontal"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <RelativeLayout
+                android:id="@+id/btn_forgot_for_hard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginVertical="16dp"
+                android:layout_marginRight="10dp"
+                android:paddingVertical="6dp"
+                android:background="@color/colorPrimary"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_forgot_for_hard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/white"
+                    android:text="НЕ ЗНАЮ"/>
+
+                <TextView
+                    android:id="@+id/tv_forgot_info_for_hard"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_forgot_for_hard"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="14dp"
+                    android:textColor="@color/colorAccent"
+                    android:text="> 10 мин"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/btn_hard"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginVertical="16dp"
+                android:layout_marginLeft="10dp"
+                android:paddingVertical="6dp"
+                android:background="@color/colorPrimary"
+                android:layout_weight="1">
 
             <TextView
                 android:id="@+id/tv_hard"
@@ -331,9 +374,13 @@
                 android:layout_centerHorizontal="true"
                 android:textSize="14dp"
                 android:textColor="@color/colorAccent"
-                android:text="1 д"/>
+                tools:text="1 д"/>
 
-        </RelativeLayout>
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
 
     </RelativeLayout>
 
