@@ -138,7 +138,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
     
     
     @Override
-    public void onSnackbarEvent(String actionText) {}
+    public void onSnackbarEvent(int actionId) {}
     
     
     

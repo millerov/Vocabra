@@ -564,24 +564,24 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void showCardAlreadyExistsSnackbarMessageAction(String deckName) {
-        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName,
+        ((MainActivity)getActivity()).showMessage(1, "Такая карточка уже существует в колоде " + deckName,
                 true, mCardBrowserPresenter, "Еще раз");
     }
 
     @Override
     public void showCardAlreadyExistsSnackbarMessage(String deckName) {
-        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName,
+        ((MainActivity)getActivity()).showMessage(0, "Такая карточка уже существует в колоде " + deckName,
                 false, null, null);
     }
 
     @Override
     public void showCardSuccessfulyAddedSnackbarMessage(String deckName) {
-        ((MainActivity)getActivity()).showMessage("Карточка успешно добавлена в " + deckName, false, null, null);
+        ((MainActivity)getActivity()).showMessage(0, "Карточка успешно добавлена в " + deckName, false, null, null);
     }
 
     @Override
     public void showSelectedItemsDeletedMessage() {
-        ((MainActivity)getActivity()).showMessage("Выделенные элементы были удалены",
+        ((MainActivity)getActivity()).showMessage(2, "Выделенные элементы были удалены",
                 true, mCardBrowserPresenter, "Отменить");
     }
 

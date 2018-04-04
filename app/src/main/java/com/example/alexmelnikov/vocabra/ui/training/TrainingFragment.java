@@ -609,7 +609,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
 
     @Override
     public void showCardAlreadyExistsMessage(String deckName) {
-        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName, false, null, null);
+        ((MainActivity)getActivity()).showMessage(0, "Такая карточка уже существует в колоде " + deckName, false, null, null);
     }
 
     @Override

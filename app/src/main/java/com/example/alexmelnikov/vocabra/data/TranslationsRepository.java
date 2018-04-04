@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Created by AlexMelnikov on 04.03.18.
@@ -50,9 +51,19 @@ public class TranslationsRepository {
     public ArrayList<Translation> getTranslationsFromDB() {
         ArrayList<Translation> translations;
         Realm realm = Realm.getDefaultInstance();
-        translations = new ArrayList(realm.where(Translation.class).findAll());
+        translations = new ArrayList<Translation>(realm.where(Translation.class).findAll());
         return translations;
     }
+
+    public ArrayList<Translation> getSortedTranslationsFromDB() {
+        ArrayList<Translation> translations;
+        Realm realm = Realm.getDefaultInstance();
+        translations = new ArrayList<Translation>(realm.where(Translation.class)
+                .sort("creationDate", Sort.ASCENDING)
+                .findAll());
+        return translations;
+    }
+
 
     public void deleteTranslationFromDB(Translation translation) {
         Realm realm = Realm.getDefaultInstance();
@@ -91,16 +102,6 @@ public class TranslationsRepository {
             }
         });
         realm.close();
-    }
-
-    public void returnPreviouslyDeletedTranslation(Translation translation) {
-        Realm realm = Realm.getDefaultInstance();
-        realm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                realm.copyToRealmOrUpdate(translation);
-            }
-        });
     }
 
 

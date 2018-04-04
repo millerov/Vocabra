@@ -1,5 +1,12 @@
 package com.example.alexmelnikov.vocabra.model.temp;
 
+import android.support.annotation.Nullable;
+
+import com.example.alexmelnikov.vocabra.model.Card;
+import com.example.alexmelnikov.vocabra.model.Translation;
+
+import java.util.Date;
+
 /**
  * Created by AlexMelnikov on 18.03.18.
  */
@@ -14,11 +21,18 @@ public class TemporaryTranslation {
 
     private boolean favorite;
 
-    public TemporaryTranslation(String langs, String fromText, String toText, boolean favorite) {
-        this.langs = langs;
-        this.fromText = fromText;
-        this.toText = toText;
-        this.favorite = favorite;
+    @Nullable
+    private Card card;
+
+    private Date creationDate;
+
+    public TemporaryTranslation(Translation translation) {
+        this.langs = translation.getLangs();
+        this.fromText = translation.getFromText();
+        this.toText = translation.getToText();
+        this.favorite = translation.getFavorite();
+        this.card = translation.getCard();
+        this.creationDate = translation.getCreationDate();
     }
 
     public String getLangs() {
@@ -52,4 +66,21 @@ public class TemporaryTranslation {
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
     }
+
+    public Card getCard() {
+        return card;
+    }
+
+    public void setCard(Card card) {
+        this.card = card;
+    }
+
+    public Date getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = creationDate;
+    }
 }
+

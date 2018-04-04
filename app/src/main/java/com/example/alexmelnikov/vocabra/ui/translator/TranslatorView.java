@@ -22,44 +22,43 @@ import java.util.List;
  * Created by AlexMelnikov on 27.02.18.
  */
 
+@StateStrategyType(OneExecutionStateStrategy.class)
 public interface TranslatorView extends BaseView {
 
-    @StateStrategyType(SkipStrategy.class)
     void setupSpinners(ArrayList<Language> languages, int from, int to);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showTranslationResult(String result);
 
     @StateStrategyType(AddToEndSingleStrategy.class)
     void changeLanguagesSelected(int from, int to);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void fillTextFields(String from, String translated, String fromLang, String toLang);
 
-    @StateStrategyType(SkipStrategy.class)
     void clearInputOutput();
 
     @StateStrategyType(AddToEndSingleStrategy.class)
     void replaceHistoryData(ArrayList<Translation> translations);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
+
     void updateHistoryDataElement(int pos, Translation translation);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);
 
-    @StateStrategyType(SkipStrategy.class)
     void copyAction(String text);
 
-    @StateStrategyType(SkipStrategy.class)
     void showFavoriteDropMessage();
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showAddCardDialog(int pos, Translation translation, ArrayList<Deck> decks);
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void showTranslationCard();
 
-    @StateStrategyType(OneExecutionStateStrategy.class)
     void hideTranslationCard();
+
+    void showDeleteOptionsDialog(int pos);
+
+    void showItemDeletedFromHistoryMessage();
+
+    void showHistoryCleanedMessage();
+
+
 }

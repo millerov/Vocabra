@@ -26,7 +26,7 @@ public interface MainView  extends MvpView {
     void replaceFragmentNavigationBar(int prevIndex, int currentIndex);
 
 
-    void showMessage(String message, boolean withAction, @Nullable SnackBarActionHandler presenter, @Nullable String actionText);
+    void showMessage(int actionId, String message, boolean withAction, @Nullable SnackBarActionHandler presenter, @Nullable String actionText);
 
     void hideBottomNavigationBar();
 

@@ -133,17 +133,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
     @Override
-    public void onSnackbarEvent(String actionText) {
-        if (actionText.equals("Еще раз"))
+    public void onSnackbarEvent(int actionId) {
+        if (actionId == 1)
             getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
 
-        else if (actionText.equals("Отменить")) {
+        else if (actionId == 2) {
 
             for (int i = 0; i < temporaryCards.size(); i++) {
                 Card card = new Card(-1, temporaryCards.get(i));
                 Translation t = temporaryCardTranslations.get(i);
-                Log.d(TAG, "onSnackbarEvent: " + t.getFromText() + "/" + t.getToText());
-                Log.d(TAG, "onSnackbarEvent: " + card.getFront() + "/" + card.getBack());
                 mCardsRep.insertCardToDB(card);
                 if (t != null)
                     mTransRep.updateTranslationFavoriteStateDB(t, t.getFromText(), t.getToText(), true, card);

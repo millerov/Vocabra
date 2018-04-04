@@ -49,7 +49,7 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
     }
 
     public void deckSelectRequestFromRecycler(Deck deck, View item, String transitionName) {
-        if (mCardsRep.getCardsByDeckDB(deck).size() != 0)
+        if (mCardsRep.getReadyCardsByDeckDB(deck).size() != 0)
             getViewState().openTrainingFragment(deck, item, transitionName);
         else
             getViewState().showEmptyDeckSelectedMessage(item);
@@ -57,7 +57,7 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
     }
 
     @Override
-    public void onSnackbarEvent(String actionText) {}
+    public void onSnackbarEvent(int actionId) {}
 
     public void setupCounterRequest(int counter) {
         getViewState().setupTextView(counter);

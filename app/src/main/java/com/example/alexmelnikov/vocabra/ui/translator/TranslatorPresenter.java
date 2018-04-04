@@ -1,10 +1,12 @@
 package com.example.alexmelnikov.vocabra.ui.translator;
 
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.adapter.HistoryRecyclerItemTouchHelper;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
 import com.example.alexmelnikov.vocabra.data.LanguagesRepository;
@@ -19,7 +21,6 @@ import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
 import com.example.alexmelnikov.vocabra.model.temp.TemporaryTranslation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 import com.example.alexmelnikov.vocabra.ui.Translating;
-import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 import com.example.alexmelnikov.vocabra.utils.LanguageUtils;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
@@ -27,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 /**
@@ -35,7 +35,7 @@ import javax.inject.Inject;
  */
 
 @InjectViewState
-public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating, SnackBarActionHandler {
+public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements Translating, SnackBarActionHandler, HistoryRecyclerItemTouchHelper.HistoryItemTouchHelperListener {
 
     private static final String TAG = "MyTag";
 
@@ -63,10 +63,17 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     private Translation mLastLoadedTranslation;
 
+    private ArrayList<Translation> mHistoryList;
+
     // this 3 variables initialized when user deletes translation from favorites (deletes card)
     private TemporaryCard mTemporaryCard;
     private Translation mTemporaryCardTranslation;
     private int mTemporaryCardPositionInHistory;
+
+    // this 3 variables initialized when user deletes translation
+    private int tempTranslationIndex;
+    private TemporaryTranslation mTemporaryTranslation;
+    private ArrayList<TemporaryTranslation> mTemporaryTranslations;
 
 
     public TranslatorPresenter() {
@@ -82,6 +89,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
+
+        mTemporaryTranslations = new ArrayList<TemporaryTranslation>();
 
         updateSelectedLanguages();
     }
@@ -211,8 +220,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     public void addNewCardFromHistoryRequest(int pos) {
-        getViewState().showAddCardDialog(pos, mTransRep.getTranslationsFromDB().get(pos),
-                mDecksRep.findDecksByTranslationDirection(mTransRep.getTranslationsFromDB().get(pos).getLangs()));
+        getViewState().showAddCardDialog(pos, mHistoryList.get(pos),
+                mDecksRep.findDecksByTranslationDirection(mHistoryList.get(pos).getLangs()));
     }
 
 
@@ -261,7 +270,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
     public void dropFavoriteStatusRequest(int pos) {
-        Translation affectedTranslation = mTransRep.getTranslationsFromDB().get(pos);
+        Translation affectedTranslation = mHistoryList.get(pos);
         Card card = affectedTranslation.getCard();
 
         mTemporaryCard = new TemporaryCard(card.getFront(), card.getBack(), card.getCardContext(), card.getTranslationDirection(),
@@ -279,22 +288,82 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
 
     @Override
-    public void onSnackbarEvent(String actionText) {
-        Card card = new Card(-1, mTemporaryCard);
-        mCardsRep.insertCardToDB(card);
+    public void onSnackbarEvent(int actionId) {
+        //undo card deletion
+        if (actionId == 1) {
+            Card card = new Card(-1, mTemporaryCard);
+            mCardsRep.insertCardToDB(card);
 
-        mTransRep.updateTranslationFavoriteStateDB(mTemporaryCardTranslation,
-                mTemporaryCardTranslation.getFromText(),
-                mTemporaryCardTranslation.getToText(),
-                true, card);
+            Log.d(TAG, "onSnackbarEvent: " + card.getFront() + "/" + card.getBack());
 
-        getViewState().updateHistoryDataElement(mTemporaryCardPositionInHistory, mTemporaryCardTranslation);
+            mTransRep.updateTranslationFavoriteStateDB(mTemporaryCardTranslation,
+                    mTemporaryCardTranslation.getFromText(),
+                    mTemporaryCardTranslation.getToText(),
+                    true, card);
+
+            getViewState().updateHistoryDataElement(mTemporaryCardPositionInHistory, mTemporaryCardTranslation);
+        } else if (actionId == 2) {
+           Translation translation = new Translation(-1, mTemporaryTranslation);
+           mTransRep.insertTranslationToDB(translation);
+           if (translation.getCard() != null)
+                Log.d(TAG, "onSnackbarEvent: " + translation.getCard().getFront() + "/" + translation.getCard().getBack());
+           loadHistoryData();
+        } else if (actionId == 3) {
+            for (TemporaryTranslation tt : mTemporaryTranslations) {
+                Translation translation = new Translation(-1, tt);
+                mTransRep.insertTranslationToDB(translation);
+            }
+            loadHistoryData();
+        }
+    }
+
+
+    public void historyItemLongClicked(int pos) {
+        getViewState().showDeleteOptionsDialog(pos);
+    }
+
+
+    public void deleteDialogOptionPicked(int pos, int option) {
+        switch (option) {
+            case 0:
+                Translation translationForDelete = mHistoryList.get(pos);
+                tempTranslationIndex = mHistoryList.size() - pos - 1;
+                mTemporaryTranslation = new TemporaryTranslation(translationForDelete);
+                mTransRep.deleteTranslationFromDB(translationForDelete);
+                loadHistoryData();
+                getViewState().showItemDeletedFromHistoryMessage();
+                break;
+            case 1:
+                mTemporaryTranslations.clear();
+                for (Translation t : mHistoryList)
+                    mTemporaryTranslations.add(new TemporaryTranslation(t));
+                mTransRep.clearTranslationsDB();
+                loadHistoryData();
+                getViewState().showHistoryCleanedMessage();
+                break;
+        }
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        Translation translationForDelete = mHistoryList.get(mHistoryList.size() - position - 1);
+        Log.d(TAG, "onSwiped: " + position + "//" + (mHistoryList.size() - position - 1));
+        Log.d(TAG, "onSwiped: " + translationForDelete.getFromText() + "/" + translationForDelete.getToText());
+        tempTranslationIndex = position;
+        mTemporaryTranslation = new TemporaryTranslation(translationForDelete);
+        if (mTemporaryTranslation.getCard() != null)
+            Log.d(TAG, "onSwiped: " + mTemporaryTranslation.getCard().getFront() + "/" + mTemporaryTranslation.getCard().getBack());
+        mTransRep.deleteTranslationFromDB(translationForDelete);
+        loadHistoryData();
+        getViewState().showItemDeletedFromHistoryMessage();
     }
 
     //==================Private logic=================
 
     private void loadHistoryData() {
-        getViewState().replaceHistoryData(mTransRep.getTranslationsFromDB());
+        mHistoryList = mTransRep.getSortedTranslationsFromDB();
+
+        getViewState().replaceHistoryData(mHistoryList);
     }
 
     private void updateSelectedLangsIndexes() {

@@ -17,4 +17,9 @@
         <item>#000000</item>
     </array>
 
+    <string-array name="delete_options">
+        <item>Удалить перевод из истории</item>
+        <item>Отчистить историю переводов</item>
+    </string-array>
+
 </resources>

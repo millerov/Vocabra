@@ -165,7 +165,7 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     @Override
     public void closeFragment() {
 
-        ((MainActivity)getActivity()).showMessage("Колода добавлена", false, mDeckAddPresenter, null);
+        ((MainActivity)getActivity()).showMessage(0, "Колода добавлена", false, mDeckAddPresenter, null);
 
         View view = getView();
 

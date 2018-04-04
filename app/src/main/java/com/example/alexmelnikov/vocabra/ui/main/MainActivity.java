@@ -124,8 +124,11 @@ public class MainActivity extends BaseActivity implements MainView {
         fts.replace(R.id.fragment_container, fragment).commit();
     }
 
+    /** @param actionId helps to understand which message calls onSnackbarEvent in case if
+     *                   one fragment calls more then one messages with action;
+     *                   should equal 0 if withAction is false*/
     @Override
-    public void showMessage(String message, boolean withAction, SnackBarActionHandler presenter, String actionText) {
+    public void showMessage(int actionId, String message, boolean withAction, SnackBarActionHandler presenter, String actionText) {
         if (withAction) {
             snack = Snackbar.make(findViewById(R.id.main_coordinator_layout), message, Snackbar.LENGTH_LONG);
         } else {
@@ -142,7 +145,7 @@ public class MainActivity extends BaseActivity implements MainView {
             snack.setAction(actionText, new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    presenter.onSnackbarEvent(actionText);
+                    presenter.onSnackbarEvent(actionId);
                 }
             });
         }

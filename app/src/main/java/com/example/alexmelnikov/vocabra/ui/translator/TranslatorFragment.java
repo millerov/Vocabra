@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
@@ -35,6 +36,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
+import com.example.alexmelnikov.vocabra.adapter.HistoryRecyclerItemTouchHelper;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
@@ -152,6 +154,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 rvHistory.setAdapter(mHistoryAdapter);
                 rvHistory.scheduleLayoutAnimation();
                 rvHistory.invalidate();
+
+                ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new HistoryRecyclerItemTouchHelper(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT , mTranslatorPresenter);
+                new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(rvHistory);
             }
         }, adapterAnimDelay);
 
@@ -232,6 +237,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         mHistoryAdapter.replaceData(translations);
     }
 
+
     @Override
     public void updateHistoryDataElement(int pos, Translation translation) {
         mHistoryAdapter.updateElement(pos, translation);
@@ -291,14 +297,14 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
         clipboard.setPrimaryClip(clip);
-        ((MainActivity)getActivity()).showMessage("Перевод скопирован", false, null, null);
+        ((MainActivity)getActivity()).showMessage(0, "Перевод скопирован", false, null, null);
 
     }
 
 
     @Override
     public void showFavoriteDropMessage() {
-        ((MainActivity)getActivity()).showMessage("Перевод удален из вашей коллекции",
+        ((MainActivity)getActivity()).showMessage(1, "Перевод удален из вашей коллекции",
                 true, mTranslatorPresenter, "Отменить");
     }
 
@@ -349,6 +355,25 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         dialog.show();
     }
 
+
+    @Override
+    public void showDeleteOptionsDialog(int pos) {
+        new MaterialDialog.Builder(getActivity())
+                .items(R.array.delete_options)
+                .itemsCallback((dialog, view, which, text) -> mTranslatorPresenter.deleteDialogOptionPicked(pos, which))
+                .show();
+    }
+
+
+    @Override
+    public void showItemDeletedFromHistoryMessage() {
+        ((MainActivity)getActivity()).showMessage(2, "Перевод удален из истории", true, mTranslatorPresenter, "Отменить");
+    }
+
+    @Override
+    public void showHistoryCleanedMessage() {
+        ((MainActivity)getActivity()).showMessage(3, "История отчищена", true, mTranslatorPresenter, "Отменить");
+    }
 
     @Override
     public void showTranslationCard() {

@@ -97,7 +97,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     @Override
     public void showEmptyDeckSelectedMessage(View item) {
-        ((MainActivity)getActivity()).showMessage("В колоде пока нет карточек для тренеровки", false, null, null);
+        ((MainActivity)getActivity()).showMessage(0, "В колоде пока нет карточек для тренеровки", false, null, null);
         YoYo.with(Techniques.Bounce)
                 .duration(600)
                 .playOn(item);

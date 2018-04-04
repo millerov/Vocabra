@@ -82,6 +82,10 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
             }
         });
 
+        holder.cardHistory.setOnLongClickListener(view -> {
+            fragmentPresenter.historyItemLongClicked(mData.size() - position - 1);
+            return true;
+        });
     }
 
     @Override
@@ -104,4 +108,5 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         mData.set(mData.size() - 1 - pos, translation);
         super.notifyItemChanged(mData.size() - 1 - pos);
     }
+
 }
