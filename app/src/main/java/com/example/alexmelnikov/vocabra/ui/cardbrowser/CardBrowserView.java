@@ -47,7 +47,7 @@ public interface CardBrowserView extends BaseView {
 
     void showAddCardDialog(ArrayList<Deck> decks, @Nullable Deck currentDeck);
 
-    void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks);
+    void showEditCardDialog(Card card, ArrayList<Deck> decks);
 
     void showCardAlreadyExistsSnackbarMessageAction(String deckName);
 

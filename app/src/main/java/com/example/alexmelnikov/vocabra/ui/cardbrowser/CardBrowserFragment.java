@@ -393,7 +393,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
 
     @Override
-    public void showEditCardDialog(int pos, Card card, ArrayList<Deck> decks) {
+    public void showEditCardDialog(Card card, ArrayList<Deck> decks) {
         MaterialDialog dialog =
                 new MaterialDialog.Builder(getActivity())
                         .title("Изменение карточки")
@@ -456,9 +456,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         if (card.getCardContext().isEmpty())
             mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
         etDialogFront.requestFocus();
-        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(etDialogFront, 0);
+
         etDialogFront.setSelection(etDialogFront.getText().length());
+        etDialogBack.setSelection(etDialogBack.getText().length());
         mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
 
         int index = 0;

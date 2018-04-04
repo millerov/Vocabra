@@ -7,19 +7,24 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
+import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Language;
+import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
 import com.example.alexmelnikov.vocabra.utils.CardUtils;
 
 import org.joda.time.DateTime;
 
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -36,6 +41,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     DecksRepository mDecksRep;
     @Inject
     CardsRepository mCardsRep;
+    @Inject
+    TranslationsRepository mTransRep;
 
     private Deck currentDeck;
     private int newCardsCount;
@@ -130,6 +137,30 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getViewState().showOptions(currentCard.getLevel() > 2);
     }
 
+    public void editCardRequest(int methodIndex) {
+        getViewState().showEditCardDialog(methodIndex, currentCard, mDecksRep.findDecksByTranslationDirection(currentCard.getTranslationDirection()));
+    }
+
+
+    public void editCardRequest(String front, String back, String cardContext) {
+        Card updatedCard = new Card(-1, front, back, currentCard.getFrontLanguage(), currentCard.getBackLanguage(),
+                currentDeck, cardContext);
+        String initialCardFront = currentCard.getFront();
+        String initialCardBack = currentCard.getBack();
+        Translation t = mTransRep.findTranslationByCardInDB(currentCard);
+
+        if (mCardsRep.containsSimilarCardInDeckDB(updatedCard, currentDeck)) {
+            getViewState().showCardAlreadyExistsMessage(currentDeck.getName());
+        } else {
+            mCardsRep.updateCardInDB(currentCard, front, back, cardContext, currentDeck);
+            if ((!initialCardFront.equals(front) || !initialCardBack.equals(back)) &&
+                    t != null) {
+                mTransRep.updateTranslationFavoriteStateDB(t, front, back, true, currentCard);
+            }
+            getViewState().fillEditedCardTextViews(front, back, cardContext);
+        }
+    }
+
 
     public void returnToPreviousCardRequest() {
         if (currentCardIndex > 0) {
@@ -182,7 +213,6 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
           in the current training again*/
         if (currentCardLevel == 1) {
             nextTrainingTime = new DateTime(currentCard.getNextTimeForTraining());
-            currentCards.add(currentCard);
         } else {
             nextTrainingTime = currentDateTime.plusDays(goodIncrement);
         }
@@ -204,7 +234,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getViewState().hideCurrentFrontAndBack(false, false);
 
         int nextLevel = 1;
-        currentCards.add(currentCard);
+       // currentCards.add(currentCard);
         prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel);
 
@@ -248,7 +278,14 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
             showFrontRequest();
             updatePreviousButtonEnabledStatus();
         } else {
-            getViewState().closeFragment();
+            ArrayList<Card> oldReadyCards = mCardsRep.getOldReadyForTrainCardsByDeckDB(currentDeck);
+            if (oldReadyCards.size() > 0) {
+                currentCards.addAll(oldReadyCards);
+                currentCardIndex--;
+                getNextCard();
+            } else {
+                getViewState().closeFragment();
+            }
         }
     }
 

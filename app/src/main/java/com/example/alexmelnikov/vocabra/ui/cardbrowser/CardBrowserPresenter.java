@@ -184,8 +184,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     public void cardsRecyclerItemPressed(int pos) {
         Card card = mCardsList.get(pos);
-        getViewState().showEditCardDialog(pos, mCardsList.get(pos),
-                mDecksRep.findDecksByTranslationDirection(card.getTranslationDirection()));
+        getViewState().showEditCardDialog(mCardsList.get(pos), mDecksRep.findDecksByTranslationDirection(card.getTranslationDirection()));
     }
 
     public void cardsRecyclerItemLongPressed(int pos) {
@@ -212,7 +211,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             getViewState().showCardAlreadyExistsSnackbarMessage(chosenDeckName);
         } else {
             mCardsRep.updateCardInDB(card, front, back, cardContext, chosenDeck);
-            if (!initialCardFront.equals(front) || !initialCardBack.equals(back)) {
+            if ((!initialCardFront.equals(front) || !initialCardBack.equals(back)) &&
+                    t != null) {
                 mTransRep.updateTranslationFavoriteStateDB(t, front, back, true, card);
             }
             loadSortedCards();

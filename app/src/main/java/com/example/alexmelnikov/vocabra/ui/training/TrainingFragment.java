@@ -9,6 +9,8 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.renderscript.RenderScript;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
+import android.text.InputType;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
 import android.util.Log;
@@ -20,14 +22,19 @@ import android.view.WindowManager;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidanimations.library.sliders.SlideInDownAnimator;
@@ -36,12 +43,17 @@ import com.daimajia.androidanimations.library.sliders.SlideOutRightAnimator;
 import com.daimajia.androidanimations.library.sliders.SlideOutUpAnimator;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
+import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.jakewharton.rxbinding2.view.RxView;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
@@ -92,6 +104,14 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     @BindView(R.id.tv_hard_info) TextView tvHardInfo;
     @BindView(R.id.sv_front_back) ScrollView svFrontBack;
 
+    EditText etDialogFront;
+    EditText etDialogBack;
+    EditText etDialogContext;
+    TextView tvSpinnerHint;
+    Spinner mDialogSpinDecks;
+    TextInputLayout mDialogTilFront;
+    TextInputLayout mDialogTilBack;
+    TextInputLayout mDialogTilContext;
 
     private int currentConfig;
 
@@ -175,9 +195,18 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                     mTrainingPresenter.optionHardPicked();
                 });
 
+        Disposable editButton = RxView.clicks(btnEdit)
+                .subscribe(o -> mTrainingPresenter.editCardRequest(1));
+
+        Disposable frontLayout = RxView.clicks(rlFront)
+                .subscribe(o -> mTrainingPresenter.editCardRequest(2));
+
+        Disposable backLayout = RxView.clicks(rlBack)
+                .subscribe(o -> mTrainingPresenter.editCardRequest(3));
+
 
         mDisposable.addAll(backButton, prevButton, showBackButton, optionEasyButton, optionGoodButton,
-                optionForgotButton, optionHardButton);
+                optionForgotButton, optionHardButton, editButton, backLayout);
     }
 
     @Override
@@ -185,12 +214,12 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
         mDisposable.clear();
     }
 
+
     @Override
     public void fillCounters(int newCardsCount, int oldReadyCardsCount) {
         tvNewCounter.setText(newCardsCount + "");
         tvReadyCounter.setText(oldReadyCardsCount + "");
     }
-
 
     @Override
     public void fillOptionsTextViews(boolean withHardBtn, String easyTime, String goodTime,
@@ -485,6 +514,103 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
         }
     }
 
+
+    @Override
+    public void showEditCardDialog(int methodIndex, Card card, ArrayList<Deck> decks) {
+        MaterialDialog dialog =
+                new MaterialDialog.Builder(getActivity())
+                        .title("Изменение карточки")
+                        .customView(R.layout.dialog_add_card, true)
+                        .positiveText("Сохранить")
+                        .negativeText(android.R.string.cancel)
+                        .autoDismiss(false)
+                        .onNegative(((dialog1, which) -> {
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                            dialog1.dismiss();
+                        }))
+                        .onPositive((dialog1, which) -> {
+                            if (etDialogFront.getText().toString().trim().isEmpty())
+                                mDialogTilFront.setError("Введите слово или фразу");
+                            if (etDialogBack.getText().toString().trim().isEmpty())
+                                mDialogTilBack.setError("Введите слово или фразу");
+
+                            if (!etDialogFront.getText().toString().trim().isEmpty() && !etDialogBack.getText().toString().trim().isEmpty()) {
+                                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                                imm.hideSoftInputFromWindow(getView().getWindowToken(), 0);
+                                mTrainingPresenter.editCardRequest(etDialogFront.getText().toString(), etDialogBack.getText().toString(),
+                                        etDialogContext.getText().toString());
+                                dialog1.dismiss();
+                            }
+                        })
+                        .build();
+
+        etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
+        etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
+        etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
+        tvSpinnerHint = (TextView) dialog.getView().findViewById(R.id.tv_spinner_hint);
+        mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
+        mDialogTilFront = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_front);
+        mDialogTilBack = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_back);
+        mDialogTilContext = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_context);
+
+        tvSpinnerHint.setVisibility(View.GONE);
+        mDialogSpinDecks.setVisibility(View.GONE);
+
+        etDialogFront.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogBack.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogContext.setInputType(InputType.TYPE_CLASS_TEXT);
+        etDialogFront.setText(card.getFront());
+        etDialogBack.setText(card.getBack());
+        if (!card.getCardContext().isEmpty())
+            etDialogContext.setText(card.getCardContext());
+        mDialogTilFront.setHint("Передняя сторона");
+        mDialogTilBack.setHint("Задняя сторона");
+        if (card.getCardContext().isEmpty())
+            mDialogTilContext.setError("Контекст поможет новому слову лучше отложиться в памяти");
+        if (methodIndex == 3)
+            etDialogBack.requestFocus();
+        else
+            etDialogFront.requestFocus();
+
+        etDialogFront.setSelection(etDialogFront.getText().length());
+        etDialogBack.setSelection(etDialogBack.getText().length());
+        mDialogSpinDecks.setAdapter(new DecksSpinnerAdapter(getActivity(), decks, false));
+
+        int index = 0;
+        for (int i = 0; i < mDialogSpinDecks.getCount(); i++) {
+            if (mDialogSpinDecks.getItemAtPosition(i).toString().equals(card.getDeck().getName())) {
+                index = i;
+                break;
+            }
+        }
+        mDialogSpinDecks.setSelection(index);
+
+        dialog.show();
+    }
+
+    @Override
+    public void fillEditedCardTextViews(String front, String back, String context) {
+        tvFront.setText(front);
+        tvBack.setText(back);
+        tvContext.setText(context);
+        if (context.isEmpty()) {
+            layoutCounters.setVisibility(View.VISIBLE);
+            tvDeckName.setVisibility(View.VISIBLE);
+            tvContext.setVisibility(View.GONE);
+        } else if (rlBack.getVisibility() == View.VISIBLE &&
+                tvContext.getVisibility() == View.GONE) {
+            layoutCounters.setVisibility(View.GONE);
+            tvDeckName.setVisibility(View.GONE);
+            tvContext.setVisibility(View.VISIBLE);
+        }
+    }
+
+
+    @Override
+    public void showCardAlreadyExistsMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage("Такая карточка уже существует в колоде " + deckName, false, null, null);
+    }
 
     @Override
     public boolean onBackPressed() {
