@@ -64,6 +64,7 @@ public class DecksForTrainingAdapter extends RecyclerView.Adapter<DecksForTraini
         @BindView(R.id.tv_ready_counter)
         TextView tvReadyCounter;
 
+
         public DecksViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);

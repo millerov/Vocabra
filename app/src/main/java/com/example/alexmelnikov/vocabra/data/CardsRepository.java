@@ -78,8 +78,6 @@ public class CardsRepository {
     }
 
 
-    //Методы обновляющие значение переменной isReadyForTraining для карт на основе текущей даты
-
     public void updateReadyStatusForAllCards() {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
@@ -119,6 +117,8 @@ public class CardsRepository {
         realm.close();
     }
 
+
+
     public ArrayList<Card> getReadyCardsByDeckDB(Deck deck) {
         ArrayList<Card> cards;
         Realm realm = Realm.getDefaultInstance();
@@ -129,6 +129,24 @@ public class CardsRepository {
         return cards;
     }
 
+    public ArrayList<Card> getNewCardsDB() {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList<Card>(realm.where(Card.class)
+                .equalTo("isNew", true)
+                .findAll());
+        return cards;
+    }
+
+    public ArrayList<Card> getOldReadyForTrainCardsDB() {
+        ArrayList<Card> cards;
+        Realm realm = Realm.getDefaultInstance();
+        cards = new ArrayList<Card>(realm.where(Card.class)
+                .equalTo("isNew", false)
+                .equalTo("isReadyForTraining", true)
+                .findAll());
+        return cards;
+    }
 
     public ArrayList<Card> getNewCardsByDeckDB(Deck deck) {
         ArrayList<Card> cards;
@@ -150,6 +168,8 @@ public class CardsRepository {
                 .findAll());
         return cards;
     }
+
+
 
     public boolean containsSimilarCardInDeckDB(Card card, Deck deck) {
         Realm realm = Realm.getDefaultInstance();

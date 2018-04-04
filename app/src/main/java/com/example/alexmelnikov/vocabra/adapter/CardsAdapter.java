@@ -17,8 +17,14 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserPresenter;
 
+import org.joda.time.DateTime;
+import org.joda.time.Days;
+import org.joda.time.Hours;
+import org.joda.time.Minutes;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -57,6 +63,8 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         TextView tvBack;
         @BindView(R.id.cb_select)
         CheckBox cbSelect;
+        @BindView(R.id.tv_next_training)
+        TextView tvNextTraining;
 
         public CardsViewHolder(View itemView) {
             super(itemView);
@@ -82,6 +90,21 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         final Drawable drawable = mContext.getResources().getDrawable(R.drawable.bg_color);
         drawable.setColorFilter(card.getDeck().getColor(), PorterDuff.Mode.SRC_ATOP);
         holder.ivColor.setBackground(drawable);
+
+        DateTime currentDateTime = new DateTime();
+        DateTime nextTrainingDateTime = new DateTime(card.getNextTimeForTraining());
+        int days =  Days.daysBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getDays();
+        int hours = Hours.hoursBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getHours();
+        int minutes = Minutes.minutesBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getMinutes();
+        if (days > 1)
+            holder.tvNextTraining.setText(days + " д.");
+        else if (hours > 1)
+            holder.tvNextTraining.setText(hours + " ч.");
+        else if (minutes > 0)
+            holder.tvNextTraining.setText(minutes + " м.");
+        else
+            holder.tvNextTraining.setText("");
+
 
         if (selectMode) {
             holder.cbSelect.setVisibility(View.VISIBLE);

@@ -92,6 +92,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @BindView(R.id.et_deck_name) EditText etDeckName;
 
+    @BindView(R.id.tv_new_counter) TextView tvNewCounter;
+    @BindView(R.id.tv_ready_counter) TextView tvReadyCouner;
+
     @BindView(R.id.layout_toolbar_edit_mode) RelativeLayout rlToolbarEditMode;
     @BindView(R.id.btn_back_edit) ImageButton btnDeleteItems;
     @BindView(R.id.cb_select_all) CheckBox cbSelectAll;
@@ -189,6 +192,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 editColor, deckNameText, decksLayout, sortButton, deleteButton);
     }
 
+
     @Override
     public void detachInputListeners() {
         mDisposable.clear();
@@ -197,6 +201,12 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void replaceCardsRecyclerData(ArrayList<Card> cards) {
         mCardsAdapter.replaceData(cards);
+    }
+
+    @Override
+    public void setupCounters(int newCounter, int oldReadyCounter) {
+        tvNewCounter.setText(newCounter + "");
+        tvReadyCouner.setText(oldReadyCounter + "");
     }
 
     @Override

@@ -27,6 +27,8 @@ public interface CardBrowserView extends BaseView {
 
     void showDecksListDialog(ArrayList<Deck> decks);
 
+    void setupCounters(int newCounter, int oldReadyCounter);
+
     void hideDecksListDialog();
 
     void openDeckCreationFragment();

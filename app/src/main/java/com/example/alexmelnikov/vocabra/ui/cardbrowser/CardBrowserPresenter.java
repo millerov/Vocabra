@@ -84,9 +84,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         if (showingDeckCards) {
            // mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
             getViewState().showDeckCardview(currentDeckChoosen);
-        } /*else {
-            mCardsList = mCardsRep.getCardsFromDB();
-        }*/
+        }
 
         if (editDeckMode)
             getViewState().updateCardColor(selectedColor);
@@ -94,7 +92,6 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         getViewState().switchDeckDisplayMode(editDeckMode);
         getViewState().switchCornerButtonState(showingDeckCards);
         loadSortedCards();
-
     }
 
     @Override
@@ -111,6 +108,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             mCardSortMethods.add(sortMethod);
         }
     }
+
+    public void updateCounters() {
+        if (showingDeckCards)
+            getViewState().setupCounters(mCardsRep.getNewCardsByDeckDB(currentDeckChoosen).size(),
+                    mCardsRep.getOldReadyForTrainCardsByDeckDB(currentDeckChoosen).size());
+        else
+            getViewState().setupCounters(mCardsRep.getNewCardsDB().size(), mCardsRep.getOldReadyForTrainCardsDB().size());
+    }
+
 
     public void sortButtonPressed() {
         getViewState().showSortOptionsDialog(mCardSortMethods, mSelectedSortMethod, mCardSortSelectionIndex);
@@ -323,6 +329,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         else
             mCardsList = mCardsRep.getSortedCardsByDeckDB(currentDeckChoosen, mSelectedSortMethod);
         getViewState().replaceCardsRecyclerData(mCardsList);
+        updateCounters();
     }
 
 /*    private void loadCards() {
