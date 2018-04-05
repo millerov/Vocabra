@@ -93,9 +93,9 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
 
         DateTime currentDateTime = new DateTime();
         DateTime nextTrainingDateTime = new DateTime(card.getNextTimeForTraining());
-        int days =  Days.daysBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getDays();
-        int hours = Hours.hoursBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getHours();
-        int minutes = Minutes.minutesBetween(currentDateTime.toLocalDate(), nextTrainingDateTime.toLocalDate()).getMinutes();
+        int days =  Days.daysBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getDays();
+        int hours = Hours.hoursBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getHours();
+        int minutes = Minutes.minutesBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getMinutes();
         if (days > 1)
             holder.tvNextTraining.setText(days + " д.");
         else if (hours > 1)
@@ -104,6 +104,7 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
             holder.tvNextTraining.setText(minutes + " м.");
         else
             holder.tvNextTraining.setText("");
+        Log.d(TAG, "onBindViewHolder: " + days + "/" + hours + "/" + minutes);
 
 
         if (selectMode) {

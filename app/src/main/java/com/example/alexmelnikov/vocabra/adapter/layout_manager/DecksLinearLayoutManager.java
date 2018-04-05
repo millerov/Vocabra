@@ -1,4 +1,4 @@
-package com.example.alexmelnikov.vocabra.ui.decks_for_train;
+package com.example.alexmelnikov.vocabra.adapter.layout_manager;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;

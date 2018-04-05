@@ -1,6 +1,5 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.PorterDuff;
@@ -39,6 +38,7 @@ import com.example.alexmelnikov.vocabra.adapter.CardsAdapter;
 import com.example.alexmelnikov.vocabra.adapter.DecksDialogAdapter;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.SortMethodsDialogAdapter;
+import com.example.alexmelnikov.vocabra.adapter.layout_manager.CardsLinearLayoutManager;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.CardSortMethod;
 import com.example.alexmelnikov.vocabra.model.Deck;
@@ -52,8 +52,6 @@ import com.thebluealliance.spectrum.SpectrumDialog;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

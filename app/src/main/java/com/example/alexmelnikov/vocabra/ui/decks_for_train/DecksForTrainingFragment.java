@@ -1,16 +1,10 @@
 package com.example.alexmelnikov.vocabra.ui.decks_for_train;
 
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.transition.AutoTransition;
-import android.transition.ChangeBounds;
-import android.transition.Slide;
 import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,19 +17,14 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.adapter.DecksForTrainingAdapter;
-import com.example.alexmelnikov.vocabra.data.CardsRepository;
+import com.example.alexmelnikov.vocabra.adapter.layout_manager.DecksLinearLayoutManager;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
-import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.training.TrainingFragment;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

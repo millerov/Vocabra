@@ -14,15 +14,13 @@ import android.text.InputType;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
-import android.transition.Slide;
 import android.transition.TransitionInflater;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.Spinner;
@@ -31,19 +29,15 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.DecksSpinnerAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryAdapter;
 import com.example.alexmelnikov.vocabra.adapter.HistoryRecyclerItemTouchHelper;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
-import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
-import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.translation.TranslationFragment;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
@@ -84,6 +78,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.layout_translator) RelativeLayout rlTranslator;
     @BindView(R.id.toolbar_layout) RelativeLayout rlToolbar;
     @BindView(R.id.sv_mainscroll) ScrollView svTranslationAndHistory;
+    @BindView(R.id.scroll_container) LinearLayout scrollContainer;
+    @BindView(R.id.layout_history_container) RelativeLayout historyContainer;
 
 
     //addCardDialog views
@@ -381,9 +377,18 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             @Override
             public void run() {
                 transitionsContainer.setVisibility(View.VISIBLE);
-                svTranslationAndHistory.animate()
+                scrollContainer.animate()
                         .y(rlToolbar.getHeight() + rlTranslator.getHeight())
                         .setDuration(200)
+                        .withEndAction(new Runnable() {
+                            @Override
+                            public void run() {
+                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                                lp.setMargins(0,0,0, transitionsContainer.getHeight() + 80);
+                                historyContainer.setLayoutParams(lp);
+                                historyContainer.requestLayout();
+                            }
+                        })
                         .start();
             }
         }, 550);
@@ -392,7 +397,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Override
     public void hideTranslationCard() {
-        svTranslationAndHistory.animate()
+        scrollContainer.animate()
                 .y(0)
                 .setDuration(240)
                 .start();
@@ -400,6 +405,10 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             @Override
             public void run() {
                 transitionsContainer.setVisibility(View.INVISIBLE);
+                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                lp.setMargins(0,0,0, 0);
+                historyContainer.setLayoutParams(lp);
+                historyContainer.requestLayout();
             }
         }, 260);
 
