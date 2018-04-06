@@ -149,7 +149,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
     public void translationResultError() {
-        getViewState().showTranslationResult("Error");
+        getViewState().showTranslationResult("Текст не может быть переведен");
         getViewState().showTranslationCard();
     }
 
@@ -219,6 +219,21 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
+    public void translationCardFavButtonPressed() {
+        if (!mHistoryList.get(mHistoryList.size() - 1).getFavorite())
+            addNewCardFromCurrentTranslationRequest();
+        else {
+            dropFavoriteStatusRequest(mHistoryList.size() - 1);
+            getViewState().changeFavouriteButtonAppearance(false);
+        }
+    }
+
+    private void addNewCardFromCurrentTranslationRequest() {
+        getViewState().showAddCardDialog(-1, mLastLoadedTranslation,
+                mDecksRep.findDecksByTranslationDirection(mLastLoadedTranslation.getLangs()));
+    }
+
+
     public void addNewCardFromHistoryRequest(int pos) {
         getViewState().showAddCardDialog(pos, mHistoryList.get(pos),
                 mDecksRep.findDecksByTranslationDirection(mHistoryList.get(pos).getLangs()));
@@ -259,13 +274,14 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
                 && initialTranslation.getToText().equals(back)) {
             mTransRep.updateTranslationFavoriteStateDB(initialTranslation, initialTranslation.getFromText(),
                     initialTranslation.getToText(), true, card);
-
-            getViewState().updateHistoryDataElement(pos, initialTranslation);
         } else {
             mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true, card);
-
-            getViewState().updateHistoryDataElement(pos, initialTranslation);
         }
+
+        getViewState().updateHistoryDataElement(pos, initialTranslation);
+
+
+        getViewState().changeFavouriteButtonAppearance(true);
 
     }
 
@@ -284,29 +300,31 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
                 affectedTranslation.getToText(), false, null);
         getViewState().updateHistoryDataElement(pos, affectedTranslation);
         getViewState().showFavoriteDropMessage();
+        getViewState().changeFavouriteButtonAppearance(false);
     }
 
 
+    /** @param actionId = 1 – Undo card deletion
+     *                  = 2 – Undo one translation deletion from history
+     *                  = 3 – Undo history cleaning */
     @Override
     public void onSnackbarEvent(int actionId) {
         //undo card deletion
         if (actionId == 1) {
             Card card = new Card(-1, mTemporaryCard);
             mCardsRep.insertCardToDB(card);
-
-            Log.d(TAG, "onSnackbarEvent: " + card.getFront() + "/" + card.getBack());
-
             mTransRep.updateTranslationFavoriteStateDB(mTemporaryCardTranslation,
                     mTemporaryCardTranslation.getFromText(),
                     mTemporaryCardTranslation.getToText(),
                     true, card);
 
             getViewState().updateHistoryDataElement(mTemporaryCardPositionInHistory, mTemporaryCardTranslation);
+            getViewState().changeFavouriteButtonAppearance(true);
+
         } else if (actionId == 2) {
            Translation translation = new Translation(-1, mTemporaryTranslation);
            mTransRep.insertTranslationToDB(translation);
            if (translation.getCard() != null)
-                Log.d(TAG, "onSnackbarEvent: " + translation.getCard().getFront() + "/" + translation.getCard().getBack());
            loadHistoryData();
         } else if (actionId == 3) {
             for (TemporaryTranslation tt : mTemporaryTranslations) {
@@ -382,8 +400,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     private void updateDatabase() {
 
-        /*check if db already contains similar translation, delete it if yes
-        it is done to keep new translation on the top of history recyclerview*/
+        /*check if db already contains similar translation, delete it if yes.
+        It's done to keep new translation on the top of history recyclerview*/
         Translation similarTranslationFromDB = mTransRep.getSimilarElementInDB(mLastLoadedTranslation);
         if (similarTranslationFromDB == null) {
             mTransRep.insertTranslationToDB(mLastLoadedTranslation);
@@ -394,6 +412,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
                 mTransRep.insertTranslationToDB(mLastLoadedTranslation);
                 mTransRep.updateTranslationFavoriteStateDB(mLastLoadedTranslation, mLastLoadedTranslation.getFromText(),
                         mLastLoadedTranslation.getToText(), true, card);
+                getViewState().changeFavouriteButtonAppearance(true);
             } else {
                 mTransRep.deleteTranslationFromDB(mLastLoadedTranslation);
                 mTransRep.insertTranslationToDB(mLastLoadedTranslation);

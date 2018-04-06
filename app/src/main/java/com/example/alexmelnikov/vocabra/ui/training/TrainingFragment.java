@@ -11,9 +11,11 @@ import android.renderscript.RenderScript;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.text.InputType;
+import android.text.Layout;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -238,6 +240,12 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
 
     @Override
     public void showFront(String front, boolean firstAttach) {
+        ViewGroup.LayoutParams ls = svFrontBack.getLayoutParams();
+        Log.d(TAG, "showFront: " + ls.height);
+        ls.height += TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
+        Log.d(TAG, "showFront: after" + ls.height);
+        svFrontBack.setLayoutParams(ls);
+
         if (firstAttach) {
             rlFront.postDelayed(new Runnable() {
                 @Override
@@ -267,6 +275,10 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
 
     @Override
     public void showBack(String back, @Nullable String context) {
+        ViewGroup.LayoutParams ls = svFrontBack.getLayoutParams();
+        ls.height -= TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());;
+        svFrontBack.setLayoutParams(ls);
+
         YoYo.with(new SlideInDownAnimator())
                 .interpolate(new AccelerateDecelerateInterpolator())
                 .duration(500)
@@ -327,11 +339,6 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
                 svFrontBack.fullScroll(View.FOCUS_UP);
             }
         }, 100);
-    }
-
-    @Override
-    public void showFrontAndBackOfPrevCard(String front, String back, @Nullable String context) {
-
     }
 
     @Override

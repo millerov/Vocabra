@@ -21,6 +21,7 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.joda.time.Hours;
 import org.joda.time.Minutes;
+import org.joda.time.Seconds;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -96,12 +97,19 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         int days =  Days.daysBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getDays();
         int hours = Hours.hoursBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getHours();
         int minutes = Minutes.minutesBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getMinutes();
-        if (days > 1)
+        int seconds = Seconds.secondsBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getSeconds();
+        if (days > 0 && hours > 12)
+            holder.tvNextTraining.setText((days + 1) + " д.");
+        else if (days > 0 && hours <= 12)
             holder.tvNextTraining.setText(days + " д.");
-        else if (hours > 1)
-            holder.tvNextTraining.setText(hours + " ч.");
+        else if (hours > 12)
+            holder.tvNextTraining.setText("1 д.");
+        else if (hours <= 12 && hours > 0)
+            holder.tvNextTraining.setText(hours + " д.");
         else if (minutes > 0)
             holder.tvNextTraining.setText(minutes + " м.");
+        else if (seconds > 0)
+            holder.tvNextTraining.setText("1 м.");
         else
             holder.tvNextTraining.setText("");
         Log.d(TAG, "onBindViewHolder: " + days + "/" + hours + "/" + minutes);

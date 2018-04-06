@@ -40,6 +40,8 @@ public interface TranslatorView extends BaseView {
     void replaceHistoryData(ArrayList<Translation> translations);
 
 
+    void changeFavouriteButtonAppearance(boolean light);
+
     void updateHistoryDataElement(int pos, Translation translation);
 
     void openTranslationFragment(String fromText, String toText, String fromLang, String toLang);

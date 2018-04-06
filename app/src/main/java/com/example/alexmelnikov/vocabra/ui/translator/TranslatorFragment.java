@@ -71,7 +71,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.spin_to) Spinner mSpinTo;
     @BindView(R.id.btn_swap) ImageButton btnSwap;
     @BindView(R.id.tv_langtagto) TextView tvLangTagTo;
-    @BindView(R.id.btn_favourite) ImageButton btnFavoutite;
+    @BindView(R.id.btn_favourite) ImageButton btnFavourite;
     @BindView(R.id.rv_history) RecyclerView rvHistory;
     @BindView(R.id.tv_langtagfrom) TextView tvLangTagFrom;
     @BindView(R.id.layout_translated) RelativeLayout transitionsContainer;
@@ -186,6 +186,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         Disposable clearInputButton = RxView.clicks(btnClear)
                 .subscribe(o -> mTranslatorPresenter.clearButtonPressed());
 
+        Disposable addFavouriteButton = RxView.clicks(btnFavourite)
+                .subscribe(o -> mTranslatorPresenter.translationCardFavButtonPressed());
+
         Disposable inputTouched = RxView.clicks(etTranslate)
                 .subscribe(o -> mTranslatorPresenter.inputRequested());
 
@@ -196,7 +199,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 .subscribe(o -> mTranslatorPresenter.copyButtonPressed());
 
         mDisposable.addAll(inputTouched, spinnerFrom, spinnerTo, clearInputButton,
-                swapButton, copyButton);
+                addFavouriteButton, swapButton, copyButton);
     }
 
     @Override
@@ -245,7 +248,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         tvTranslated.setVisibility(View.VISIBLE);
         btnCopy.setVisibility(View.VISIBLE);
         btnClear.setVisibility(View.VISIBLE);
-        btnFavoutite.setVisibility(View.VISIBLE);
+        btnFavourite.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -262,10 +265,18 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             tvTranslated.setText(translated);
             btnCopy.setVisibility(View.VISIBLE);
             btnClear.setVisibility(View.VISIBLE);
-            btnFavoutite.setVisibility(View.VISIBLE);
+            btnFavourite.setVisibility(View.VISIBLE);
         }
         tvLangTagFrom.setText(fromLang);
         tvLangTagTo.setText(toLang);
+    }
+
+    @Override
+    public void changeFavouriteButtonAppearance(boolean light) {
+        if (light)
+            btnFavourite.setImageResource(R.drawable.ic_star_yellow_24dp);
+        else
+            btnFavourite.setImageResource(R.drawable.ic_star_border_white_24dp);
     }
 
     @Override
@@ -277,7 +288,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         etTranslate.setText("");
         tvTranslated.setText("");
         btnCopy.setVisibility(View.INVISIBLE);
-        btnFavoutite.setVisibility(View.GONE);
+        btnFavourite.setVisibility(View.GONE);
 
         btnClear.postDelayed(new Runnable() {
             @Override

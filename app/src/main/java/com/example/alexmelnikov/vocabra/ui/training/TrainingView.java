@@ -23,7 +23,6 @@ public interface TrainingView extends BaseView {
 
     void hideCurrentFrontAndBack(boolean animateUp, boolean onlyFront);
 
-    void showFrontAndBackOfPrevCard(String front, String back, @Nullable String context);
 
     void disableButtonsWhileAnimating();
 

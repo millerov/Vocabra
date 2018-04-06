@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity implements MainView {
     }
 
     /** @param actionId helps to understand which message calls onSnackbarEvent in case if
-     *                   one fragment calls more then one messages with action;
+     *                   one fragment calls multiple different messages with action;
      *                   should equal 0 if withAction is false*/
     @Override
     public void showMessage(int actionId, String message, boolean withAction, SnackBarActionHandler presenter, String actionText) {
