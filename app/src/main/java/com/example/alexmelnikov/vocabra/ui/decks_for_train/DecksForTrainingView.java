@@ -25,4 +25,5 @@ public interface DecksForTrainingView extends BaseView {
 
     void showEmptyDeckSelectedMessage(View item);
 
+    void openStatisticsFragment();
 }

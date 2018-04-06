@@ -241,9 +241,7 @@ public class TrainingFragment extends BaseFragment implements TrainingView {
     @Override
     public void showFront(String front, boolean firstAttach) {
         ViewGroup.LayoutParams ls = svFrontBack.getLayoutParams();
-        Log.d(TAG, "showFront: " + ls.height);
         ls.height += TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 200, getResources().getDisplayMetrics());
-        Log.d(TAG, "showFront: after" + ls.height);
         svFrontBack.setLayoutParams(ls);
 
         if (firstAttach) {

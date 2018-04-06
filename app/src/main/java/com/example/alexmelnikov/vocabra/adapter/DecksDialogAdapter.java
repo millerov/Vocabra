@@ -72,7 +72,7 @@ public class DecksDialogAdapter extends RecyclerView.Adapter<DecksDialogAdapter.
         holder.tvDeckName.setText(deck.getName());
 
 
-        holder.itemView.setOnClickListener(view -> presenter.decksDialogRecyclerItemPressed(mData.size() - position - 1));
+        holder.itemView.setOnClickListener(view -> presenter.decksDialogRecyclerItemPressed(deck.getId()));
     }
 
     @Override

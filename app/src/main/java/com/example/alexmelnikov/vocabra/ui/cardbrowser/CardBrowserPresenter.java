@@ -224,8 +224,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     }
 
-    public void decksDialogRecyclerItemPressed(int pos) {
-        currentDeckChoosen = mDecksRep.getDecksFromDB().get(pos);
+    public void decksDialogRecyclerItemPressed(int cardId) {
+        currentDeckChoosen = mDecksRep.getDeckById(cardId);
         getViewState().hideDecksListDialog();
         getViewState().showDeckCardview(currentDeckChoosen);
         showingDeckCards = true;

@@ -37,10 +37,10 @@ public class VocabraApp extends Application {
         Realm.init(this);
 
         //REALM MIGRATION
-       /*  RealmConfiguration config2 = new RealmConfiguration.Builder()
-                .deleteRealmIfMigrationNeeded()
-                .build();
-        Realm realm = Realm.getInstance(config2);*/
+        /*     RealmConfiguration config2 = new RealmConfiguration.Builder()
+                     .deleteRealmIfMigrationNeeded()
+                    .build();
+             Realm realm = Realm.getInstance(config2);*/
     }
 
 

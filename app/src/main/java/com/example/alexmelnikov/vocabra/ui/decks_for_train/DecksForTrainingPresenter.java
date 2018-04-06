@@ -56,6 +56,10 @@ public class DecksForTrainingPresenter extends MvpPresenter<DecksForTrainingView
 
     }
 
+    public void showStatisticsButtonPressed() {
+        getViewState().openStatisticsFragment();
+    }
+
     @Override
     public void onSnackbarEvent(int actionId) {}
 

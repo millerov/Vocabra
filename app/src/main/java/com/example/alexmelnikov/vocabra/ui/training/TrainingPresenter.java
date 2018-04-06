@@ -7,6 +7,7 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.DecksRepository;
+import com.example.alexmelnikov.vocabra.data.StatisticsRepository;
 import com.example.alexmelnikov.vocabra.data.TranslationsRepository;
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.Deck;
@@ -43,6 +44,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     CardsRepository mCardsRep;
     @Inject
     TranslationsRepository mTransRep;
+    @Inject
+    StatisticsRepository mStatsRep;
 
     private Deck currentDeck;
     private int newCardsCount;
@@ -194,6 +197,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
 
+        mStatsRep.increaseTodayCardsTrainedCounter();
 
         updateCounters();
         getNextCard();

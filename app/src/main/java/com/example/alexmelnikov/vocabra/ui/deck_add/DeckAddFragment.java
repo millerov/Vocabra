@@ -163,14 +163,16 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
     }
 
     @Override
-    public void closeFragment() {
+    public void closeFragment(int createdDeckId) {
 
+        ((MainActivity)getActivity()).deckCreated(createdDeckId);
         ((MainActivity)getActivity()).showMessage(0, "Колода добавлена", false, mDeckAddPresenter, null);
 
         View view = getView();
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+
 
         view.postDelayed(new Runnable() {
             @Override

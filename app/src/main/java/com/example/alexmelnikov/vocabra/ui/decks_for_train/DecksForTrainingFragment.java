@@ -4,10 +4,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Slide;
 import android.transition.TransitionInflater;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -21,13 +23,16 @@ import com.example.alexmelnikov.vocabra.adapter.layout_manager.DecksLinearLayout
 import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
+import com.example.alexmelnikov.vocabra.ui.statistics.StatisticsFragment;
 import com.example.alexmelnikov.vocabra.ui.training.TrainingFragment;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
+import com.jakewharton.rxbinding2.view.RxView;
 
 import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.reactivex.disposables.Disposable;
 
 /**
  * Created by AlexMelnikov on 28.03.18.
@@ -43,8 +48,9 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     @BindView(R.id.layout_toolbar) RelativeLayout rlToolBar;
     @BindView(R.id.rv_decks) RecyclerView rvDecks;
-    @BindView(R.id.tv_cards_ready_counter)
-    TextView tvCardsReadyCounter;
+    @BindView(R.id.tv_cards_ready_counter) TextView tvCardsReadyCounter;
+    @BindView(R.id.btn_stats)
+    ImageButton btnStats;
 
     private DecksForTrainingAdapter mDecksAdapter;
     private DecksLinearLayoutManager mDecksRvManager;
@@ -72,7 +78,10 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     @Override
     public void attachInputListeners() {
+        Disposable statisticsButton = RxView.clicks(btnStats)
+                .subscribe(o -> mDecksForTrainPresenter.showStatisticsButtonPressed());
 
+        mDisposable.addAll(statisticsButton);
     }
 
     @Override
@@ -115,6 +124,20 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
         getActivity().getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
                 .addSharedElement(item, transitionName)
+                .addToBackStack(null)
+                .commit();
+    }
+
+    @Override
+    public void openStatisticsFragment() {
+        ((MainActivity)getActivity()).hideBottomNavigationBar();
+        StatisticsFragment fragment = new StatisticsFragment();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
+            fragment.setEnterTransition(new Slide().setDuration(370));
+        }
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, fragment)
                 .addToBackStack(null)
                 .commit();
     }

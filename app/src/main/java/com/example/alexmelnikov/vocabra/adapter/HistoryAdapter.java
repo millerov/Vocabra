@@ -114,6 +114,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         } else {
             mData.set(0, translation);
             super.notifyItemChanged(0);
+            Log.d(TAG, "updateElement: " + translation.getFromText() + "/" + translation.getToText() + "/" + translation.getFavorite());
+            Log.d(TAG, "updateElement: " + mData.get(0).getFromText() + "/" + mData.get(0).getToText() + "/" + mData.get(0).getFavorite());
         }
     }
 

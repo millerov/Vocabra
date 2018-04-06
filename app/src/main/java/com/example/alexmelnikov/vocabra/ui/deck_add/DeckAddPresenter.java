@@ -125,7 +125,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
                     mLangList.get(mSelectedFrom), mLangList.get(mSelectedTo));
             if (!mDecksRep.containsSimilarElementInDB(deck)) {
                 mDecksRep.insertDeckToDB(deck);
-                getViewState().closeFragment();
+                getViewState().closeFragment(mDecksRep.getDeckByName(deck.getName()).getId());
             } else {
                 nameEtErrorEnabled = true;
                 getViewState().showNameEditTextError("Колода с таким названием уже существует");

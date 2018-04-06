@@ -206,6 +206,5 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                         .replace(R.id.fragment_container, fragment)
                         .addSharedElement(rlTranslator, "viewtrans")
                         .commit();
-
     }
 }

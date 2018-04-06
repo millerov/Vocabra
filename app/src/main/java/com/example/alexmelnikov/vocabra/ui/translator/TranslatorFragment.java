@@ -15,6 +15,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
 import android.transition.TransitionInflater;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -80,6 +81,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     @BindView(R.id.sv_mainscroll) ScrollView svTranslationAndHistory;
     @BindView(R.id.scroll_container) LinearLayout scrollContainer;
     @BindView(R.id.layout_history_container) RelativeLayout historyContainer;
+    @BindView(R.id.layout_empty_history_msg) LinearLayout emptyHistoryMessage;
 
 
     //addCardDialog views
@@ -224,7 +226,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
         getFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, fragment)
-                //  .addToBackStack(null)
+                  .addToBackStack(null)
                 // .addSharedElement(btnClear, "transition")
                 .addSharedElement(rlTranslator, "viewtrans")
                 .commit();
@@ -233,6 +235,11 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Override
     public void replaceHistoryData(ArrayList<Translation> translations) {
+        if (translations.isEmpty())
+            emptyHistoryMessage.setVisibility(View.VISIBLE);
+        else if (emptyHistoryMessage.getVisibility() == View.VISIBLE)
+            emptyHistoryMessage.setVisibility(View.GONE);
+
         mHistoryAdapter.replaceData(translations);
     }
 

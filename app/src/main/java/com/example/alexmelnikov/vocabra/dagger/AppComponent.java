@@ -5,6 +5,7 @@ import com.example.alexmelnikov.vocabra.api.ApiHelper;
 import com.example.alexmelnikov.vocabra.dagger.module.ApiHelperModule;
 import com.example.alexmelnikov.vocabra.dagger.module.RepositoryModule;
 import com.example.alexmelnikov.vocabra.ui.decks_for_train.DecksForTrainingFragment;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.training.TrainingFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 
@@ -21,6 +22,7 @@ import dagger.Component;
 @Component(modules = {RepositoryModule.class
 })
 public interface AppComponent {
+
 
     void inject(TranslatorFragment fragment);
 

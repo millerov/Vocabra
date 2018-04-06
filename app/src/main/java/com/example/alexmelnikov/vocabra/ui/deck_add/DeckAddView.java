@@ -32,7 +32,7 @@ public interface DeckAddView extends BaseView {
     void changeLanguagesSelected(int from, int to);
 
     @StateStrategyType(SkipStrategy.class)
-    void closeFragment();
+    void closeFragment(int createdDeckId);
 
     @StateStrategyType(AddToEndSingleStrategy.class)
     void showNameEditTextError(String message);

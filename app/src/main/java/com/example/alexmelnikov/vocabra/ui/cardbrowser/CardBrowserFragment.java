@@ -142,6 +142,14 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         rvCards.setLayoutManager(mCardsRvManager);
         rvCards.setAdapter(mCardsAdapter);
 
+        /* If fragment called on popbackstack from DeckAddFragment, get createdDeckId from Activity
+        *  and show it on screen using decksDialogRecyclerItemPressed method */
+        int createdDeckId = ((MainActivity)getActivity()).getDeckId();
+        if (createdDeckId != -1) {
+            mCardBrowserPresenter.decksDialogRecyclerItemPressed(createdDeckId);
+            ((MainActivity)getActivity()).resetCreatedDeckId();
+        }
+
     }
 
     @Override
@@ -264,7 +272,6 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             setExitTransition(TransitionInflater.from(getActivity()).inflateTransition(android.R.transition.fade));
 
             fragment.setEnterTransition(new Slide().setDuration(370));
-            //   fragment.setSharedElementEnterTransition(changeBoundsTransition);
             fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
 

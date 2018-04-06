@@ -64,6 +64,15 @@ public class TranslationsRepository {
         return translations;
     }
 
+    public Translation getTranslationByIdFromDB(int id) {
+        Translation translation;
+        Realm realm = Realm.getDefaultInstance();
+        translation = realm.where(Translation.class)
+                .equalTo("id", id)
+                .findFirst();
+        return translation;
+    }
+
 
     public void deleteTranslationFromDB(Translation translation) {
         Realm realm = Realm.getDefaultInstance();

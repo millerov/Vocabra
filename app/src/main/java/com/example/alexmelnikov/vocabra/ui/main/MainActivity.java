@@ -1,6 +1,8 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
 import android.graphics.Color;
 import android.net.Uri;
@@ -54,6 +56,8 @@ public class MainActivity extends BaseActivity implements MainView {
 
     private Snackbar snack;
 
+    public int createdDeckId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,7 +65,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
         ButterKnife.bind(this);
 
-        Log.d(TAG, "onCreate: " + R.color.colorPrimary);
+        createdDeckId = -1;
 
         initViews();
 
@@ -124,6 +128,7 @@ public class MainActivity extends BaseActivity implements MainView {
         fts.replace(R.id.fragment_container, fragment).commit();
     }
 
+
     /** @param actionId helps to understand which message calls onSnackbarEvent in case if
      *                   one fragment calls multiple different messages with action;
      *                   should equal 0 if withAction is false*/
@@ -161,17 +166,40 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showBottomNavigationBar() {
-        bottomNavBar.animate().y(2405.0f).withEndAction(new Runnable() {
-            @Override
-            public void run() {
-                bottomNavBar.setVisibility(View.VISIBLE);
-                bottomNavBar.animate().yBy(-100).setDuration(200);
-            }
-        });
+        if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
+            bottomNavBar.animate().y(2405.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    bottomNavBar.setVisibility(View.VISIBLE);
+                    bottomNavBar.animate().yBy(-100).setDuration(200);
+                }
+            });
+        } else {
+            bottomNavBar.animate().y(1285.0f).withEndAction(new Runnable() {
+                @Override
+                public void run() {
+                    bottomNavBar.setVisibility(View.VISIBLE);
+                    bottomNavBar.animate().yBy(-100).setDuration(200);
+                }
+            });
+        }
     }
 
 
-    public void exportDatabase() {
+    public void deckCreated(int createdDeckId) {
+        this.createdDeckId = createdDeckId;
+    }
+
+    public int getDeckId() {
+        return createdDeckId;
+    }
+
+    public void resetCreatedDeckId() {
+        createdDeckId = -1;
+    }
+
+
+    private void exportDatabase() {
 
         // init realm
         Realm realm = Realm.getDefaultInstance();

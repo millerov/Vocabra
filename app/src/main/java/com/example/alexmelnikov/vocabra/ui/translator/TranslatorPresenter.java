@@ -27,6 +27,7 @@ import com.example.alexmelnikov.vocabra.utils.TextUtils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 
 import javax.inject.Inject;
 
@@ -278,7 +279,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             mTransRep.updateTranslationFavoriteStateDB(initialTranslation, front, back, true, card);
         }
 
-        getViewState().updateHistoryDataElement(pos, initialTranslation);
+        getViewState().updateHistoryDataElement(pos, mTransRep.getTranslationByIdFromDB(initialTranslation.getId()));
 
 
         getViewState().changeFavouriteButtonAppearance(true);
