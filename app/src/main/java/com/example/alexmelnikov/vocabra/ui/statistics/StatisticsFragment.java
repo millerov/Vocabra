@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.statistics;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -14,16 +15,9 @@ import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.utils.MapHelper;
-import com.github.mikephil.charting.charts.LineChart;
-import com.github.mikephil.charting.components.AxisBase;
-import com.github.mikephil.charting.components.XAxis;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.LineData;
-import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.DefaultAxisValueFormatter;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.jakewharton.rxbinding2.view.RxView;
 
+import java.lang.reflect.Array;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +27,12 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
+import lecho.lib.hellocharts.model.Axis;
+import lecho.lib.hellocharts.model.Line;
+import lecho.lib.hellocharts.model.LineChartData;
+import lecho.lib.hellocharts.model.PointValue;
+import lecho.lib.hellocharts.util.ChartUtils;
+import lecho.lib.hellocharts.view.LineChartView;
 
 /**
  * Created by AlexMelnikov on 06.04.18.
@@ -46,7 +46,7 @@ public class StatisticsFragment extends BaseFragment implements StatisticsView {
     StatisticsPresenter mStatisticsPresenter;
 
     @BindView(R.id.btn_back) ImageButton btnBack;
-    @BindView(R.id.chart) LineChart chart;
+    @BindView(R.id.chart) LineChartView chart;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -78,30 +78,37 @@ public class StatisticsFragment extends BaseFragment implements StatisticsView {
         mDisposable.clear();
     }
 
-    public void setupChartData(HashMap<String, Integer> values) {
+    @Override
+    public void setupChartData(HashMap<String, Integer> stats) {
 
-        List<Entry> entries = new ArrayList<Entry>();
+        List<PointValue> values = new ArrayList<PointValue>();
 
-        for (Map.Entry<String, Integer> cord : values.entrySet()) {
-            entries.add(new Entry(cord.getValue(), cord.getValue()));
+
+        for (Map.Entry<String, Integer> cord : stats.entrySet()) {
+            Log.d(TAG, "setupChartData: value=" + cord.getValue());
+            values.add(new PointValue(cord.getValue(), cord.getValue()));
         }
 
-        LineDataSet dataSet = new LineDataSet(entries, "TimesTrained");
-        dataSet.setMode(LineDataSet.Mode.CUBIC_BEZIER);
-        LineData data = new LineData(dataSet);
+        Line line = new Line(values);
+        line.setColor(getActivity().getResources().getColor(R.color.colorPrimary));
+        line.setCubic(true);
+        line.setFilled(true);
+
+        ArrayList<Line> lines = new ArrayList<Line>();
+        lines.add(line);
+
+        LineChartData data = new LineChartData(lines);
+
+        Axis axisX = new Axis();
+        Axis axisY = new Axis().setHasLines(true);
+        data.setAxisXBottom(axisX);
+        data.setAxisYLeft(axisY);
+
+        chart.setLineChartData(data);
 
 
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setValueFormatter(new IAxisValueFormatter() {
-            @Override
-            public String getFormattedValue(float value, AxisBase axis) {
-                Log.d(TAG, "getFormattedValue: " + value);
-                return MapHelper.getKeyFromValue(values, value) + "";
-            }
-        });
+        //MapHelper.getKeyFromValue(values, value)
 
-        chart.setData(data);
-        chart.invalidate();
 
     }
 

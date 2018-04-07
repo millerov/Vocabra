@@ -6,6 +6,7 @@ import com.example.alexmelnikov.vocabra.adapter.DecksDialogAdapter$DecksViewHold
 import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.DailyStats;
 
+import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
@@ -54,6 +55,24 @@ public class StatisticsRepository {
         return stats;
     }
 
+
+    public void fillStatisticsUpToDate(DateTime firstAppLaunchDate) {
+        DateTime currentDateTime = new DateTime();
+
+        Realm realm = Realm.getDefaultInstance();
+        while (firstAppLaunchDate.isBefore(currentDateTime) || firstAppLaunchDate.withTimeAtStartOfDay().equals(currentDateTime.withTimeAtStartOfDay())) {
+            DailyStats stats = realm.where(DailyStats.class)
+                    .equalTo("stringDate", LocalDate.fromDateFields(firstAppLaunchDate.toDate()).toString())
+                    .findFirst();
+            if (stats == null) {
+                DailyStats newStats = new DailyStats(LocalDate.fromDateFields(firstAppLaunchDate.toDate()));
+                insertStatisticsToDB(newStats);
+            }
+            firstAppLaunchDate = firstAppLaunchDate.plusDays(1);
+        }
+    }
+
+
     public void increaseTodayCardsTrainedCounter() {
         String today = new LocalDate().toString();
         Realm realm = Realm.getDefaultInstance();
@@ -65,6 +84,7 @@ public class StatisticsRepository {
                         .findFirst();
                 if (stats == null) {
                     DailyStats newStats = new DailyStats(new LocalDate());
+                    newStats.setCardsTrained(1);
                     realm.insertOrUpdate(newStats);
                 } else {
                     stats.setCardsTrained(stats.getCardsTrained() + 1);

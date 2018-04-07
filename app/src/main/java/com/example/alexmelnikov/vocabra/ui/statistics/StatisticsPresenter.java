@@ -4,9 +4,15 @@ import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.data.StatisticsRepository;
+import com.example.alexmelnikov.vocabra.data.UserDataRepository;
 import com.example.alexmelnikov.vocabra.model.DailyStats;
 
+import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 import javax.inject.Inject;
@@ -20,6 +26,8 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
 
     @Inject
     StatisticsRepository mStatsRep;
+    @Inject
+    UserDataRepository mUserData;
 
     private ArrayList<DailyStats> stats;
     private HashMap<String, Integer> valuesForChart;
@@ -34,6 +42,7 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
         super.attachView(view);
         getViewState().attachInputListeners();
 
+        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, LocalDate.now())));
         setupStatisticsFromDb();
     }
 

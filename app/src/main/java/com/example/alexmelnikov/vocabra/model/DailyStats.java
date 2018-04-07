@@ -31,7 +31,7 @@ public class DailyStats extends RealmObject {
     public DailyStats(LocalDate date) {
         stringDate = date.toString();
         Log.d("MyTag", "DailyStats: " + stringDate);
-        cardsTrained = 1;
+        cardsTrained = 0;
     }
 
     public int getId() {

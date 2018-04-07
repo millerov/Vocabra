@@ -14,5 +14,5 @@ public interface StatisticsView extends BaseView {
 
     void closeFragment();
 
-    void setupChartData(HashMap<String, Integer> values);
+    void setupChartData(HashMap<String, Integer> stats);
 }
