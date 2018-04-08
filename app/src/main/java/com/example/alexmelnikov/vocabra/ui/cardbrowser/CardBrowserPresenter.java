@@ -393,6 +393,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             mCardsList = mCardsRep.getSortedCardsDB(mSelectedSortMethod);
         } else {
             mCardsList = mCardsRep.getSortedCardsByDeckDB(currentDeckChoosen, mSelectedSortMethod);
+            Log.d(TAG, "loadSortedCards: " + mSelectedSortMethod.getId());
             getViewState().switchResetDeckButton(mCardsList.isEmpty());
         }
 

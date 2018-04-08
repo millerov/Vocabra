@@ -225,31 +225,35 @@ public class CardsRepository {
 
         if (method.getId() == 0) {
             if (method.isAscending()) {
-                /*Log.d(TAG, "getSortedCardsDB: sorting ascending");
-                result.sort("id", Sort.ASCENDING);*/
                 cards = new ArrayList<Card>(realm.where(Card.class)
                         .sort("creationDate", Sort.ASCENDING)
                         .findAll());
             } else {
-                /*Log.d(TAG, "getSortedCardsDB: sorting descending");
-                result.sort("id", Sort.DESCENDING);*/
                 cards = new ArrayList<Card>(realm.where(Card.class)
                         .sort("creationDate", Sort.DESCENDING)
                         .findAll());
             }
-        } else cards = null; /*else if (method.getId() == 1) {
-            if (method.isAscending())
-                result.sort("timesTrained", Sort.ASCENDING);
-            else
-                result.sort("timesTrained", Sort.DESCENDING);
-        } else if (method.getId() ==2 ) {
-            if (method.isAscending())
-                result.sort("lastTimeTrained", Sort.ASCENDING);
-            else
-                result.sort("lastTimeTrained", Sort.DESCENDING);
-        }*/
-
-//        cards = new ArrayList<Card>(result);
+        } else if (method.getId() == 1) {
+            if (method.isAscending()) {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("timesTrained", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("timesTrained", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else if (method.getId() == 2) {
+            if (method.isAscending()) {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("lastTimeTrained", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .sort("lastTimeTrained", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else cards = null;
         return cards;
     }
 
@@ -258,18 +262,38 @@ public class CardsRepository {
         Realm realm = Realm.getDefaultInstance();
         if (method.getId() == 0) {
             if (method.isAscending()) {
-                /*Log.d(TAG, "getSortedCardsDB: sorting ascending");
-                result.sort("id", Sort.ASCENDING);*/
                 cards = new ArrayList<Card>(realm.where(Card.class)
                         .equalTo("deck.name", deck.getName())
                         .sort("creationDate", Sort.ASCENDING)
                         .findAll());
             } else {
-                /*Log.d(TAG, "getSortedCardsDB: sorting descending");
-                result.sort("id", Sort.DESCENDING);*/
                 cards = new ArrayList<Card>(realm.where(Card.class)
                         .equalTo("deck.name", deck.getName())
                         .sort("creationDate", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else if (method.getId() == 1) {
+            if (method.isAscending()) {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("timesTrained", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("timesTrained", Sort.DESCENDING)
+                        .findAll());
+            }
+        } else if (method.getId() == 2) {
+            if (method.isAscending()) {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("lastTimeTrained", Sort.ASCENDING)
+                        .findAll());
+            } else {
+                cards = new ArrayList<Card>(realm.where(Card.class)
+                        .equalTo("deck.name", deck.getName())
+                        .sort("lastTimeTrained", Sort.DESCENDING)
                         .findAll());
             }
         } else cards = null;
