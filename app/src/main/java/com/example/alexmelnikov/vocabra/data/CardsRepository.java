@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -293,7 +294,9 @@ public class CardsRepository {
         realm.close();
     }
 
-    public void updateCardAfterTraining(Card card, Date nextTimeForTraining, int newLevel) {
+    /** @param  incrementDays equals -1 when we don't want to update current value
+     *                                  (e. g. cards has been forgotten)          */
+    public void updateCardAfterTraining(Card card, Date nextTimeForTraining, int newLevel, int incrementDays) {
         Realm realm = Realm.getDefaultInstance();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
@@ -306,6 +309,8 @@ public class CardsRepository {
                 updatedCard.setLastTimeTrained(new Date());
                 updatedCard.setNextTimeForTraining(nextTimeForTraining);
                 updatedCard.setLevel(newLevel);
+                if (incrementDays != -1)
+                    updatedCard.setLastIncrement(incrementDays);
                 updatedCard.setTimesTrained(updatedCard.getTimesTrained() + 1);
             }
         });

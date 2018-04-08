@@ -195,7 +195,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
         int nextLevel = currentCardLevel + 2;
         prevCards.push(new TemporaryCard(currentCard));
-        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel, easyIncrement);
 
         mStatsRep.increaseTodayCardsTrainedCounter();
 
@@ -223,7 +223,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
         int nextLevel = currentCardLevel + 1;
         prevCards.push(new TemporaryCard(currentCard));
-        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel, goodIncrement);
 
 
         updateCounters();
@@ -240,7 +240,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         int nextLevel = 1;
        // currentCards.add(currentCard);
         prevCards.push(new TemporaryCard(currentCard));
-        mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel);
+        mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel, -1);
 
         updateCounters();
         getNextCard();
@@ -259,7 +259,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
 
         int nextLevel = currentCardLevel - 1;
         prevCards.push(new TemporaryCard(currentCard));
-        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel);
+        mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel, hardIncrement);
 
         updateCounters();
         getNextCard();

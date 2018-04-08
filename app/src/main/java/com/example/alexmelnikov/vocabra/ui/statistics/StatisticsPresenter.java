@@ -1,15 +1,21 @@
 package com.example.alexmelnikov.vocabra.ui.statistics;
 
+import android.util.Log;
+
 import com.arellomobile.mvp.InjectViewState;
 import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
+import com.example.alexmelnikov.vocabra.data.CardsRepository;
 import com.example.alexmelnikov.vocabra.data.StatisticsRepository;
 import com.example.alexmelnikov.vocabra.data.UserDataRepository;
+import com.example.alexmelnikov.vocabra.model.Card;
 import com.example.alexmelnikov.vocabra.model.DailyStats;
+import com.example.alexmelnikov.vocabra.utils.CardUtils;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
+import java.text.DecimalFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -24,21 +30,23 @@ import javax.inject.Inject;
 @InjectViewState
 public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
 
+    private static final String TAG = "MyTag";
+
     @Inject
     StatisticsRepository mStatsRep;
     @Inject
     UserDataRepository mUserData;
+    @Inject
+    CardsRepository mCardsRep;
 
     private ArrayList<DailyStats> stats;
-    private HashMap<String, Integer> valuesForChart;
 
     public StatisticsPresenter() {
-        valuesForChart = new HashMap<String, Integer>();
+        VocabraApp.getPresenterComponent().inject(this);
     }
 
     @Override
     public void attachView(StatisticsView view) {
-        VocabraApp.getPresenterComponent().inject(this);
         super.attachView(view);
         getViewState().attachInputListeners();
 
@@ -54,9 +62,43 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
 
     private void setupStatisticsFromDb() {
         stats = mStatsRep.getStatisticsFromDB();
-        for (DailyStats s : stats) {
-            valuesForChart.put(s.getStringDate(), s.getCardsTrained());
+        ArrayList<Card> cards = mCardsRep.getCardsFromDB();
+
+        int totalCards = cards.size();
+        int totalRepeats = 0;
+        int sumIntervals = 0;
+        int maxInterval = 0;
+        for (Card c : cards) {
+            totalRepeats += c.getTimesTrained();
+            int inc = c.getLastIncrement();
+            sumIntervals += inc;
+            if (inc > maxInterval)
+                maxInterval = inc;
         }
-        getViewState().setupChartData(valuesForChart);
+
+        int allDays = stats.size();
+        int trainedDays = 0;
+        for (DailyStats ds : stats)
+            if (ds.getCardsTrained() != 0)
+                trainedDays++;
+
+        double avgInterval = 0;
+        double avgRepeatsPerDay = 0;
+
+        if (cards.size() != 0) {
+            avgInterval = (double) sumIntervals / cards.size();
+            avgRepeatsPerDay = (double) totalRepeats / allDays;
+        }
+
+        double trainedDaysPercent = ((double) trainedDays / allDays) * 100;
+
+        getViewState().setupStatisticsData(totalCards + "", totalRepeats + "",
+                new DecimalFormat("##.##").format(trainedDaysPercent) + "% (" + trainedDays + " из " +allDays + ")",
+                new DecimalFormat("##.##").format(avgRepeatsPerDay),
+                new DecimalFormat("##.##").format(avgInterval),
+                maxInterval + "");
+
+        getViewState().setupChartData(stats);
+
     }
 }

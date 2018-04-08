@@ -49,6 +49,8 @@ public class Card extends RealmObject {
 
     private int level;
 
+    private int lastIncrement;
+
     public Card() {}
 
     //=======================
@@ -71,6 +73,7 @@ public class Card extends RealmObject {
         isReadyForTraining = isNew = true;
         timesTrained = 0;
         level = 1;
+        lastIncrement = 0;
     }
 
     public Card(int id, TemporaryCard tempCard) {
@@ -208,5 +211,13 @@ public class Card extends RealmObject {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public int getLastIncrement() {
+        return lastIncrement;
+    }
+
+    public void setLastIncrement(int lastIncrement) {
+        this.lastIncrement = lastIncrement;
     }
 }
