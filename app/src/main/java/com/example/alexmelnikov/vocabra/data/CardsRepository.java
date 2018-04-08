@@ -294,6 +294,26 @@ public class CardsRepository {
         realm.close();
     }
 
+    public void resetCardTrainingStats(Card card) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                Card updatedCard = realm.where(Card.class)
+                        .equalTo("id", card.getId())
+                        .findFirst();
+                updatedCard.setReadyForTraining(true);
+                updatedCard.setNew(true);
+                updatedCard.setTimesTrained(0);
+                updatedCard.setLevel(1);
+                updatedCard.setLastIncrement(0);
+                updatedCard.setNextTimeForTraining(new Date());
+                updatedCard.setLastTimeTrained(null);
+            }
+        });
+        realm.close();
+    }
+
     /** @param  incrementDays equals -1 when we don't want to update current value
      *                                  (e. g. cards has been forgotten)          */
     public void updateCardAfterTraining(Card card, Date nextTimeForTraining, int newLevel, int incrementDays) {

@@ -39,6 +39,8 @@ public interface CardBrowserView extends BaseView {
 
     void switchCornerButtonState(boolean showingDeckCards);
 
+    void switchResetDeckButton(boolean enabled);
+
     void switchDeckDisplayMode(boolean editModeOn);
 
     void showSelectColorDialog(Deck currentDeck);
@@ -72,8 +74,16 @@ public interface CardBrowserView extends BaseView {
 
     void changeAddButtonResource(boolean addDeckMode);
 
-    void showDeleteDeckConfirmation(Deck deck);
+    void showDeleteDeckConfirmationDialog(Deck deck);
+
+    void showResetDeckConfirmationDialog(Deck deck);
+
+    void showResetStatsItemsConfirmationDialog(boolean[] selectedItemsIndexes);
 
     void showDeckDeletedMessage(String deckName);
+
+    void showDeckResetedMessage(String deckName);
+
+    void showSelectedItemsStatsResetedMessage();
 
 }

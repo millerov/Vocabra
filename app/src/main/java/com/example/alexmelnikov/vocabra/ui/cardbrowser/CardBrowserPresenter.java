@@ -17,7 +17,6 @@ import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.model.temp.TemporaryCard;
-import com.example.alexmelnikov.vocabra.model.temp.TemporaryTranslation;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
 
 import java.util.ArrayList;
@@ -68,6 +67,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         VocabraApp.getPresenterComponent().inject(this);
         showingDeckCards = false;
         editDeckMode = false;
+        mCardsList = new ArrayList<Card>();
         temporaryCards = new ArrayList<TemporaryCard>();
         temporaryCardTranslations = new ArrayList<Translation>();
     }
@@ -93,9 +93,6 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
         if (editDeckMode)
             getViewState().updateCardColor(selectedColor);
-
-        noDecksInDB = mDecksRep.getDecksFromDB().isEmpty();
-
 
         getViewState().switchDeckDisplayMode(editDeckMode);
         getViewState().switchCornerButtonState(showingDeckCards);
@@ -335,8 +332,32 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         loadSortedCards();
     }
 
+
+    public void resetItemsStatsButtonPressed(boolean[] selectedItemsIndexes) {
+        getViewState().showResetStatsItemsConfirmationDialog(selectedItemsIndexes);
+    }
+
+    public void resetItemsStatsRequestConfirmed(boolean[] selectedItemsIndexes) {
+        ArrayList<Card> cardsForReset = new ArrayList<Card>();
+        Card card;
+
+        for (int i = 0; i < selectedItemsIndexes.length; i++)
+            if (selectedItemsIndexes[i]) {
+                card = mCardsList.get(i);
+                cardsForReset.add(card);
+            }
+
+        for (Card c : cardsForReset)
+            mCardsRep.resetCardTrainingStats(c);
+
+        getViewState().disableEditModeToolbar();
+        getViewState().showSelectedItemsStatsResetedMessage();
+        loadSortedCards();
+
+    }
+
     public void deleteDeckButtonPressed() {
-        getViewState().showDeleteDeckConfirmation(currentDeckChoosen);
+        getViewState().showDeleteDeckConfirmationDialog(currentDeckChoosen);
     }
 
     public void deleteDeckRequestConfirmed() {
@@ -352,23 +373,31 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         backButtonPressed();
     }
 
+    public void resetDeckButtonPressed() {
+        getViewState().showResetDeckConfirmationDialog(currentDeckChoosen);
+    }
 
+    public void resetDeckRequestConfirmed() {
+        for (Card c : mCardsList) {
+            mCardsRep.resetCardTrainingStats(c);
+        }
+
+        getViewState().showDeckResetedMessage(currentDeckChoosen.getName());
+        loadSortedCards();
+    }
 
     //=============Private logic===============
 
     private void loadSortedCards() {
-        if (!showingDeckCards)
+        if (!showingDeckCards) {
             mCardsList = mCardsRep.getSortedCardsDB(mSelectedSortMethod);
-        else
+        } else {
             mCardsList = mCardsRep.getSortedCardsByDeckDB(currentDeckChoosen, mSelectedSortMethod);
+            getViewState().switchResetDeckButton(mCardsList.isEmpty());
+        }
 
         getViewState().replaceCardsRecyclerData(mCardsList);
         updateCounters();
     }
-
-/*    private void loadCards() {
-        getViewState().replaceCardsRecyclerData(mCardsList);
-    }*/
-
 
 }

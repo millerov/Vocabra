@@ -112,7 +112,6 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
             holder.tvNextTraining.setText("1 м.");
         else
             holder.tvNextTraining.setText("");
-        Log.d(TAG, "onBindViewHolder: " + days + "/" + hours + "/" + minutes);
 
 
         if (selectMode) {

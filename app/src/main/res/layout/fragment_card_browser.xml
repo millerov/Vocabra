@@ -136,7 +136,18 @@
             tools:text="12"/>
 
         <ImageButton
-            android:id="@+id/btn_back_edit"
+            android:id="@+id/btn_reset_cards"
+            android:layout_width="24dp"
+            android:layout_height="32dp"
+            android:layout_toStartOf="@id/btn_delete_cards"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="10dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_replay_white_28dp"
+            tools:ignore="ContentDescription" />
+
+        <ImageButton
+            android:id="@+id/btn_delete_cards"
             android:layout_width="24dp"
             android:layout_height="32dp"
             android:layout_alignParentEnd="true"
@@ -183,12 +194,16 @@
                 android:id="@+id/tv_deck_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingRight="64dp"
+                android:paddingRight="94dp"
                 android:paddingLeft="4dp"
                 android:textSize="22sp"
                 android:textColor="@color/colorWhite"
-                android:maxLines="1"
-                android:ellipsize="end"
+                android:singleLine="true"
+                android:ellipsize="marquee"
+                android:marqueeRepeatLimit ="marquee_forever"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:scrollHorizontally="true"
                 tools:text="hello" />
 
             <EditText
@@ -205,7 +220,7 @@
 
 
             <ImageButton
-                android:id="@+id/btn_delete"
+                android:id="@+id/btn_delete_deck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
@@ -214,10 +229,20 @@
                 android:background="?selectableItemBackgroundBorderless"/>
 
             <ImageButton
+                android:id="@+id/btn_reset_deck"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@id/btn_delete_deck"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/selector_btn_reset_deck"
+                android:background="?selectableItemBackgroundBorderless"/>
+
+            <ImageButton
                 android:id="@+id/btn_edit_deck"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@id/btn_delete"
+                android:layout_toLeftOf="@id/btn_reset_deck"
                 android:layout_centerVertical="true"
                 android:layout_marginRight="10dp"
                 android:src="@drawable/ic_edit_white_24dp"

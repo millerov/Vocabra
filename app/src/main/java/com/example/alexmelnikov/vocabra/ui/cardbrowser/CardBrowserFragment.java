@@ -84,7 +84,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.tv_deck_name) TextView tvDeckName;
     @BindView(R.id.tv_deck_langs) TextView tvDeckLangs;
     @BindView(R.id.btn_edit_deck) ImageButton btnEditDeck;
-    @BindView(R.id.btn_delete) ImageButton btnDeleteDeck;
+    @BindView(R.id.btn_delete_deck) ImageButton btnDeleteDeck;
+    @BindView(R.id.btn_reset_deck) ImageButton btnResetDeck;
     @BindView(R.id.btn_edit_color) ImageButton btnEditColor;
     @BindView(R.id.btn_confirm) ImageButton btnConfirm;
 
@@ -94,7 +95,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.tv_ready_counter) TextView tvReadyCouner;
 
     @BindView(R.id.layout_toolbar_edit_mode) RelativeLayout rlToolbarEditMode;
-    @BindView(R.id.btn_back_edit) ImageButton btnDeleteItems;
+    @BindView(R.id.btn_delete_cards) ImageButton btnDeleteItems;
+    @BindView(R.id.btn_reset_cards) ImageButton btnResetCards;
     @BindView(R.id.cb_select_all) CheckBox cbSelectAll;
     @BindView(R.id.tv_selected_counter) TextView tvSelectedCounter;
 
@@ -184,8 +186,16 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable deleteDeckButton = RxView.clicks(btnDeleteDeck)
                 .subscribe(o -> mCardBrowserPresenter.deleteDeckButtonPressed());
 
-        Disposable deleteButton = RxView.clicks(btnDeleteItems)
+        Disposable resetDeckButton = RxView.clicks(btnResetDeck)
+                .subscribe(o -> mCardBrowserPresenter.resetDeckButtonPressed());
+
+        Disposable deleteCardsButton = RxView.clicks(btnDeleteItems)
                 .subscribe(o -> mCardBrowserPresenter.deleteItemsRequest(mCardsAdapter.getSelectedItemsIndexes()));
+
+        Disposable resetCardsButton = RxView.clicks(btnResetCards)
+                .subscribe(o -> mCardBrowserPresenter.resetItemsStatsButtonPressed(mCardsAdapter.getSelectedItemsIndexes()));
+
+
 
         cbSelectAll.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -198,7 +208,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         });
 
         mDisposable.addAll(addCardButton, decksButton, editDeckButton, confirmDeckEdit, backButton,
-                editColor, deckNameText, decksLayout, sortButton, deleteButton, deleteDeckButton);
+                editColor, deckNameText, decksLayout, sortButton, deleteCardsButton, deleteDeckButton,
+                resetCardsButton, resetDeckButton);
     }
 
 
@@ -297,9 +308,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
         drawable.setColorFilter(deck.getColor(), PorterDuff.Mode.SRC_ATOP);
         rlDeck.setBackground(drawable);
-
         rlDeck.setVisibility(View.VISIBLE);
+    }
 
+    @Override
+    public void switchResetDeckButton(boolean enabled) {
+        if (enabled)
+            btnResetDeck.setEnabled(false);
+        else
+            btnResetDeck.setEnabled(true);
     }
 
     @Override
@@ -318,6 +335,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
             btnEditDeck.setVisibility(View.GONE);
             btnDeleteDeck.setVisibility(View.GONE);
+            btnResetDeck.setVisibility(View.GONE);
             btnConfirm.setVisibility(View.VISIBLE);
             btnEditColor.setVisibility(View.VISIBLE);
         } else {
@@ -331,6 +349,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 tvDeckLangs.setVisibility(View.VISIBLE);
                 btnEditDeck.setVisibility(View.VISIBLE);
                 btnDeleteDeck.setVisibility(View.VISIBLE);
+                btnResetDeck.setVisibility(View.VISIBLE);
                 btnConfirm.setVisibility(View.GONE);
                 btnEditColor.setVisibility(View.GONE);
             }
@@ -533,13 +552,31 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 }).build().show(getFragmentManager(), "color_dialog");
     }
 
-    public void showDeleteDeckConfirmation(Deck deck) {
+    public void showDeleteDeckConfirmationDialog(Deck deck) {
             new MaterialDialog.Builder(getActivity())
                     .content("Вы уверены, что хотите удалить колоду " + deck.getName() + " и все ее карточки?")
                     .positiveText("Подтвердить")
                     .negativeText("Отмена")
                     .onPositive((dialog, which) -> mCardBrowserPresenter.deleteDeckRequestConfirmed())
                     .show();
+    }
+
+    public void showResetDeckConfirmationDialog(Deck deck) {
+        new MaterialDialog.Builder(getActivity())
+                .content("Сбросить статистику карточек колоды " + deck.getName() + " ?")
+                .positiveText("Подтвердить")
+                .negativeText("Отмена")
+                .onPositive((dialog, which) -> mCardBrowserPresenter.resetDeckRequestConfirmed())
+                .show();
+    }
+
+    public void showResetStatsItemsConfirmationDialog(boolean[] selectedItemsIndexes) {
+        new MaterialDialog.Builder(getActivity())
+                .content("Сбросить статистику повторений выбранных карточек?")
+                .positiveText("Подтвердить")
+                .negativeText("Отмена")
+                .onPositive((dialog, which) -> mCardBrowserPresenter.resetItemsStatsRequestConfirmed(selectedItemsIndexes))
+                .show();
     }
 
     @Override
@@ -625,8 +662,20 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
+    public void showSelectedItemsStatsResetedMessage() {
+        ((MainActivity)getActivity()).showMessage(0, "Статистика повторений выделенных элементов была сброшена",
+                false, null, null);
+    }
+
+    @Override
     public void showDeckDeletedMessage(String deckName) {
         ((MainActivity)getActivity()).showMessage(0, "Колода " + deckName + " была удалена",
+                false, null, null);
+    }
+
+    @Override
+    public void showDeckResetedMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage(0, "Статистика повторений карточек колоды " + deckName + " была сброшена",
                 false, null, null);
     }
 
