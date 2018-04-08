@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.deck_add;
 
+import android.net.ConnectivityManager;
 import android.support.design.widget.BottomSheetBehavior;
 
 import com.arellomobile.mvp.viewstate.strategy.AddToEndSingleStrategy;

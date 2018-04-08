@@ -50,7 +50,8 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
         super.attachView(view);
         getViewState().attachInputListeners();
 
-        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, LocalDate.now())));
+        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())));
+        Log.d(TAG, "attachView: " + ((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())).toString());
         setupStatisticsFromDb();
     }
 

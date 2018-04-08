@@ -62,6 +62,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     private ArrayList<TemporaryCard> temporaryCards;
     private ArrayList<Translation> temporaryCardTranslations;
 
+    private boolean noDecksInDB;
+
     public CardBrowserPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         showingDeckCards = false;
@@ -84,10 +86,16 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         if (showingDeckCards) {
            // mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
             getViewState().showDeckCardview(currentDeckChoosen);
+            getViewState().changeAddButtonResource(false);
+        } else {
+            getViewState().changeAddButtonResource(true);
         }
 
         if (editDeckMode)
             getViewState().updateCardColor(selectedColor);
+
+        noDecksInDB = mDecksRep.getDecksFromDB().isEmpty();
+
 
         getViewState().switchDeckDisplayMode(editDeckMode);
         getViewState().switchCornerButtonState(showingDeckCards);
@@ -122,8 +130,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         getViewState().showSortOptionsDialog(mCardSortMethods, mSelectedSortMethod, mCardSortSelectionIndex);
     }
 
-    public void addCardButtonPressed() {
-        getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
+    public void addButtonPressed() {
+        if (showingDeckCards)
+            getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
+        else
+            getViewState().openDeckCreationFragment();
     }
 
     public void addNewCardRequest(String front, String back, Language firstLanguage, Language secondLanguage, String cardContext, String chosenDeckName, int defaultColor) {
@@ -176,6 +187,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
                 getViewState().switchCornerButtonState(showingDeckCards);
                 //mCardsList = mCardsRep.getCardsFromDB();
                 getViewState().hideDeckCardview();
+                getViewState().changeAddButtonResource(true);
                 loadSortedCards();
             }
         }
@@ -226,11 +238,13 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     public void decksDialogRecyclerItemPressed(int cardId) {
         currentDeckChoosen = mDecksRep.getDeckById(cardId);
+        Log.d(TAG, "decksDialogRecyclerItemPressed: " + currentDeckChoosen.getName());
         getViewState().hideDecksListDialog();
+        noDecksInDB = false;
         getViewState().showDeckCardview(currentDeckChoosen);
         showingDeckCards = true;
         getViewState().switchCornerButtonState(showingDeckCards);
-
+        getViewState().changeAddButtonResource(false);
         //mCardsList = mCardsRep.getCardsByDeckDB(currentDeckChoosen);
         loadSortedCards();
     }
@@ -321,6 +335,25 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         loadSortedCards();
     }
 
+    public void deleteDeckButtonPressed() {
+        getViewState().showDeleteDeckConfirmation(currentDeckChoosen);
+    }
+
+    public void deleteDeckRequestConfirmed() {
+        for (Card c : mCardsList) {
+            Translation t = mTransRep.findTranslationByCardInDB(c);
+            if (t != null)
+                mTransRep.updateTranslationFavoriteStateDB(t, t.getFromText(), t.getToText(), false, null);
+            mCardsRep.deleteCardFromDB(c);
+        }
+
+        getViewState().showDeckDeletedMessage(currentDeckChoosen.getName());
+        mDecksRep.deleteDeckFromDB(currentDeckChoosen);
+        backButtonPressed();
+    }
+
+
+
     //=============Private logic===============
 
     private void loadSortedCards() {
@@ -328,6 +361,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
             mCardsList = mCardsRep.getSortedCardsDB(mSelectedSortMethod);
         else
             mCardsList = mCardsRep.getSortedCardsByDeckDB(currentDeckChoosen, mSelectedSortMethod);
+
         getViewState().replaceCardsRecyclerData(mCardsList);
         updateCounters();
     }

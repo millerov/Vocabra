@@ -173,6 +173,7 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
 
+        ((MainActivity) getActivity()).showBottomNavigationBar();
 
         view.postDelayed(new Runnable() {
             @Override
@@ -218,5 +219,10 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
     }
 
+    @Override
+    public boolean onBackPressed() {
+        ((MainActivity)getActivity()).showBottomNavigationBar();
+        return super.onBackPressed();
+    }
 
 }

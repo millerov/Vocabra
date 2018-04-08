@@ -288,6 +288,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     public void dropFavoriteStatusRequest(int pos) {
         Translation affectedTranslation = mHistoryList.get(pos);
+        Log.d(TAG, "dropFavoriteStatusRequest: " + affectedTranslation.getFromText() + "/" + affectedTranslation.getToText());
         Card card = affectedTranslation.getCard();
 
         mTemporaryCard = new TemporaryCard(card.getFront(), card.getBack(), card.getCardContext(), card.getTranslationDirection(),
@@ -323,9 +324,9 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             getViewState().changeFavouriteButtonAppearance(true);
 
         } else if (actionId == 2) {
+            Log.d(TAG, "onSnackbarEvent: cancel delete");
            Translation translation = new Translation(-1, mTemporaryTranslation);
            mTransRep.insertTranslationToDB(translation);
-           if (translation.getCard() != null)
            loadHistoryData();
         } else if (actionId == 3) {
             for (TemporaryTranslation tt : mTemporaryTranslations) {
@@ -382,6 +383,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     private void loadHistoryData() {
         mHistoryList = mTransRep.getSortedTranslationsFromDB();
 
+        for (Translation t : mHistoryList)
+            Log.d(TAG, "loadHistoryData: " + t.getFromText() + "/" + t.getToText());
         getViewState().replaceHistoryData(mHistoryList);
     }
 

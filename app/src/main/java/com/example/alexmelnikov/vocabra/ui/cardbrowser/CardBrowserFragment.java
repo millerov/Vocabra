@@ -84,7 +84,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @BindView(R.id.tv_deck_name) TextView tvDeckName;
     @BindView(R.id.tv_deck_langs) TextView tvDeckLangs;
     @BindView(R.id.btn_edit_deck) ImageButton btnEditDeck;
-    @BindView(R.id.btn_train) ImageButton btnTrain;
+    @BindView(R.id.btn_delete) ImageButton btnDeleteDeck;
     @BindView(R.id.btn_edit_color) ImageButton btnEditColor;
     @BindView(R.id.btn_confirm) ImageButton btnConfirm;
 
@@ -155,7 +155,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void attachInputListeners() {
         Disposable addCardButton = RxView.clicks(btnAddCard)
-                .subscribe(o -> mCardBrowserPresenter.addCardButtonPressed());
+                .subscribe(o -> mCardBrowserPresenter.addButtonPressed());
 
         Disposable decksButton = RxView.clicks(btnDecks)
                 .subscribe(o -> mCardBrowserPresenter.decksButtonPressed());
@@ -181,6 +181,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         Disposable sortButton = RxView.clicks(btnSort)
                 .subscribe(o -> mCardBrowserPresenter.sortButtonPressed());
 
+        Disposable deleteDeckButton = RxView.clicks(btnDeleteDeck)
+                .subscribe(o -> mCardBrowserPresenter.deleteDeckButtonPressed());
+
         Disposable deleteButton = RxView.clicks(btnDeleteItems)
                 .subscribe(o -> mCardBrowserPresenter.deleteItemsRequest(mCardsAdapter.getSelectedItemsIndexes()));
 
@@ -195,7 +198,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
         });
 
         mDisposable.addAll(addCardButton, decksButton, editDeckButton, confirmDeckEdit, backButton,
-                editColor, deckNameText, decksLayout, sortButton, deleteButton);
+                editColor, deckNameText, decksLayout, sortButton, deleteButton, deleteDeckButton);
     }
 
 
@@ -235,7 +238,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void hideDecksListDialog() {
-        decksDialog.hide();
+        try {
+            decksDialog.hide();
+        } catch (NullPointerException e) {}
     }
 
     @Override
@@ -264,6 +269,8 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     @Override
     public void openDeckCreationFragment() {
         DeckAddFragment fragment = new DeckAddFragment();
+
+        ((MainActivity)getActivity()).hideBottomNavigationBar();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ChangeBounds changeBoundsTransition = new ChangeBounds();
@@ -310,7 +317,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
             etDeckName.setSelection(etDeckName.getText().length());
 
             btnEditDeck.setVisibility(View.GONE);
-            btnTrain.setVisibility(View.GONE);
+            btnDeleteDeck.setVisibility(View.GONE);
             btnConfirm.setVisibility(View.VISIBLE);
             btnEditColor.setVisibility(View.VISIBLE);
         } else {
@@ -323,7 +330,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 tvDeckName.setVisibility(View.VISIBLE);
                 tvDeckLangs.setVisibility(View.VISIBLE);
                 btnEditDeck.setVisibility(View.VISIBLE);
-                btnTrain.setVisibility(View.VISIBLE);
+                btnDeleteDeck.setVisibility(View.VISIBLE);
                 btnConfirm.setVisibility(View.GONE);
                 btnEditColor.setVisibility(View.GONE);
             }
@@ -409,8 +416,7 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
 
     @Override
     public void showEditCardDialog(Card card, ArrayList<Deck> decks) {
-        MaterialDialog dialog =
-                new MaterialDialog.Builder(getActivity())
+        MaterialDialog dialog = new MaterialDialog.Builder(getActivity())
                         .title("Изменение карточки")
                         .customView(R.layout.dialog_add_card, true)
                         .positiveText("Сохранить")
@@ -527,6 +533,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
                 }).build().show(getFragmentManager(), "color_dialog");
     }
 
+    public void showDeleteDeckConfirmation(Deck deck) {
+            new MaterialDialog.Builder(getActivity())
+                    .content("Вы уверены, что хотите удалить колоду " + deck.getName() + " и все ее карточки?")
+                    .positiveText("Подтвердить")
+                    .negativeText("Отмена")
+                    .onPositive((dialog, which) -> mCardBrowserPresenter.deleteDeckRequestConfirmed())
+                    .show();
+    }
+
     @Override
     public void updateCardColor(int color) {
         final Drawable drawable = getActivity().getResources().getDrawable(R.drawable.bg_card);
@@ -573,6 +588,15 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     }
 
     @Override
+    public void changeAddButtonResource(boolean addDeckMode) {
+        if (addDeckMode)
+            btnAddCard.setImageResource(R.drawable.ic_library_add_white_30dp);
+        else
+            btnAddCard.setImageResource(R.drawable.ic_add_white_30dp);
+
+    }
+
+    @Override
     public void showDeckNameEditTextMessage(String message) {
         etDeckName.setError(message);
     }
@@ -598,6 +622,12 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void showSelectedItemsDeletedMessage() {
         ((MainActivity)getActivity()).showMessage(2, "Выделенные элементы были удалены",
                 true, mCardBrowserPresenter, "Отменить");
+    }
+
+    @Override
+    public void showDeckDeletedMessage(String deckName) {
+        ((MainActivity)getActivity()).showMessage(0, "Колода " + deckName + " была удалена",
+                false, null, null);
     }
 
     @Override

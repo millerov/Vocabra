@@ -38,6 +38,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
+import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
@@ -180,6 +181,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
     @Override
     public boolean onBackPressed() {
+        ((MainActivity)getActivity()).showBottomNavigationBar();
         mTranslationPresenter.continueRequest();
         return true;
     }
@@ -187,6 +189,8 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     @Override
     public void closeFragment(Translation translation) {
         View view = this.getView();
+
+        ((MainActivity) getActivity()).showBottomNavigationBar();
 
         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
 
@@ -207,4 +211,5 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                         .addSharedElement(rlTranslator, "viewtrans")
                         .commit();
     }
+
 }

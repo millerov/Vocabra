@@ -170,16 +170,16 @@ public class MainActivity extends BaseActivity implements MainView {
             bottomNavBar.animate().y(2405.0f).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    bottomNavBar.setVisibility(View.VISIBLE);
                     bottomNavBar.animate().yBy(-100).setDuration(200);
+                    bottomNavBar.setVisibility(View.VISIBLE);
                 }
             });
         } else {
             bottomNavBar.animate().y(1285.0f).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    bottomNavBar.setVisibility(View.VISIBLE);
                     bottomNavBar.animate().yBy(-100).setDuration(200);
+                    bottomNavBar.setVisibility(View.VISIBLE);
                 }
             });
         }

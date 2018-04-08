@@ -70,4 +70,10 @@ public interface CardBrowserView extends BaseView {
 
     void showSelectedItemsDeletedMessage();
 
+    void changeAddButtonResource(boolean addDeckMode);
+
+    void showDeleteDeckConfirmation(Deck deck);
+
+    void showDeckDeletedMessage(String deckName);
+
 }

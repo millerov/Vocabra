@@ -101,6 +101,7 @@ public class StatisticsFragment extends BaseFragment implements StatisticsView {
         }
 
 
+
         Line line = new Line(values);
         line.setColor(getActivity().getResources().getColor(R.color.colorPrimary))
             .setCubic(true)

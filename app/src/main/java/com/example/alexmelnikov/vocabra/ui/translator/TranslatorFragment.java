@@ -213,6 +213,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void openTranslationFragment(String fromText, String toText, String fromLang, String toLang) {
         TranslationFragment fragment = TranslationFragment.newInstance(fromText, toText, fromLang, toLang);
 
+        ((MainActivity) getActivity()).hideBottomNavigationBar();
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ChangeBounds changeBoundsTransition = new ChangeBounds();
             changeBoundsTransition.setDuration(370);
@@ -432,6 +434,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     }
 
+    //Without this override while translated card view is on screen back press screws the whole layout over
+    @Override
+    public boolean onBackPressed() {
+        getActivity().finish();
+        return super.onBackPressed();
+    }
 }
 
 

@@ -108,14 +108,15 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
     /**@param pos equals -1 in case when translation has been added to favourites with
      * imagebutton on translation card. That way we update last added to history translation */
     public void updateElement(int pos, Translation translation) {
+        Log.d(TAG, "updateElement: " + pos);
         if (pos != -1) {
-            mData.set(mData.size() - 1 - pos, translation);
+            for (int i = 0; i < mData.size(); i++)
+                Log.d(TAG, "updateElement: " + i + ":" + mData.get(i).getFromText());
+            mData.set(pos, translation);
             super.notifyItemChanged(mData.size() - 1 - pos);
         } else {
             mData.set(0, translation);
             super.notifyItemChanged(0);
-            Log.d(TAG, "updateElement: " + translation.getFromText() + "/" + translation.getToText() + "/" + translation.getFavorite());
-            Log.d(TAG, "updateElement: " + mData.get(0).getFromText() + "/" + mData.get(0).getToText() + "/" + mData.get(0).getFavorite());
         }
     }
 

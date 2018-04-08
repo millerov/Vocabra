@@ -54,6 +54,18 @@ public class DecksRepository {
     }
 
 
+    public void deleteDeckFromDB(Deck deck) {
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                RealmResults<Deck> result = realm.where(Deck.class).equalTo("id", deck.getId()).findAll();
+                result.deleteAllFromRealm();
+            }
+        });
+    }
+
+
     public boolean containsSimilarElementInDB(Deck deck) {
         final boolean[] result = new boolean[1];
 
