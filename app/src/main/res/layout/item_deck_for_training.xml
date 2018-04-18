@@ -27,7 +27,7 @@
             android:textColor="@color/white"
             android:maxLines="1"
             android:ellipsize="end"
-            tools:text="hello" />
+            tools:text="123456789123456789123456789" />
 
         <LinearLayout
             android:id="@+id/layout_counters"

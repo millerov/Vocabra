@@ -178,6 +178,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
                 cardBackViewOnScreen = false;
             }
             getPreviousCard();
+
+            mStatsRep.decreaseTodayCardsTrainedCounter();
         }
     }
 
@@ -225,6 +227,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel, goodIncrement);
 
+        mStatsRep.increaseTodayCardsTrainedCounter();
 
         updateCounters();
         getNextCard();
@@ -241,6 +244,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
        // currentCards.add(currentCard);
         prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, currentCard.getNextTimeForTraining(), nextLevel, -1);
+
+        mStatsRep.increaseTodayCardsTrainedCounter();
 
         updateCounters();
         getNextCard();
@@ -260,6 +265,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         int nextLevel = currentCardLevel - 1;
         prevCards.push(new TemporaryCard(currentCard));
         mCardsRep.updateCardAfterTraining(currentCard, nextTrainingTime.toDate(), nextLevel, hardIncrement);
+
+        mStatsRep.increaseTodayCardsTrainedCounter();
 
         updateCounters();
         getNextCard();

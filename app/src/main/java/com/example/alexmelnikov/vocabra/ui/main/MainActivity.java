@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.TypedArray;
@@ -15,9 +16,12 @@ import android.support.transition.Fade;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.transition.AutoTransition;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 
@@ -55,6 +59,9 @@ public class MainActivity extends BaseActivity implements MainView {
     @BindView(R.id.bottom_nav_bar) BottomNavigationViewEx bottomNavBar;
 
     private Snackbar snack;
+
+    //private float defaultNavBarPortraitY;
+   //private float def
 
     public int createdDeckId;
 
@@ -166,19 +173,21 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showBottomNavigationBar() {
+        float y = bottomNavBar.getY();
+        float height = bottomNavBar.getItemHeight();
         if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            bottomNavBar.animate().y(2405.0f).withEndAction(new Runnable() {
+            bottomNavBar.animate().y(y + height).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    bottomNavBar.animate().yBy(-100).setDuration(200);
+                    bottomNavBar.animate().yBy(-height).setDuration(200);
                     bottomNavBar.setVisibility(View.VISIBLE);
                 }
             });
         } else {
-            bottomNavBar.animate().y(1285.0f).withEndAction(new Runnable() {
+            bottomNavBar.animate().y(y + height).withEndAction(new Runnable() {
                 @Override
                 public void run() {
-                    bottomNavBar.animate().yBy(-100).setDuration(200);
+                    bottomNavBar.animate().yBy(-height).setDuration(200);
                     bottomNavBar.setVisibility(View.VISIBLE);
                 }
             });

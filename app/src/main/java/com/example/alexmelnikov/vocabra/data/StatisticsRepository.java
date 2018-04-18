@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import io.realm.Realm;
+import io.realm.Sort;
 
 /**
  * Created by AlexMelnikov on 06.04.18.
@@ -32,7 +33,7 @@ public class StatisticsRepository {
                     int nextID;
                     try {
                         // Incrementing primary key manually
-                        nextID = realm.where(Card.class).max("id").intValue() + 1;
+                        nextID = realm.where(DailyStats.class).max("id").intValue() + 1;
                     } catch (NullPointerException e) {
                         // If there is first item, being added to cache, give it id = 0
                         nextID = 0;
@@ -51,14 +52,15 @@ public class StatisticsRepository {
     public ArrayList<DailyStats> getStatisticsFromDB() {
         ArrayList<DailyStats> stats;
         Realm realm = Realm.getDefaultInstance();
-        stats = new ArrayList<DailyStats>(realm.where(DailyStats.class).findAll());
+        stats = new ArrayList<DailyStats>(realm.where(DailyStats.class)
+                .sort("stringDate", Sort.ASCENDING)
+                .findAll());
         return stats;
     }
 
 
     public void fillStatisticsUpToDate(DateTime firstAppLaunchDate) {
         DateTime currentDateTime = new DateTime();
-
         Realm realm = Realm.getDefaultInstance();
         while (firstAppLaunchDate.isBefore(currentDateTime) || firstAppLaunchDate.withTimeAtStartOfDay().equals(currentDateTime.withTimeAtStartOfDay())) {
             DailyStats stats = realm.where(DailyStats.class)
@@ -66,6 +68,7 @@ public class StatisticsRepository {
                     .findFirst();
             if (stats == null) {
                 DailyStats newStats = new DailyStats(LocalDate.fromDateFields(firstAppLaunchDate.toDate()));
+                newStats.setCardsTrained(0);
                 insertStatisticsToDB(newStats);
             }
             firstAppLaunchDate = firstAppLaunchDate.plusDays(1);
@@ -90,6 +93,21 @@ public class StatisticsRepository {
                     stats.setCardsTrained(stats.getCardsTrained() + 1);
                 }
 
+            }
+        });
+        realm.close();
+    }
+
+    public void decreaseTodayCardsTrainedCounter() {
+        String today = new LocalDate().toString();
+        Realm realm = Realm.getDefaultInstance();
+        realm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                DailyStats stats = realm.where(DailyStats.class)
+                        .equalTo("stringDate", today)
+                        .findFirst();
+                if (stats != null) stats.setCardsTrained(stats.getCardsTrained() - 1);
             }
         });
         realm.close();

@@ -43,15 +43,14 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
 
     public StatisticsPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
+
+        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())));
     }
 
     @Override
     public void attachView(StatisticsView view) {
         super.attachView(view);
         getViewState().attachInputListeners();
-
-        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())));
-        Log.d(TAG, "attachView: " + ((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())).toString());
         setupStatisticsFromDb();
     }
 
@@ -69,8 +68,11 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
         int totalRepeats = 0;
         int sumIntervals = 0;
         int maxInterval = 0;
+
+        for (DailyStats ds : stats)
+            totalRepeats += ds.getCardsTrained();
+
         for (Card c : cards) {
-            totalRepeats += c.getTimesTrained();
             int inc = c.getLastIncrement();
             sumIntervals += inc;
             if (inc > maxInterval)
