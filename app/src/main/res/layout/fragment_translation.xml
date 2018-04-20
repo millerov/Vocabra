@@ -24,6 +24,7 @@
             android:background="@android:color/transparent"
             android:gravity="top|left"
             android:hint="Введите текст (русский)"
+                android:imeOptions="flagNoExtractUi"
             android:inputType="textMultiLine"
             android:maxLines="3"
             android:minLines="1"

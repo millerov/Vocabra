@@ -87,6 +87,8 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         View view = inflater.inflate(R.layout.fragment_translation, container, false);
         ButterKnife.bind(this, view);
 
+        ((MainActivity) getActivity()).hideBottomNavigationBar();
+
         tvTranslated.setMovementMethod(new ScrollingMovementMethod());
         tvMessage.setMovementMethod(LinkMovementMethod.getInstance());
         tvMessage.setClickable(true);

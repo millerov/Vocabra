@@ -98,14 +98,12 @@ public class CardsAdapter extends RecyclerView.Adapter<CardsAdapter.CardsViewHol
         int hours = Hours.hoursBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getHours();
         int minutes = Minutes.minutesBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getMinutes();
         int seconds = Seconds.secondsBetween(currentDateTime.toLocalDateTime(), nextTrainingDateTime.toLocalDateTime()).getSeconds();
-        if (days > 0 && hours > 12)
+        if (days > 0)
             holder.tvNextTraining.setText((days + 1) + " д.");
-        else if (days > 0 && hours <= 12)
-            holder.tvNextTraining.setText(days + " д.");
         else if (hours > 12)
             holder.tvNextTraining.setText("1 д.");
         else if (hours <= 12 && hours > 0)
-            holder.tvNextTraining.setText(hours + " д.");
+            holder.tvNextTraining.setText(hours  + " ч.");
         else if (minutes > 0)
             holder.tvNextTraining.setText(minutes + " м.");
         else if (seconds > 0)

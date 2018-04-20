@@ -28,6 +28,9 @@ import android.widget.RelativeLayout;
 import com.afollestad.materialdialogs.color.ColorChooserDialog;
 import com.afollestad.materialdialogs.util.DialogUtils;
 import com.arellomobile.mvp.presenter.InjectPresenter;
+import com.daimajia.androidanimations.library.YoYo;
+import com.daimajia.androidanimations.library.sliders.SlideInUpAnimator;
+import com.daimajia.androidanimations.library.sliders.SlideOutUpAnimator;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseActivity;
@@ -60,9 +63,6 @@ public class MainActivity extends BaseActivity implements MainView {
 
     private Snackbar snack;
 
-    //private float defaultNavBarPortraitY;
-   //private float def
-
     public int createdDeckId;
 
     @Override
@@ -84,8 +84,6 @@ public class MainActivity extends BaseActivity implements MainView {
     @Override
     protected void onStart() {
         super.onStart();
-        /*if (bottomNavBar.getVisibility() == View.GONE)
-           showBottomNavigationBar();*/
     }
 
 
@@ -173,25 +171,10 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @Override
     public void showBottomNavigationBar() {
-        float y = bottomNavBar.getY();
-        float height = bottomNavBar.getItemHeight();
-        if (getResources().getConfiguration().orientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT) {
-            bottomNavBar.animate().y(y + height).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    bottomNavBar.animate().yBy(-height).setDuration(200);
-                    bottomNavBar.setVisibility(View.VISIBLE);
-                }
-            });
-        } else {
-            bottomNavBar.animate().y(y + height).withEndAction(new Runnable() {
-                @Override
-                public void run() {
-                    bottomNavBar.animate().yBy(-height).setDuration(200);
-                    bottomNavBar.setVisibility(View.VISIBLE);
-                }
-            });
-        }
+        bottomNavBar.setVisibility(View.VISIBLE);
+        YoYo.with(new SlideInUpAnimator())
+                .duration(500)
+                .playOn(bottomNavBar);
     }
 
 

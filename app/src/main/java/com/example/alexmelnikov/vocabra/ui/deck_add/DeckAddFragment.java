@@ -78,6 +78,8 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
         View view = inflater.inflate(R.layout.fragment_deck_add, container, false);
         ButterKnife.bind(this, view);
 
+        ((MainActivity) getActivity()).hideBottomNavigationBar();
+
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
         etDeckName.requestFocus();
         etDeckName.postDelayed(new Runnable() {

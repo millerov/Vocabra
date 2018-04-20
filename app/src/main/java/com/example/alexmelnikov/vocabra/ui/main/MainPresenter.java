@@ -47,5 +47,4 @@ public class MainPresenter extends MvpPresenter<MainView> {
         mCurrentFragmentIndex = itemPos;
         getViewState().replaceFragmentNavigationBar(mCurrentFragmentIndex, mPreviousFragmentIndex);
     }
-
 }
