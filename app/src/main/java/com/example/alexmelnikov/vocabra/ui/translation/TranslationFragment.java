@@ -1,47 +1,36 @@
 package com.example.alexmelnikov.vocabra.ui.translation;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.VisibleForTesting;
-import android.support.v4.app.FragmentManager;
-import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
-import android.text.TextWatcher;
 import android.text.method.LinkMovementMethod;
 import android.text.method.ScrollingMovementMethod;
 import android.transition.AutoTransition;
 import android.transition.ChangeBounds;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.jakewharton.rxbinding2.view.RxView;
-import com.jakewharton.rxbinding2.widget.RxAdapterView;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
 import java.util.concurrent.TimeUnit;
@@ -52,9 +41,9 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Translation Fragment
+ * TranslationFragment.java
+ * @author Alexander Melnikov
  */
-
 public class TranslationFragment extends BaseFragment implements TranslationView {
 
     private static final String TAG = "MyTag";
@@ -83,7 +72,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_translation, container, false);
         ButterKnife.bind(this, view);
 
@@ -98,7 +87,7 @@ public class TranslationFragment extends BaseFragment implements TranslationView
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mTranslationPresenter.setInputOutput(getArguments().getSerializable("fromText").toString(),
                 getArguments().getSerializable("toText").toString(),
@@ -108,12 +97,9 @@ public class TranslationFragment extends BaseFragment implements TranslationView
         etTranslate.setInputType(InputType.TYPE_CLASS_TEXT);
         etTranslate.requestFocus();
         etTranslate.setSelection(etTranslate.getText().length());
-        etTranslate.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etTranslate, 0);
-            }
+        etTranslate.postDelayed(() -> {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etTranslate, 0);
         }, 150);
     }
 
@@ -136,12 +122,9 @@ public class TranslationFragment extends BaseFragment implements TranslationView
                     mTranslationPresenter.inputChanges(text);
                 });
 
-        etTranslate.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                mTranslationPresenter.continueRequest();
-                return false;
-            }
+        etTranslate.setOnEditorActionListener((textView, i, keyEvent) -> {
+            mTranslationPresenter.continueRequest();
+            return false;
         });
 
         mDisposable.addAll(translateButton, clearButton, translateText, inputChanges);

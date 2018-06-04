@@ -1,47 +1,26 @@
 package com.example.alexmelnikov.vocabra.ui.main;
 
-import android.app.Activity;
-import android.content.Context;
+
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
-import android.support.transition.Fade;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.transition.AutoTransition;
-import android.util.DisplayMetrics;
-import android.util.Log;
-import android.view.Display;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 
-import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.afollestad.materialdialogs.util.DialogUtils;
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.daimajia.androidanimations.library.YoYo;
 import com.daimajia.androidanimations.library.sliders.SlideInUpAnimator;
-import com.daimajia.androidanimations.library.sliders.SlideOutUpAnimator;
 import com.example.alexmelnikov.vocabra.R;
-import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.BaseActivity;
 import com.example.alexmelnikov.vocabra.ui.SnackBarActionHandler;
-import com.example.alexmelnikov.vocabra.ui.deck_add.DeckAddFragment;
 import com.example.alexmelnikov.vocabra.ui.decks_for_train.DecksForTrainingFragment;
 import com.example.alexmelnikov.vocabra.ui.translator.TranslatorFragment;
 import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 
 import com.ittianyu.bottomnavigationviewex.BottomNavigationViewEx;
-
 
 import java.io.File;
 
@@ -51,8 +30,6 @@ import io.realm.Realm;
 
 
 public class MainActivity extends BaseActivity implements MainView {
-    private CardBrowserFragment cardBrowserFragment;
-    private TranslatorFragment translatorFragment;
 
     private static final String TAG = "MyTag";
 
@@ -61,7 +38,7 @@ public class MainActivity extends BaseActivity implements MainView {
 
     @BindView(R.id.bottom_nav_bar) BottomNavigationViewEx bottomNavBar;
 
-    private Snackbar snack;
+    Snackbar snack;
 
     public int createdDeckId;
 
@@ -93,19 +70,16 @@ public class MainActivity extends BaseActivity implements MainView {
         bottomNavBar.enableItemShiftingMode(false);
         bottomNavBar.setTextVisibility(false);
 
-        bottomNavBar.setOnNavigationItemSelectedListener(new BottomNavigationViewEx.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                presenter.bottomNavigationClick(bottomNavBar.getMenuItemPosition(item));
+        bottomNavBar.setOnNavigationItemSelectedListener(item -> {
+            presenter.bottomNavigationClick(bottomNavBar.getMenuItemPosition(item));
 
-                //Starting intent to send realm db via mail
-                if (bottomNavBar.getMenuItemPosition(item) == 3) {
-                    exportDatabase();
-                }
-
-                return true;
-
+            //Starting intent to send realm db via mail
+            if (bottomNavBar.getMenuItemPosition(item) == 3) {
+                exportDatabase();
             }
+
+            return true;
+
         });
     }
 
@@ -152,12 +126,7 @@ public class MainActivity extends BaseActivity implements MainView {
         snack.getView().setLayoutParams(params);
 
         if (withAction) {
-            snack.setAction(actionText, new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    presenter.onSnackbarEvent(actionId);
-                }
-            });
+            snack.setAction(actionText, view -> presenter.onSnackbarEvent(actionId));
         }
 
         snack.show();
@@ -196,9 +165,7 @@ public class MainActivity extends BaseActivity implements MainView {
         // init realm
         Realm realm = Realm.getDefaultInstance();
 
-        File exportRealmFile = null;
-        // get or create an "export.realm" file
-        exportRealmFile = new File(this.getExternalCacheDir(), "export.realm");
+        File exportRealmFile = new File(this.getExternalCacheDir(), "export.realm");
 
         // if "export.realm" already exists, delete
         exportRealmFile.delete();

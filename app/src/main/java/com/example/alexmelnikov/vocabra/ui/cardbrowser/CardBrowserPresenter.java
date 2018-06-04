@@ -1,6 +1,5 @@
 package com.example.alexmelnikov.vocabra.ui.cardbrowser;
 
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.arellomobile.mvp.InjectViewState;
@@ -26,7 +25,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 10.03.18.
+ * CardBrowserPresenter.java – presenter for CardBrowserFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -45,11 +45,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     @Inject
     TranslationsRepository mTransRep;
 
-    public static int selectedColor;
+    static int selectedColor;
 
     private ArrayList<Card> mCardsList;
     private boolean showingDeckCards;
-    @Nullable private Deck currentDeckChoosen;
+    private Deck currentDeckChoosen;
 
     private boolean editDeckMode;
 
@@ -67,9 +67,9 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         VocabraApp.getPresenterComponent().inject(this);
         showingDeckCards = false;
         editDeckMode = false;
-        mCardsList = new ArrayList<Card>();
-        temporaryCards = new ArrayList<TemporaryCard>();
-        temporaryCardTranslations = new ArrayList<Translation>();
+        mCardsList = new ArrayList<>();
+        temporaryCards = new ArrayList<>();
+        temporaryCardTranslations = new ArrayList<>();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         super.attachView(view);
         getViewState().attachInputListeners();
 
-        mSelectedSortMethod = (CardSortMethod) mUserData.getValue(mUserData.SELECTED_CARD_SORT_METHOD,
+        mSelectedSortMethod = (CardSortMethod) mUserData.getValue(UserDataRepository.SELECTED_CARD_SORT_METHOD,
                 mCardSortMethods.get(0));
 
 
@@ -106,15 +106,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
 
-    public void initSortingMethods(String[] names) {
-        mCardSortMethods = new ArrayList<CardSortMethod>(names.length);
+    void initSortingMethods(String[] names) {
+        mCardSortMethods = new ArrayList<>(names.length);
         for (int i = 0; i < names.length; i++) {
             CardSortMethod sortMethod = new CardSortMethod(i, names[i], true);
             mCardSortMethods.add(sortMethod);
         }
     }
 
-    public void updateCounters() {
+    private void updateCounters() {
         if (showingDeckCards)
             getViewState().setupCounters(mCardsRep.getNewCardsByDeckDB(currentDeckChoosen).size(),
                     mCardsRep.getOldReadyForTrainCardsByDeckDB(currentDeckChoosen).size());
@@ -123,18 +123,18 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
 
-    public void sortButtonPressed() {
+    void sortButtonPressed() {
         getViewState().showSortOptionsDialog(mCardSortMethods, mSelectedSortMethod, mCardSortSelectionIndex);
     }
 
-    public void addButtonPressed() {
+    void addButtonPressed() {
         if (showingDeckCards)
             getViewState().showAddCardDialog(mDecksRep.getDecksFromDB(), currentDeckChoosen);
         else
             getViewState().openDeckCreationFragment();
     }
 
-    public void addNewCardRequest(String front, String back, Language firstLanguage, Language secondLanguage, String cardContext, String chosenDeckName, int defaultColor) {
+    void addNewCardRequest(String front, String back, Language firstLanguage, Language secondLanguage, String cardContext, String chosenDeckName, int defaultColor) {
         Deck deck = mDecksRep.getDeckByName(chosenDeckName);
         Card card = new Card(-1, front, back, firstLanguage, secondLanguage, deck, cardContext);
         if (mCardsRep.containsSimilarCardInDeckDB(card, deck))
@@ -166,11 +166,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     }
 
-    public void decksButtonPressed() {
+    void decksButtonPressed() {
         getViewState().showDecksListDialog(mDecksRep.getDecksFromDB());
     }
 
-    public void backButtonPressed() {
+    void backButtonPressed() {
         if (selectItemsForDeletionMode) {
             selectItemsForDeletionMode = false;
             getViewState().disableEditModeToolbar();
@@ -190,7 +190,7 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         }
     }
 
-    public void createNewDeckRequest() {
+    void createNewDeckRequest() {
         getViewState().openDeckCreationFragment();
     }
 
@@ -211,8 +211,8 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         getViewState().updateSelectedCounter(count, max);
     }
 
-    public void editCardRequest(Card card, String front,
-                                String back, String cardContext, String chosenDeckName) {
+    void editCardRequest(Card card, String front,
+                         String back, String cardContext, String chosenDeckName) {
         Deck chosenDeck = mDecksRep.getDeckByName(chosenDeckName);
         Card updatedCard = new Card(-1, front, back, card.getFrontLanguage(), card.getBackLanguage(),
                 chosenDeck, cardContext);
@@ -247,13 +247,15 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
 
-    public void editDeckButtonPressed() {
+    void editDeckButtonPressed() {
         editDeckMode = true;
-        selectedColor = currentDeckChoosen.getColor();
+        if (currentDeckChoosen != null) {
+            selectedColor = currentDeckChoosen.getColor();
+        }
         getViewState().switchDeckDisplayMode(editDeckMode);
     }
 
-    public void confirmEditDeckRequest(String updatedDeckName) {
+    void confirmEditDeckRequest(String updatedDeckName) {
         editDeckMode = false;
         if (!updatedDeckName.isEmpty()) {
             if (!updatedDeckName.equals(currentDeckChoosen.getName()) || selectedColor != currentDeckChoosen.getColor()) {
@@ -268,16 +270,16 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         }
     }
 
-    public void editDeckColorRequest() {
+    void editDeckColorRequest() {
         getViewState().showSelectColorDialog(currentDeckChoosen);
     }
 
-    public void editDeckColorResultPassed(int color) {
+    void editDeckColorResultPassed(int color) {
         selectedColor = color;
         getViewState().updateCardColor(selectedColor);
     }
 
-    public List<Language> getLanguagesByDeckName(String deckName) {
+    List<Language> getLanguagesByDeckName(String deckName) {
         Deck deck = mDecksRep.getDeckByName(deckName);
         Language firstLang = deck.getFirstLanguage();
         Language secondLang = deck.getSecondLanguage();
@@ -289,21 +291,21 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         if (mCardSortSelectionIndex != pos) {
             mSelectedSortMethod = mCardSortMethods.get(pos);
             mCardSortSelectionIndex = pos;
-            mUserData.putValue(mUserData.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
+            mUserData.putValue(UserDataRepository.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
             loadSortedCards();
         } else {
             if (mSelectedSortMethod.isAscending())
                 mSelectedSortMethod.setAscending(false);
             else
                 mSelectedSortMethod.setAscending(true);
-            mUserData.putValue(mUserData.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
+            mUserData.putValue(UserDataRepository.SELECTED_CARD_SORT_METHOD, mSelectedSortMethod);
             loadSortedCards();
         }
     }
 
-    public void deleteItemsRequest(boolean[] selectedItemsIndexes) {
-        ArrayList<Card> cardsForDeletion = new ArrayList<Card>();
-        ArrayList<Translation> cardTranlationsInHistory = new ArrayList<Translation>();
+    void deleteItemsRequest(boolean[] selectedItemsIndexes) {
+        ArrayList<Card> cardsForDeletion = new ArrayList<>();
+        ArrayList<Translation> cardTranlationsInHistory = new ArrayList<>();
         Card card;
         temporaryCards.clear();
         temporaryCardTranslations.clear();
@@ -333,12 +335,12 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
     }
 
 
-    public void resetItemsStatsButtonPressed(boolean[] selectedItemsIndexes) {
+    void resetItemsStatsButtonPressed(boolean[] selectedItemsIndexes) {
         getViewState().showResetStatsItemsConfirmationDialog(selectedItemsIndexes);
     }
 
-    public void resetItemsStatsRequestConfirmed(boolean[] selectedItemsIndexes) {
-        ArrayList<Card> cardsForReset = new ArrayList<Card>();
+    void resetItemsStatsRequestConfirmed(boolean[] selectedItemsIndexes) {
+        ArrayList<Card> cardsForReset = new ArrayList<>();
         Card card;
 
         for (int i = 0; i < selectedItemsIndexes.length; i++)
@@ -356,11 +358,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
 
     }
 
-    public void deleteDeckButtonPressed() {
+    void deleteDeckButtonPressed() {
         getViewState().showDeleteDeckConfirmationDialog(currentDeckChoosen);
     }
 
-    public void deleteDeckRequestConfirmed() {
+    void deleteDeckRequestConfirmed() {
         for (Card c : mCardsList) {
             Translation t = mTransRep.findTranslationByCardInDB(c);
             if (t != null)
@@ -373,11 +375,11 @@ public class CardBrowserPresenter extends MvpPresenter<CardBrowserView> implemen
         backButtonPressed();
     }
 
-    public void resetDeckButtonPressed() {
+    void resetDeckButtonPressed() {
         getViewState().showResetDeckConfirmationDialog(currentDeckChoosen);
     }
 
-    public void resetDeckRequestConfirmed() {
+    void resetDeckRequestConfirmed() {
         for (Card c : mCardsList) {
             mCardsRep.resetCardTrainingStats(c);
         }

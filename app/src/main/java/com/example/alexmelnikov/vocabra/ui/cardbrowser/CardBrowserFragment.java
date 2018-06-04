@@ -251,7 +251,9 @@ public class CardBrowserFragment extends BaseFragment implements CardBrowserView
     public void hideDecksListDialog() {
         try {
             decksDialog.hide();
-        } catch (NullPointerException e) {}
+        } catch (NullPointerException e) {
+            Log.e(TAG, "hideDecksListDialog: " + e.getLocalizedMessage());
+        }
     }
 
     @Override

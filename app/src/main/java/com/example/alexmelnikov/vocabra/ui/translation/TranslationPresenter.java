@@ -7,13 +7,13 @@ import com.arellomobile.mvp.MvpPresenter;
 import com.example.alexmelnikov.vocabra.VocabraApp;
 import com.example.alexmelnikov.vocabra.model.Translation;
 import com.example.alexmelnikov.vocabra.ui.Translating;
-import com.example.alexmelnikov.vocabra.ui.translator.TranslatorView;
 import com.example.alexmelnikov.vocabra.utils.TextUtils;
 
 import java.io.IOException;
 
 /**
- * Translation Fragment Presenter
+ * TranslationPresenter.java – presenter for TranslationFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -43,7 +43,7 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
         getViewState().detachInputListeners();
     }
 
-    public void setInputOutput(String fromText, String toText, String fromLang, String toLang) {
+    void setInputOutput(String fromText, String toText, String fromLang, String toLang) {
         mInput = fromText;
         mOutput = toText;
         mFromLanguage = fromLang;
@@ -51,11 +51,11 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
         getViewState().fillTextFields(fromText, toText, fromLang, toLang);
     }
 
-    public void continueRequest() {
+    void continueRequest() {
         getViewState().closeFragment(mLastLoadedTranslation);
     }
 
-    public void inputChanges(String input) {
+    void inputChanges(String input) {
         mInput = input;
         translationRequested(input);
     }
@@ -79,7 +79,7 @@ public class TranslationPresenter extends MvpPresenter<TranslationView> implemen
         getViewState().showTranslationResult(mOutput);
     }
 
-    public void clearButtonPressed() {
+    void clearButtonPressed() {
         if (!mInput.isEmpty()) {
             mInput = mOutput = "";
             mLastLoadedTranslation = null;

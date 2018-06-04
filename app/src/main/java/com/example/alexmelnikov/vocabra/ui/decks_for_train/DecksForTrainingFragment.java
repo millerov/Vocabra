@@ -2,6 +2,7 @@ package com.example.alexmelnikov.vocabra.ui.decks_for_train;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.transition.Slide;
@@ -35,7 +36,8 @@ import butterknife.ButterKnife;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by AlexMelnikov on 28.03.18.
+ * DecksForTrainingFragment.java – fragment displaying list of decks available for training
+ * @author Alexander Melnikov
  */
 
 public class DecksForTrainingFragment extends BaseFragment implements DecksForTrainingView {
@@ -57,7 +59,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         VocabraApp.getAppComponent().inject(this);
         View view = inflater.inflate(R.layout.fragment_decks_for_training, container, false);
         ButterKnife.bind(this, view);
@@ -65,7 +67,7 @@ public class DecksForTrainingFragment extends BaseFragment implements DecksForTr
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mDecksAdapter = new DecksForTrainingAdapter(getActivity(), new ArrayList<Deck>(), mDecksForTrainPresenter);
         mDecksAdapter.setHasStableIds(true);

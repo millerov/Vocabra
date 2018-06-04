@@ -30,7 +30,8 @@ import java.util.List;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 29.03.18.
+ * TrainingPresenter.java – presenter for TrainingFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -75,8 +76,8 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         buttonsLayoutIsExpanded = false;
         cardBackViewOnScreen = false;
         currentCardIndex = -1;
-        prevCards = new ArrayDeque<TemporaryCard>();
-        currentCards = new ArrayList<Card>();
+        prevCards = new ArrayDeque<>();
+        currentCards = new ArrayList<>();
     }
 
     @Override
@@ -106,7 +107,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     }
 
 
-    public void setupDeck(Deck deck) {
+    void setupDeck(Deck deck) {
         currentDeck = deck;
         updateCounters();
         mCardsRep.updateReadyStatusForCardsInDeck(deck);
@@ -120,19 +121,19 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     }
 
 
-    public void updateCounters() {
+    private void updateCounters() {
         mCardsRep.updateReadyStatusForCardsInDeck(currentDeck);
         this.newCardsCount = mCardsRep.getNewCardsByDeckDB(currentDeck).size();
         this.oldReadyCardsCount = mCardsRep.getOldReadyForTrainCardsByDeckDB(currentDeck).size();
         getViewState().fillCounters(newCardsCount, oldReadyCardsCount);
     }
 
-    public void showFrontRequest() {
+    private void showFrontRequest() {
         getViewState().showFront(currentCard.getFront(), firstAttach);
     }
 
 
-    public void showBackRequest() {
+    void showBackRequest() {
         getViewState().showBack(currentCard.getBack(), currentCard.getCardContext());
         buttonsLayoutIsExpanded = true;
         cardBackViewOnScreen = true;
@@ -140,12 +141,12 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getViewState().showOptions(currentCard.getLevel() > 2);
     }
 
-    public void editCardRequest(int methodIndex) {
+    void editCardRequest(int methodIndex) {
         getViewState().showEditCardDialog(methodIndex, currentCard, mDecksRep.findDecksByTranslationDirection(currentCard.getTranslationDirection()));
     }
 
 
-    public void editCardRequest(String front, String back, String cardContext) {
+    void editCardRequest(String front, String back, String cardContext) {
         Card updatedCard = new Card(-1, front, back, currentCard.getFrontLanguage(), currentCard.getBackLanguage(),
                 currentDeck, cardContext);
         String initialCardFront = currentCard.getFront();
@@ -165,7 +166,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     }
 
 
-    public void returnToPreviousCardRequest() {
+    void returnToPreviousCardRequest() {
         if (currentCardIndex > 0) {
             if (buttonsLayoutIsExpanded) {
                 getViewState().disableButtonsWhileAnimating();
@@ -184,7 +185,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
     }
 
 
-    public void optionEasyPicked() {
+    void optionEasyPicked() {
         buttonsLayoutIsExpanded = false;
         cardBackViewOnScreen = false;
         getViewState().disableButtonsWhileAnimating();
@@ -205,7 +206,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getNextCard();
     }
 
-    public void optionGoodPicked() {
+    void optionGoodPicked() {
         buttonsLayoutIsExpanded = false;
         cardBackViewOnScreen = false;
         getViewState().disableButtonsWhileAnimating();
@@ -233,7 +234,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getNextCard();
     }
 
-    public void optionForgotPicked() {
+    void optionForgotPicked() {
         buttonsLayoutIsExpanded = false;
         cardBackViewOnScreen = false;
         getViewState().disableButtonsWhileAnimating();
@@ -251,7 +252,7 @@ public class TrainingPresenter extends MvpPresenter<TrainingView> {
         getNextCard();
     }
 
-    public void optionHardPicked() {
+    void optionHardPicked() {
         buttonsLayoutIsExpanded = false;
         cardBackViewOnScreen = false;
         getViewState().disableButtonsWhileAnimating();

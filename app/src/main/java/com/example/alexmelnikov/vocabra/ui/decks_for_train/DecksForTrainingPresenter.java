@@ -15,7 +15,8 @@ import java.util.ArrayList;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 28.03.18.
+ * DecksForTrainingPresenter.java – presenter for DecksForTrainingFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState

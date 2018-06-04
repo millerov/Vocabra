@@ -21,16 +21,17 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
- * Created by AlexMelnikov on 04.03.18.
+ * HistoryAdapter.java – adapter for history RecyclerView in translator fragment
+ * @author Alexander Melnikov
  */
 
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryViewHolder> {
 
     private static final String TAG = "MyTag";
 
-    Context mContext;
-    ArrayList<Translation> mData;
-    TranslatorPresenter fragmentPresenter;
+    private Context mContext;
+    private ArrayList<Translation> mData;
+    private TranslatorPresenter fragmentPresenter;
 
     public HistoryAdapter(Context mContext, ArrayList<Translation> mData, TranslatorPresenter presenter) {
         this.mContext = mContext;
@@ -45,7 +46,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.HistoryV
         @BindView(R.id.ib_favourite) ImageButton btnFavourite;
         @BindView(R.id.card_history) CardView cardHistory;
 
-        public HistoryViewHolder(View itemView) {
+        HistoryViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
         }

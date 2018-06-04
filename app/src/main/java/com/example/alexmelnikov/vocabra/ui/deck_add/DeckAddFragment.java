@@ -1,8 +1,6 @@
 package com.example.alexmelnikov.vocabra.ui.deck_add;
 
 import android.content.Context;
-import android.content.res.TypedArray;
-import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,12 +10,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.text.InputType;
-import android.transition.TransitionInflater;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -25,17 +20,13 @@ import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.afollestad.materialdialogs.color.ColorChooserDialog;
-import com.afollestad.materialdialogs.util.DialogUtils;
+
 import com.arellomobile.mvp.presenter.InjectPresenter;
 import com.arellomobile.mvp.presenter.PresenterType;
 import com.example.alexmelnikov.vocabra.R;
 import com.example.alexmelnikov.vocabra.adapter.LanguageAdapter;
-import com.example.alexmelnikov.vocabra.data.UserDataRepository;
-import com.example.alexmelnikov.vocabra.model.Deck;
 import com.example.alexmelnikov.vocabra.model.Language;
 import com.example.alexmelnikov.vocabra.ui.BaseFragment;
-import com.example.alexmelnikov.vocabra.ui.cardbrowser.CardBrowserFragment;
 import com.example.alexmelnikov.vocabra.ui.main.MainActivity;
 import com.jakewharton.rxbinding2.view.RxView;
 import com.jakewharton.rxbinding2.widget.RxAdapterView;
@@ -52,7 +43,8 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 
 /**
- * Created by AlexMelnikov on 15.03.18.
+ * DeckAddFragment.java – fragment for adding new decks
+ * @author Alexander Melnikov
  */
 
 public class DeckAddFragment extends BaseFragment implements DeckAddView {
@@ -82,12 +74,9 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
         etDeckName.setInputType(InputType.TYPE_CLASS_TEXT);
         etDeckName.requestFocus();
-        etDeckName.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.showSoftInput(etDeckName, 0);
-            }
+        etDeckName.postDelayed(() -> {
+            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(etDeckName, 0);
         }, 150);
         return view;
     }
@@ -125,7 +114,7 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
                 });
 
 
-        mDisposable.addAll(changeColorButton, spinnerFrom, spinnerTo, swapButton, confirmButton);
+        mDisposable.addAll(changeColorButton, spinnerFrom, spinnerTo, swapButton, confirmButton, inputChanges);
     }
 
     @Override
@@ -177,12 +166,9 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
         ((MainActivity) getActivity()).showBottomNavigationBar();
 
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                FragmentManager fm = getActivity().getSupportFragmentManager();
-                fm.popBackStackImmediate();
-            }
+        view.postDelayed(() -> {
+            FragmentManager fm = getActivity().getSupportFragmentManager();
+            fm.popBackStackImmediate();
         }, 300);
 
 
@@ -201,23 +187,14 @@ public class DeckAddFragment extends BaseFragment implements DeckAddView {
 
     @Override
     public void showSelectColorDialog() {
-        TypedArray colors = getResources().obtainTypedArray(R.array.custom_colors);
-        int[] colorsInts = new int[colors.length()];
-        for (int i = 0; i < colors.length(); i++) {
-            colorsInts[i] = colors.getColor(i,0);
-        }
-
         new SpectrumDialog.Builder((getContext()))
                 .setTitle("Цвет колоды")
                 .setColors(R.array.custom_colors)
                 .setDismissOnColorSelected(true)
-                .setSelectedColor(mDeckAddPresenter.selectedColor)
-                .setOnColorSelectedListener(new SpectrumDialog.OnColorSelectedListener() {
-                    @Override
-                    public void onColorSelected(boolean positiveResult, int color) {
-                        mDeckAddPresenter.updateSelectedColor(color);
-                    }
-                }).build().show(getFragmentManager(), "color_dialog");
+                .setSelectedColor(DeckAddPresenter.selectedColor)
+                .setOnColorSelectedListener((positiveResult, color) -> mDeckAddPresenter.updateSelectedColor(color))
+                .build()
+                .show(getFragmentManager(), "color_dialog");
 
     }
 

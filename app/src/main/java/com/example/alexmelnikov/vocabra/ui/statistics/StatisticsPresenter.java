@@ -24,7 +24,8 @@ import java.util.HashMap;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 06.04.18.
+ * StatisticsPresenter.java – presenter for StatisticsFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -44,7 +45,7 @@ public class StatisticsPresenter extends MvpPresenter<StatisticsView> {
     public StatisticsPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
 
-        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(mUserData.FIRST_APP_LAUNCH_DATE, new Date())));
+        mStatsRep.fillStatisticsUpToDate(new DateTime((Date)mUserData.getValue(UserDataRepository.FIRST_APP_LAUNCH_DATE, new Date())));
     }
 
     @Override

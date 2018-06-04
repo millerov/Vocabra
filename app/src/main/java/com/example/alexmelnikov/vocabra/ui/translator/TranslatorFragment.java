@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.graphics.drawable.AnimatedVectorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -54,7 +55,8 @@ import io.reactivex.disposables.Disposable;
 
 
 /**
- * Created by AlexMelnikov on 25.02.18.
+ * TranslatorFragment.java – translator fragment class
+ * @author Alexander Melnikov
  */
 
 public class TranslatorFragment extends BaseFragment implements TranslatorView {
@@ -100,8 +102,8 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public static TranslatorFragment newInstance(@Nullable Translation translation, boolean fromTranslationFragment, boolean translationNotNull) {
         Bundle args = new Bundle();
         args.putSerializable("translation", translation);
-        args.putSerializable("fromTranslationFragment", fromTranslationFragment);
-        args.putSerializable("translationNotNull", translationNotNull);
+        args.putBoolean("fromTranslationFragment", fromTranslationFragment);
+        args.putBoolean("translationNotNull", translationNotNull);
         TranslatorFragment fragment = new TranslatorFragment();
         fragment.setArguments(args);
         return fragment;
@@ -109,7 +111,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_translator, container, false);
         ButterKnife.bind(this, view);
 
@@ -117,13 +119,13 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
         /*Setting delay before animating the history recycler view to avoid friction between it, transition animation and animation of the
           translation card appearance */
-        String fromTranslationFragment = getArguments().getSerializable("fromTranslationFragment").toString();
-        String translationNotNull = getArguments().getSerializable("translationNotNull").toString();
+        boolean fromTranslationFragment = getArguments().getBoolean("fromTranslationFragment");
+        boolean translationNotNull = getArguments().getBoolean("translationNotNull");
 
-        if (fromTranslationFragment == "false") {
+        if (!fromTranslationFragment) {
             adapterAnimDelay = 0;
         } else {
-            if (translationNotNull == "false") {
+            if (!translationNotNull) {
                 adapterAnimDelay = 410;
             } else {
                 adapterAnimDelay = 850;
@@ -135,9 +137,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<Translation>(), mTranslatorPresenter);
+        mHistoryAdapter = new HistoryAdapter(getActivity(), new ArrayList<>(), mTranslatorPresenter);
         RecyclerView.LayoutManager layman= new LinearLayoutManager(getActivity()) {
             @Override
             public boolean canScrollVertically() {
@@ -213,7 +215,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void openTranslationFragment(String fromText, String toText, String fromLang, String toLang) {
         TranslationFragment fragment = TranslationFragment.newInstance(fromText, toText, fromLang, toLang);
 
-        ((MainActivity) getActivity()).hideBottomNavigationBar();
+        if (getActivity() != null) {
+            ((MainActivity) getActivity()).hideBottomNavigationBar();
+        }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             ChangeBounds changeBoundsTransition = new ChangeBounds();
@@ -226,12 +230,14 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
             fragment.setSharedElementReturnTransition(changeBoundsTransition);
         }
 
+
         getFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, fragment)
-                  .addToBackStack(null)
-                // .addSharedElement(btnClear, "transition")
-                .addSharedElement(rlTranslator, "viewtrans")
-                .commit();
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    // .addSharedElement(btnClear, "transition")
+                    .addSharedElement(rlTranslator, "viewtrans")
+                    .commit();
+
 
     }
 
@@ -299,12 +305,7 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
         btnCopy.setVisibility(View.INVISIBLE);
         btnFavourite.setVisibility(View.GONE);
 
-        btnClear.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                btnClear.setVisibility(View.INVISIBLE);
-            }
-        }, 520);
+        btnClear.postDelayed(() -> btnClear.setVisibility(View.INVISIBLE), 520);
 
     }
 
@@ -312,7 +313,9 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
     public void copyAction(String text) {
         ClipboardManager clipboard = (ClipboardManager) getActivity().getSystemService(getActivity().CLIPBOARD_SERVICE);
         ClipData clip = ClipData.newPlainText("output", text);
-        clipboard.setPrimaryClip(clip);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(clip);
+        }
         ((MainActivity)getActivity()).showMessage(0, "Перевод скопирован", false, null, null);
 
     }
@@ -350,13 +353,13 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                         })
                         .build();
 
-        etDialogFront = (EditText) dialog.getView().findViewById(R.id.et_front);
-        etDialogBack = (EditText) dialog.getView().findViewById(R.id.et_back);
-        etDialogContext = (EditText) dialog.getView().findViewById(R.id.et_context);
-        mDialogSpinDecks = (Spinner) dialog.getView().findViewById(R.id.spin_decks);
-        mDialogTilFront = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_front);
-        mDialogTilBack = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_back);
-        mDialogTilContext = (TextInputLayout) dialog.getView().findViewById(R.id.input_layout_context);
+        etDialogFront = dialog.getView().findViewById(R.id.et_front);
+        etDialogBack = dialog.getView().findViewById(R.id.et_back);
+        etDialogContext = dialog.getView().findViewById(R.id.et_context);
+        mDialogSpinDecks = dialog.getView().findViewById(R.id.spin_decks);
+        mDialogTilFront = dialog.getView().findViewById(R.id.input_layout_front);
+        mDialogTilBack = dialog.getView().findViewById(R.id.input_layout_back);
+        mDialogTilContext = dialog.getView().findViewById(R.id.input_layout_context);
 
         etDialogFront.setText(translation.getFromText());
         etDialogBack.setText(translation.getToText());
@@ -393,24 +396,18 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
 
     @Override
     public void showTranslationCard() {
-        svTranslationAndHistory.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                transitionsContainer.setVisibility(View.VISIBLE);
-                scrollContainer.animate()
-                        .y(rlToolbar.getHeight() + rlTranslator.getHeight())
-                        .setDuration(200)
-                        .withEndAction(new Runnable() {
-                            @Override
-                            public void run() {
-                                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                                lp.setMargins(0,0,0, transitionsContainer.getHeight() + 80);
-                                historyContainer.setLayoutParams(lp);
-                                historyContainer.requestLayout();
-                            }
-                        })
-                        .start();
-            }
+        svTranslationAndHistory.postDelayed(() -> {
+            transitionsContainer.setVisibility(View.VISIBLE);
+            scrollContainer.animate()
+                    .y(rlToolbar.getHeight() + rlTranslator.getHeight())
+                    .setDuration(200)
+                    .withEndAction(() -> {
+                        LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+                        lp.setMargins(0,0,0, transitionsContainer.getHeight() + 80);
+                        historyContainer.setLayoutParams(lp);
+                        historyContainer.requestLayout();
+                    })
+                    .start();
         }, 550);
 
     }
@@ -421,15 +418,12 @@ public class TranslatorFragment extends BaseFragment implements TranslatorView {
                 .y(0)
                 .setDuration(240)
                 .start();
-        svTranslationAndHistory.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                transitionsContainer.setVisibility(View.INVISIBLE);
-                LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-                lp.setMargins(0,0,0, 0);
-                historyContainer.setLayoutParams(lp);
-                historyContainer.requestLayout();
-            }
+        svTranslationAndHistory.postDelayed(() -> {
+            transitionsContainer.setVisibility(View.INVISIBLE);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            lp.setMargins(0,0,0, 0);
+            historyContainer.setLayoutParams(lp);
+            historyContainer.requestLayout();
         }, 260);
 
     }

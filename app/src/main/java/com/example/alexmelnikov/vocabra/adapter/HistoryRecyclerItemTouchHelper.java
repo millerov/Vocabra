@@ -5,11 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.View;
 
-import com.example.alexmelnikov.vocabra.ui.translator.TranslatorPresenter;
-
-/**
- * Created by AlexMelnikov on 04.04.18.
- */
 
 public class HistoryRecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
 

@@ -33,7 +33,8 @@ import lecho.lib.hellocharts.model.Viewport;
 import lecho.lib.hellocharts.view.LineChartView;
 
 /**
- * Created by AlexMelnikov on 06.04.18.
+ * StatisticsFragment.java – fragment displaying taining statistics
+ * @author Alexander Melnikov
  */
 
 public class StatisticsFragment extends BaseFragment implements StatisticsView {

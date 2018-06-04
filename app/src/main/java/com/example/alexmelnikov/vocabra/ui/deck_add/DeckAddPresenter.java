@@ -21,7 +21,8 @@ import java.util.Collections;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 15.03.18.
+ * DeckAddPresenter.java – presenter for DeckAddFragment
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -33,9 +34,9 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
     @Inject UserDataRepository mUserData;
     @Inject DecksRepository mDecksRep;
 
-    ArrayList<Language> mLangList;
+    private ArrayList<Language> mLangList;
 
-    public static int selectedColor;
+    static int selectedColor;
 
     private int mSelectedFrom; //TranslatonFragment spinner index
     private int mSelectedTo; //TraxnslationFragment spinner index
@@ -44,12 +45,12 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
 
     private boolean nameEtErrorEnabled;
 
-    public DeckAddPresenter() {
+    DeckAddPresenter() {
         VocabraApp.getPresenterComponent().inject(this);
         mLangList = mLangRep.getLanguagesFromDB();
         Collections.sort(mLangList);
 
-        SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(mUserData.SELECTED_LANGUAGES, new SelectedLanguages(
+        SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(UserDataRepository.SELECTED_LANGUAGES, new SelectedLanguages(
                 mLangList.indexOf(LanguageUtils.findByKey("ru")),
                 mLangList.indexOf(LanguageUtils.findByKey("en"))));
 
@@ -73,7 +74,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
         getViewState().detachInputListeners();
     }
 
-    public void selectorFrom(int index) {
+    void selectorFrom(int index) {
         if (index == mSelectedTo) {
             swapSelection();
         } else {
@@ -82,7 +83,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
         }
     }
 
-    public void selectorTo(int index) {
+    void selectorTo(int index) {
         if (index == mSelectedFrom) {
             swapSelection();
         } else {
@@ -91,7 +92,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
         }
     }
 
-    public void swapSelection() {
+    void swapSelection() {
         int temp = mSelectedFrom;
         mSelectedFrom = mSelectedTo;
         mSelectedTo = temp;
@@ -100,7 +101,7 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
         updateSelectedLanguages();
     }
 
-    public void inputChanges(String text) {
+    void inputChanges(String text) {
         if (nameEtErrorEnabled) {
             nameEtErrorEnabled = false;
             getViewState().hideNameEditTextError();
@@ -108,18 +109,18 @@ public class DeckAddPresenter extends MvpPresenter<DeckAddView> implements Snack
     }
 
 
-    public void colorChangeButtonPressed() {
+    void colorChangeButtonPressed() {
         getViewState().showSelectColorDialog();
     }
 
 
-    public void updateSelectedColor(int color) {
+    void updateSelectedColor(int color) {
         selectedColor = color;
         getViewState().updateCardColor(color);
     }
 
 
-    public void addNewDeckRequest(String name) {
+    void addNewDeckRequest(String name) {
         if (!name.trim().isEmpty()) {
             Deck deck = new Deck(-1, name.trim(), selectedColor,
                     mLangList.get(mSelectedFrom), mLangList.get(mSelectedTo));

@@ -32,7 +32,8 @@ import java.util.Date;
 import javax.inject.Inject;
 
 /**
- * Created by AlexMelnikov on 27.02.18.
+ * TranslatorPresenter.java – translator presenter class
+ * @author Alexander Melnikov
  */
 
 @InjectViewState
@@ -51,7 +52,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     @Inject
     DecksRepository mDecksRep;
 
-    ArrayList<Language> mLangList;
+    private ArrayList<Language> mLangList;
 
     private int mSelectedFrom; //TranslatonFragment spinner index
     private int mSelectedTo; //TranslationFragment spinner index
@@ -82,7 +83,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         mLangList = mLangRep.getLanguagesFromDB();
         Collections.sort(mLangList);
 
-        SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(mUserData.SELECTED_LANGUAGES, new SelectedLanguages(
+        SelectedLanguages selectedLanguages = (SelectedLanguages) mUserData.getValue(UserDataRepository.SELECTED_LANGUAGES, new SelectedLanguages(
                 mLangList.indexOf(LanguageUtils.findByKey("ru")),
                 mLangList.indexOf(LanguageUtils.findByKey("en"))));
 
@@ -91,7 +92,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         mSelectedFrom = selectedLanguages.from();
         mSelectedTo = selectedLanguages.to();
 
-        mTemporaryTranslations = new ArrayList<TemporaryTranslation>();
+        mTemporaryTranslations = new ArrayList<>();
 
         updateSelectedLanguages();
     }
@@ -116,12 +117,12 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void setInputOutput(Translation translation) {
+    void setInputOutput(Translation translation) {
         if (translation != null && translation.getFromText() != null) {
             mLastLoadedTranslation = translation;
             mInput = translation.getFromText();
             mOutput = translation.getToText();
-            if (mOutput != "" || mInput == mOutput)
+            if (!mOutput.isEmpty() || mInput.equals(mOutput))
                 updateDatabase();
             getViewState().fillTextFields(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
             getViewState().showTranslationCard();
@@ -154,7 +155,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         getViewState().showTranslationCard();
     }
 
-    public void selectorFrom(int index) {
+    void selectorFrom(int index) {
         if (index == mSelectedTo) {
             swapSelection();
         } else {
@@ -168,7 +169,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         }
     }
 
-    public void selectorTo(int index) {
+    void selectorTo(int index) {
         if (index == mSelectedFrom) {
             swapSelection();
         } else {
@@ -182,7 +183,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
         }
     }
 
-    public void clearButtonPressed() {
+    void clearButtonPressed() {
         if (!mInput.isEmpty()) {
             mLastLoadedTranslation = null;
             mInput = mOutput = "";
@@ -192,7 +193,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void swapSelection() {
+    void swapSelection() {
         int temp = mSelectedFrom;
         mSelectedFrom = mSelectedTo;
         mSelectedTo = temp;
@@ -211,16 +212,16 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
             translationRequested(mInput);
     }
 
-    public void inputRequested() {
+    void inputRequested() {
         getViewState().openTranslationFragment(mInput, mOutput, mSelectedFromLanguage, mSelectedToLanguage);
     }
 
-    public void copyButtonPressed() {
+    void copyButtonPressed() {
         getViewState().copyAction(mOutput);
     }
 
 
-    public void translationCardFavButtonPressed() {
+    void translationCardFavButtonPressed() {
         if (!mHistoryList.get(mHistoryList.size() - 1).getFavorite())
             addNewCardFromCurrentTranslationRequest();
         else {
@@ -241,8 +242,8 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void addNewCardFromHistoryResultPassed(int pos, Translation initialTranslation, String front,
-                                                  String back, String cardContext, String chosenDeckName, int defaultColor) {
+    void addNewCardFromHistoryResultPassed(int pos, Translation initialTranslation, String front,
+                                           String back, String cardContext, String chosenDeckName, int defaultColor) {
 
         String firstLanguageName = LanguageUtils.findNameByKey(TextUtils.getFirstLanguageIndexFromDir(initialTranslation.getLangs()));
         String secondLanguageName = LanguageUtils.findNameByKey(TextUtils.getSecondLanguageIndexFromDir(initialTranslation.getLangs()));
@@ -343,7 +344,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
     }
 
 
-    public void deleteDialogOptionPicked(int pos, int option) {
+    void deleteDialogOptionPicked(int pos, int option) {
         switch (option) {
             case 0:
                 Translation translationForDelete = mHistoryList.get(pos);
@@ -390,7 +391,7 @@ public class TranslatorPresenter extends MvpPresenter<TranslatorView> implements
 
     private void updateSelectedLangsIndexes() {
         SelectedLanguages newValue = new SelectedLanguages(mSelectedFrom, mSelectedTo);
-        mUserData.putValue(mUserData.SELECTED_LANGUAGES, newValue);
+        mUserData.putValue(UserDataRepository.SELECTED_LANGUAGES, newValue);
     }
 
     private void updateSelectedLanguages() {
