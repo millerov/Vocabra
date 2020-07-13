@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/AndroidStudioProjects-Vocabra.iml" filepath="$PROJECT_DIR$/AndroidStudioProjects-Vocabra.iml" group="Vocabra" />
       <module fileurl="file://$PROJECT_DIR$/Vocabra.iml" filepath="$PROJECT_DIR$/Vocabra.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/Vocabra-app.iml" filepath="$PROJECT_DIR$/app/Vocabra-app.iml" group="Vocabra/app" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
