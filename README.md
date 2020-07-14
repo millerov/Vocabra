@@ -11,15 +11,14 @@ Android application helps to translate and train words in different languages to
 <p>Create decks to organize translated words by categories and train each deck separately. Setup deck name, color and languages pair.</p>
 <br/><br/><br/><br/><br/><br/>
   
-<br />  
-<br /> 
+<br />  <br /><br />  <br />  <br /> 
 
-<img align="left" hspace=28 src="../master/docs/translation.gif" width="237"/></a>
+<img align="left" hspace=68 src="../master/docs/translation.gif" width="237"/></a>
 <h3>Translate words</h3>
 <p>App uses <a href = "https://yandex.ru/dev/translate/">Yandex Translate API</a> to provide translation functionality. Put translated words into one of the created decks.</p>
 <br/><br/><br/><br/><br/><br/> 
 
-<br />  <br /><br />  <br />  <br /> <br /> 
+<br />  <br /><br />  <br />  <br /> <br /> <br /> <br /> 
 
 <img align="left" hspace=68 src="../master/docs/training.gif" width="237"/></a>
 <h3>Train saved words and phrases</h3>
@@ -27,7 +26,7 @@ Android application helps to translate and train words in different languages to
 Each trained word will come up in next work outs in the future after longer interval each time the word is marked as correctly remembered</p>
 <br/><br/><br/><br/><br/><br/>
 
-<br />  <br />  <br />  <br />  <br />  <br />  <br />  <br />  
+<br />  <br />  <br />  <br /> <br /> 
 
 ## Features
 
