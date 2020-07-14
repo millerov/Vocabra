@@ -19,7 +19,7 @@ Android application helps to translate and train words in different languages to
 <p>App uses <a href = "https://yandex.ru/dev/translate/">Yandex Translate API</a> to provide translation functionality. Put translated words into one of the created decks.</p>
 <br/><br/><br/><br/><br/><br/> 
 
-<br />  <br /><br />  <br />  <br /> 
+<br />  <br /><br />  <br />  <br /> <br /> 
 
 <img align="left" hspace=68 src="../master/docs/training.gif" width="237"/></a>
 <h3>Train saved words and phrases</h3>
