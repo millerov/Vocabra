@@ -38,4 +38,4 @@ Each trained word will come up in next work outs in the future after longer inte
 
 ## Screenshots
 
-<img src="../master/docs/deck_screen.png" width="250"> <img hspace=68 src="../master/docs/translation_screen.png" width="250"> <img src="../master/docs/stats.png" width="250">
+<img src="../master/docs/deck_screen.png" width="250"> <img src="../master/docs/translation_screen.png" width="250"> <img src="../master/docs/stats.png" width="250">
